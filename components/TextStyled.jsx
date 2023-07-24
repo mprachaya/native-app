@@ -5,6 +5,7 @@ function TextStyled(props) {
   return (
     <Text
       m={2}
+      fontWeight={'light'}
       fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
       {...props}
     >

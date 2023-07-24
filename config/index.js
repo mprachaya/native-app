@@ -3,5 +3,5 @@ export const config = {
 };
 export const url = {
   PURCHASE_ORDER:
-    'https://demo.erpeazy.com/api/resource/Purchase Order?fields=["name","supplier","status","transaction_date"]',
+    'https://demo.erpeazy.com/api/resource/Purchase Order?fields=["name","supplier","status","transaction_date","company"]',
 };

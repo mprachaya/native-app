@@ -5,14 +5,14 @@ function MoreButton(props) {
   return (
     <Button
       rounded={20}
-      size='sm'
-      variant='outline'
+      size='md'
       background={'blue.500'}
       px={20}
       _pressed={{
         bg: 'blue.300',
       }}
       _text={{
+        fontSize: 'md',
         fontWeight: 'bold',
         color: 'white',
       }}
