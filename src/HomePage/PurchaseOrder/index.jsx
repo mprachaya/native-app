@@ -9,17 +9,32 @@ import GetScreenSize from '../../../hooks/GetScreenSize';
 import MoreButton from '../../../components/MoreButton';
 import Badges from '../../../components/Badges';
 import useFetch from '../../../hooks/useFetch';
+import { config, url } from '../../../config';
 
 function PurchaseOrder({ navigation }) {
   const [state, dispatch] = useContext(Context);
-  const { data: purchaseOrder, loading, error } = useFetch('https://api.quotable.io/random', header);
   const path = 'PurchaseOrder';
+  const {
+    data: purchaseOrder,
+    loading,
+    error,
+  } = useFetch(url.PURCHASE_ORDER, {
+    headers: {
+      Authorization: config.API_TOKEN,
+    },
+  });
 
   useEffect(() => {
     dispatch({ type: 'SET_PATHNAME', payload: path });
   }, []);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    // if (purchaseOrder) {
+    console.log('data ', purchaseOrder);
+    console.log('error ', error);
+    console.log('api_token', config.API_TOKEN);
+    // }
+  }, [purchaseOrder]);
 
   return (
     <SafeAreaView>
@@ -30,23 +45,28 @@ function PurchaseOrder({ navigation }) {
               space={SPACING.small}
               w={{ lg: 1000 }}
             >
-              <HStack>
-                <TextStyled>Supplier Name</TextStyled>
-                <Badges type='receive' />
-              </HStack>
-              <HStack justifyContent={'space-between'}>
-                <HStack>
-                  <TextStyled>29-01-2023</TextStyled>
-                  <TextStyled>PUR-ORD-2023-00004</TextStyled>
-                </HStack>
-                <GetScreenSize type='lg'>
-                  <MoreButton />
-                </GetScreenSize>
-              </HStack>
-              <GetScreenSize type='sm'>
-                <MoreButton />
-              </GetScreenSize>
-              <Divider my={2} />
+              {!loading &&
+                Object.values(purchaseOrder)?.map((order) => (
+                  <VStack key={order.name}>
+                    <HStack>
+                      <TextStyled>{order.supplier.replace(/['"]+/g, '')}</TextStyled>
+                      <Badges type='receive'>{order.status}</Badges>
+                    </HStack>
+                    <HStack justifyContent={'space-between'}>
+                      <HStack>
+                        <TextStyled>{order.transaction_date}</TextStyled>
+                        <TextStyled>{order.name}</TextStyled>
+                      </HStack>
+                      <GetScreenSize type='lg'>
+                        <MoreButton />
+                      </GetScreenSize>
+                    </HStack>
+                    <GetScreenSize type='sm'>
+                      <MoreButton />
+                    </GetScreenSize>
+                    <Divider my={4} />
+                  </VStack>
+                ))}
             </VStack>
           </Center>
         </ScrollView>

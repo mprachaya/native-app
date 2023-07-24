@@ -1,9 +1,10 @@
 import { Button } from 'native-base';
 import React from 'react';
 
-function MoreButton() {
+function MoreButton(props) {
   return (
     <Button
+      rounded={20}
       size='sm'
       variant='outline'
       background={'blue.500'}
@@ -15,6 +16,7 @@ function MoreButton() {
         fontWeight: 'bold',
         color: 'white',
       }}
+      {...props}
     >
       More
     </Button>

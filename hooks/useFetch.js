@@ -2,29 +2,31 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function useFetch(url, header) {
-  const [data, setData] = useState(null);
+export default function useFetch(url, header) {
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setLoading('loading...');
-    setData(null);
+    setLoading(true);
+    setData([]);
     setError(null);
     const source = axios.CancelToken.source();
     if (header) {
       axios
         .get(url, header)
+        .then((response) => response.data)
         .then((res) => {
+          console.log(res.data);
           setLoading(false);
           //checking for multiple responses for more flexibility
           //with the url we send in.
-          res.data.content && setData(res.data.content);
-          res.content && setData(res.content);
+          res.data && setData(res.data);
         })
         .catch((err) => {
           setLoading(false);
           setError('An error occurred. Awkward..');
+          console.log(err);
         });
       return () => {
         source.cancel();
@@ -36,8 +38,7 @@ function useFetch(url, header) {
           setLoading(false);
           //checking for multiple responses for more flexibility
           //with the url we send in.
-          res.data.content && setData(res.data.content);
-          res.content && setData(res.content);
+          res.data && setData(res.data);
         })
         .catch((err) => {
           setLoading(false);
@@ -51,4 +52,3 @@ function useFetch(url, header) {
 
   return { data, loading, error };
 }
-export default useFetch;
