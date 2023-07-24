@@ -1,11 +1,11 @@
-import { Avatar, Box, Center, ChevronRightIcon, HStack, Hidden, Input, Link, Text } from 'native-base';
-import { ICON, SHADOWS, SIZES, SPACING } from '../constants/theme';
-import { FrappeLogo } from './FrappeLogo';
+import { Avatar, Box, Center, ChevronRightIcon, HStack, Hidden, Link, Text } from 'native-base';
+import { SHADOWS, SPACING } from '../constants/theme';
 import { SearchInput } from './Inputs';
 import { useContext } from 'react';
 import { Context } from '../reducer';
+import FrappeLogo from './FrappeLogo';
 
-export const AppBar = (props) => {
+export default function AppBar(props) {
   const [state] = useContext(Context);
   return (
     <Box
@@ -44,4 +44,4 @@ export const AppBar = (props) => {
       </HStack>
     </Box>
   );
-};
+}

@@ -36,7 +36,7 @@ export const SearchInputFilled = (props) => (
     mx='2'
     placeholder={props.label}
     fontSize={{ base: SIZES.medium, lg: SIZES.large }}
-    w={{ base: 200, lg: 400 }}
+    w={{ base: 300, lg: 400 }}
     _focus={{
       borderColor: 'white',
       backgroundColor: 'blueGray.200',

@@ -28,5 +28,4 @@ function Badges({ type, children }) {
     );
   }
 }
-
 export default Badges;

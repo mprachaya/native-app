@@ -1,6 +1,6 @@
 import { Image } from 'native-base';
 
-export const FrappeLogo = ({ size }) => {
+function FrappeLogo({ size }) {
   if (size === 'xs') {
     return (
       <Image
@@ -49,4 +49,5 @@ export const FrappeLogo = ({ size }) => {
       />
     );
   }
-};
+}
+export default FrappeLogo;
