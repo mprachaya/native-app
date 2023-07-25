@@ -4,9 +4,9 @@ import React from 'react';
 function TextStyled(props) {
   return (
     <Text
-      m={2}
+      lineHeight={0}
       fontWeight={'light'}
-      fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+      fontSize={{ base: 'sm', md: 'lg', lg: 'xl' }}
       {...props}
     >
       {props.children}

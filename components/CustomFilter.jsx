@@ -2,7 +2,7 @@ import { Box, Button, ChevronDownIcon, ChevronUpIcon, HStack, Menu, Text } from 
 import { SIZES } from '../constants/theme';
 import TextStyled from './TextStyled';
 
-export const CustomSort = ({ sort, sortOption, handleChange, setSort }) => (
+export const CustomSort = ({ sort, setSortOption, setSort, sortOptionDisplay, setSortOptionDisplay }) => (
   <HStack
     h={12}
     mb={6}
@@ -28,18 +28,28 @@ export const CustomSort = ({ sort, sortOption, handleChange, setSort }) => (
           background: 'blueGray.100',
         }}
       >
-        <HStack
-          space={2}
-          w={'20'}
-          justifyContent={'center'}
-        >
-          {sort ? <ChevronUpIcon my={1.5} /> : <ChevronDownIcon my={1.5} />}
-          {sort ? <Text fontSize={SIZES.large}>ASC</Text> : <Text fontSize={SIZES.large}>DESC</Text>}
-        </HStack>
+        {sort ? (
+          <HStack
+            space={2}
+            w={'20'}
+            justifyContent={'center'}
+          >
+            <ChevronUpIcon my={{ base: 0.8, lg: 1.5 }} />
+            <Text fontSize={{ base: SIZES.small, lg: SIZES.large }}>ASC</Text>
+          </HStack>
+        ) : (
+          <HStack
+            space={2}
+            w={'20'}
+            justifyContent={'center'}
+          >
+            <ChevronDownIcon my={{ base: 0.8, lg: 1.5 }} />
+            <Text fontSize={{ base: SIZES.small, lg: SIZES.large }}>DESC</Text>
+          </HStack>
+        )}
       </Button>
       <HStack>
         <Menu
-          value={sortOption}
           trigger={(triggerProps) => {
             return (
               <Button
@@ -54,26 +64,46 @@ export const CustomSort = ({ sort, sortOption, handleChange, setSort }) => (
                 {...triggerProps}
               >
                 <Text
-                  fontSize={SIZES.large}
+                  fontSize={{ base: SIZES.small, lg: SIZES.large }}
                   my={-0.5}
                   mx={2}
                 >
-                  {sortOption}
+                  {sortOptionDisplay}
                 </Text>
               </Button>
             );
           }}
         >
-          <Menu.Item onPress={() => handleChange('Created On')}>
+          <Menu.Item
+            onPress={() => {
+              setSortOption('transaction_date');
+              setSortOptionDisplay('Created On');
+            }}
+          >
             <TextStyled>Created On</TextStyled>
           </Menu.Item>
-          <Menu.Item onPress={() => handleChange('Status')}>
+          <Menu.Item
+            onPress={() => {
+              setSortOption('status');
+              setSortOptionDisplay('Status');
+            }}
+          >
             <TextStyled>Status</TextStyled>
           </Menu.Item>
-          <Menu.Item onPress={() => handleChange('Title')}>
+          <Menu.Item
+            onPress={() => {
+              setSortOption('supplier');
+              setSortOptionDisplay('Title');
+            }}
+          >
             <TextStyled>Title</TextStyled>
           </Menu.Item>
-          <Menu.Item onPress={() => handleChange('Company')}>
+          <Menu.Item
+            onPress={() => {
+              setSortOption('company');
+              setSortOptionDisplay('Company');
+            }}
+          >
             <TextStyled>Company</TextStyled>
           </Menu.Item>
         </Menu>

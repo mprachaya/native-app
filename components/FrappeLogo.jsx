@@ -8,7 +8,7 @@ function FrappeLogo({ size }) {
           uri: 'https://avatars.githubusercontent.com/u/836974?s=200&v=4',
         }}
         alt='frappe-logo'
-        size='10'
+        size='8'
         rounded={6}
       />
     );

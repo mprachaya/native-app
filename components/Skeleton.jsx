@@ -6,8 +6,12 @@ export const PurchaseOrderListSkeleton = (props) => (
     space={4}
     overflow='hidden'
     rounded='md'
+    {...props}
   >
-    <Skeleton h='12' />
-    <Skeleton.Text lines={3} />
+    <Skeleton h='24' />
+    <Skeleton.Text
+      h='24'
+      lines={3}
+    />
   </VStack>
 );

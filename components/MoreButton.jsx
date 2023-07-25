@@ -4,21 +4,22 @@ import React from 'react';
 function MoreButton(props) {
   return (
     <Button
-      rounded={20}
-      size='md'
-      background={'blue.500'}
+      variant={'link'}
+      size='lg'
+      // background={'blue.500'}
       px={20}
-      _pressed={{
-        bg: 'blue.300',
-      }}
+      // _pressed={{
+      //   bg: 'blue.300',
+      // }}
       _text={{
         fontSize: 'md',
         fontWeight: 'bold',
-        color: 'white',
+        color: 'blue.600',
+        // color: 'white',
       }}
       {...props}
     >
-      More
+      VIEW MORE
     </Button>
   );
 }

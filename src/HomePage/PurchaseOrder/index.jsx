@@ -1,24 +1,21 @@
-import { Center, Divider, HStack, ScrollView, Spinner, VStack, View } from 'native-base';
+import { Center, ScrollView, VStack, View } from 'native-base';
 import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native';
 import { SPACING } from '../../../constants/theme';
 import { Context } from '../../../reducer';
-import TextStyled from '../../../components/TextStyled';
-import GetScreenSize from '../../../hooks/GetScreenSize';
 import useFetch from '../../../hooks/useFetch';
-import MoreButton from '../../../components/MoreButton';
 import Header from './Header';
-import Badges from '../../../components/Badges';
 import { config, url } from '../../../config';
-import { Platform } from 'react-native';
-import { PurchaseOrderListSkeleton } from '../../../components/Skeleton';
+import List from './List';
+import SearchFilter from '../../../hooks/SearchFilter';
+import Pagination from '../../../components/Pagination';
 
 const ContainerStyled = (props) => {
   return (
     <View
       pt={12}
       height={'full'}
-      bg={'blueGray.50'}
+      bg={'blueGray.100'}
       {...props}
     >
       {props.children}
@@ -30,7 +27,14 @@ function PurchaseOrder() {
   const [state, dispatch] = useContext(Context);
   const path = 'PurchaseOrder';
   const [sort, setSort] = useState(true); // true = asc , false = desc
-  const [sortOption, setSortOption] = useState('Created On');
+  const [sortOption, setSortOption] = useState('transaction_date');
+  const [sortOptionDisplay, setSortOptionDisplay] = useState('Created On');
+  const [searchState, setSearchState] = useState({
+    id: '',
+    supplier: '',
+    status: '',
+    company: '',
+  });
   const {
     data: purchaseOrder,
     loading,
@@ -40,67 +44,68 @@ function PurchaseOrder() {
       Authorization: config.API_TOKEN,
     },
   });
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     dispatch({ type: 'SET_PATHNAME', payload: path });
   }, []);
+
+  // parse purchaseOrder to data
+  useEffect(() => {
+    if (purchaseOrder) {
+      setData(purchaseOrder);
+    }
+  }, [purchaseOrder]);
+
+  // call search function
+  useEffect(() => {
+    SearchFilter(data, sort, sortOption, setData);
+  }, [sort, sortOption]);
+
+  // log data
+  useEffect(() => {
+    if (data) {
+      // console.log('Data ', data);
+    }
+  }, [data]);
+
+  // log search state
+  useEffect(() => {
+    console.log('Search ', searchState);
+  }, [searchState]);
 
   return (
     <SafeAreaView>
       <ContainerStyled>
         <Center>
           {/* Sort and Filter */}
-          <Header
-            sort={sort}
-            setSort={setSort}
-            sortOption={sortOption}
-            handleChange={setSortOption}
-          />
           <ScrollView
             h='full'
-            px={12}
+            px={{ base: 4, lg: 24 }}
           >
+            <Header
+              sort={sort}
+              setSort={setSort}
+              sortOption={sortOption}
+              setSortOption={setSortOption}
+              handleSearchChange={setSearchState}
+              sortOptionDisplay={sortOptionDisplay}
+              setSortOptionDisplay={setSortOptionDisplay}
+            />
+            <Pagination />
+
             <VStack
               space={SPACING.small}
-              w={{ lg: 1000 }}
+              mt={4}
             >
-              {!loading
-                ? Object.values(purchaseOrder)?.map((order) => (
-                    <VStack key={order.name}>
-                      <TextStyled fontWeight={'bold'}>{order.company}</TextStyled>
-                      <HStack>
-                        <TextStyled>{order.supplier.replace(/['"]+/g, '')}</TextStyled>
-                        <Badges type='receive'>{order.status}</Badges>
-                      </HStack>
-                      <HStack justifyContent={'space-between'}>
-                        <HStack>
-                          <TextStyled>{order.transaction_date}</TextStyled>
-                          <TextStyled>{order.name}</TextStyled>
-                        </HStack>
-                        <GetScreenSize
-                          from='md'
-                          to={'lg'}
-                        >
-                          <MoreButton />
-                        </GetScreenSize>
-                      </HStack>
-                      <GetScreenSize
-                        from='sm'
-                        to={'md'}
-                      >
-                        <MoreButton mt={6} />
-                      </GetScreenSize>
-                      <Divider my={6} />
-                    </VStack>
-                  ))
-                : Platform.OS === 'ios'
-                ? Array.from(Array(10).fill()).map((index) => (
-                    <View key={index + Math.random().toString(16).slice(2)}>
-                      <PurchaseOrderListSkeleton />
-                    </View>
-                  ))
-                : Platform.OS === 'android' && <Spinner size='lg' />}
-              {error && <TextStyled> Error Fetching Data Please Check. </TextStyled>}
+              <List
+                loading={loading}
+                error={error}
+                data={data}
+                sort={sort}
+                sortOption={sortOption}
+                searchState={searchState}
+              />
             </VStack>
           </ScrollView>
         </Center>

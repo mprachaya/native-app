@@ -4,15 +4,17 @@ import { SearchInput } from './Inputs';
 import { useContext } from 'react';
 import { Context } from '../reducer';
 import FrappeLogo from './FrappeLogo';
+import GetScreenSize from '../hooks/GetScreenSize';
 
 export default function AppBar(props) {
   const [state] = useContext(Context);
   return (
     <Box
       safeAreaTop
-      height={20}
+      height={32}
+      pt={6}
+      pb={6}
       bg='white'
-      style={{ top: 0, bottom: 0, left: 0, right: 0 }}
       shadow={SHADOWS.small}
       {...props}
     >
@@ -38,7 +40,17 @@ export default function AppBar(props) {
         <Center>
           <HStack space={{ base: 0, lg: SPACING.small }}>
             <SearchInput />
-            <Avatar>A</Avatar>
+            <HStack space={{ base: 2, lg: SPACING.small }}>
+              <Avatar
+                bg='lightBlue.400'
+                size={'10'}
+              >
+                A
+              </Avatar>
+              <Avatar size={'10'}>
+                <Avatar.Badge bg='green.500' />A
+              </Avatar>
+            </HStack>
           </HStack>
         </Center>
       </HStack>

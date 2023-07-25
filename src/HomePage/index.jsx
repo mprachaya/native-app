@@ -12,7 +12,7 @@ const ContainerStyled = (props) => {
     <View
       pt={12}
       height={'full'}
-      bg={'blueGray.50'}
+      bg={'blueGray.100'}
       {...props}
     >
       {props.children}

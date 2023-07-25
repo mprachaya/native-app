@@ -17,7 +17,7 @@ export default function useFetch(url, header) {
         .get(url, header)
         .then((response) => response.data)
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           setLoading(false);
           //checking for multiple responses for more flexibility
           //with the url we send in.

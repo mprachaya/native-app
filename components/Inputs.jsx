@@ -6,6 +6,7 @@ import TextStyled from './TextStyled';
 export const SearchInput = (props) => (
   <Input
     {...props}
+    height={{ base: 9, lg: 10 }}
     rounded={12}
     mx='2'
     placeholder='Search'
@@ -30,7 +31,7 @@ export const SearchInput = (props) => (
 export const SearchInputFilled = (props) => (
   <Input
     {...props}
-    bg={'blueGray.100'}
+    bg={'blueGray.50'}
     variant={'filled'}
     rounded={12}
     mx='2'
@@ -38,8 +39,9 @@ export const SearchInputFilled = (props) => (
     fontSize={{ base: SIZES.medium, lg: SIZES.large }}
     w={{ base: 300, lg: 400 }}
     _focus={{
-      borderColor: 'white',
-      backgroundColor: 'blueGray.200',
+      borderColor: 'blueGray.300',
+      backgroundColor: 'blueGray.100',
     }}
+    onChangeText={props.handleChange}
   />
 );
