@@ -1,4 +1,4 @@
-import { NativeBaseProvider, StatusBar, Text, View } from 'native-base';
+import { NativeBaseProvider, StatusBar, Text } from 'native-base';
 import Store from './reducer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -23,17 +23,17 @@ export default function App() {
             <Stack.Screen
               name='Home'
               component={HomePage}
-              options={{ title: 'Home Page', headerLeft: () => <Text></Text> }}
+              options={{ title: 'Home Page', headerTitleAlign: 'center', headerLeft: () => <Text></Text> }}
             />
             <Stack.Screen
               name='Purchase Order'
               component={PurchaseOrder}
-              options={{ title: 'Purchase Order', headerLeft: () => <Text></Text> }}
+              options={{ title: 'Purchase Order', headerTitleAlign: 'center', headerLeft: () => <Text></Text> }}
             />
             <Stack.Screen
               name='Other Test'
               component={OtherTest}
-              options={{ title: 'Other Test', headerLeft: () => <Text></Text> }}
+              options={{ title: 'Other Test', headerTitleAlign: 'center', headerLeft: () => <Text></Text> }}
             />
           </Stack.Navigator>
           {/* </StyledContainer> */}

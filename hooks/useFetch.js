@@ -1,5 +1,5 @@
 //useFetch.js
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import axios from 'axios';
 
 export default function useFetch(url, header) {
@@ -7,9 +7,9 @@ export default function useFetch(url, header) {
   const [loading, setLoading] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  useMemo(() => {
+    // console.log('Running useFetch!');
     setLoading(true);
-    setData([]);
     setError(null);
     const source = axios.CancelToken.source();
     if (header) {
@@ -22,6 +22,7 @@ export default function useFetch(url, header) {
           //checking for multiple responses for more flexibility
           //with the url we send in.
           res.data && setData(res.data);
+          console.log('Fetching successful!');
         })
         .catch((err) => {
           setLoading(false);
@@ -39,6 +40,7 @@ export default function useFetch(url, header) {
           //checking for multiple responses for more flexibility
           //with the url we send in.
           res.data && setData(res.data);
+          // console.log('Fetching successful!');
         })
         .catch((err) => {
           setLoading(false);
@@ -50,5 +52,5 @@ export default function useFetch(url, header) {
     }
   }, [url]);
 
-  return { data, loading, error };
+  return { data, setData, loading, error };
 }

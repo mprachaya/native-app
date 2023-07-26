@@ -1,5 +1,5 @@
 import { Center, ScrollView, VStack, View } from 'native-base';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native';
 import { SPACING } from '../../../constants/theme';
 import { Context } from '../../../reducer';
@@ -29,14 +29,17 @@ function PurchaseOrder() {
   const [sort, setSort] = useState(true); // true = asc , false = desc
   const [sortOption, setSortOption] = useState('transaction_date');
   const [sortOptionDisplay, setSortOptionDisplay] = useState('Created On');
+  const [totalPage, setTotalPage] = useState(12);
   const [searchState, setSearchState] = useState({
     id: '',
     supplier: '',
     status: '',
     company: '',
   });
+
   const {
     data: purchaseOrder,
+    setData: setPurchaseOrder,
     loading,
     error,
   } = useFetch(url.PURCHASE_ORDER, {
@@ -44,35 +47,24 @@ function PurchaseOrder() {
       Authorization: config.API_TOKEN,
     },
   });
-  const [data, setData] = useState([]);
 
+  // must use useEffect
   useEffect(() => {
     dispatch({ type: 'SET_PATHNAME', payload: path });
   }, []);
 
   // parse purchaseOrder to data
-  useEffect(() => {
-    if (purchaseOrder) {
-      setData(purchaseOrder);
-    }
-  }, [purchaseOrder]);
 
   // call search function
-  useEffect(() => {
-    SearchFilter(data, sort, sortOption, setData);
+  useMemo(() => {
+    SearchFilter(purchaseOrder, sort, sortOption, setPurchaseOrder);
   }, [sort, sortOption]);
 
-  // log data
-  useEffect(() => {
-    if (data) {
-      // console.log('Data ', data);
+  useMemo(() => {
+    if (purchaseOrder.length > 0) {
+      setTotalPage(purchaseOrder.length);
     }
-  }, [data]);
-
-  // log search state
-  useEffect(() => {
-    console.log('Search ', searchState);
-  }, [searchState]);
+  }, [purchaseOrder]);
 
   return (
     <SafeAreaView>
@@ -81,7 +73,7 @@ function PurchaseOrder() {
           {/* Sort and Filter */}
           <ScrollView
             h='full'
-            px={{ base: 4, lg: 24 }}
+            px={{ base: 0, lg: 24 }}
           >
             <Header
               sort={sort}
@@ -92,16 +84,16 @@ function PurchaseOrder() {
               sortOptionDisplay={sortOptionDisplay}
               setSortOptionDisplay={setSortOptionDisplay}
             />
-            <Pagination />
-
+            <Pagination total={totalPage} />
             <VStack
               space={SPACING.small}
-              mt={4}
+              mt={2}
+              mx={{ base: 6, lg: 0 }}
             >
               <List
                 loading={loading}
                 error={error}
-                data={data}
+                data={purchaseOrder}
                 sort={sort}
                 sortOption={sortOption}
                 searchState={searchState}

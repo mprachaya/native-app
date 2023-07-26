@@ -1,11 +1,12 @@
-import { Button, Card, HStack, VStack, View } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import { Button, Card, HStack, Spinner, Text, VStack, View } from 'native-base';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Platform } from 'react-native';
 import TextStyled from '../../../components/TextStyled';
 import Badges from '../../../components/Badges';
 import GetScreenSize from '../../../hooks/GetScreenSize';
 import MoreButton from '../../../components/MoreButton';
 import uuid from 'react-native-uuid';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { PurchaseOrderListSkeleton } from '../../../components/Skeleton';
 
 function List({ data, loading, error, searchState, sort, sortOption }) {
@@ -21,11 +22,11 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
     </View>
   );
 
-  useEffect(() => {
+  useMemo(() => {
     setHotReload(true);
   }, [sort, sortOption]);
 
-  useEffect(() => {
+  useMemo(() => {
     if (hotReload) {
       setTimeout(function () {
         setHotReload(false);
@@ -43,7 +44,7 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
 
   return (
     <React.Fragment>
-      {!loading ? (
+      {!loading &&
         Object.values(data)
           ?.filter((order) => {
             return (
@@ -58,13 +59,14 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
               key={uuid.v1()}
               pl={{ base: 0, lg: 16 }}
               my={4}
-              py={8}
+              py={{ base: 4, lg: 8 }}
               shadow={0}
               background={'blueGray.50'}
               rounded={6}
             >
               <VStack key={orderFilter.name}>
                 <HStack
+                  mt={2}
                   space={1}
                   justifyContent={'space-between'}
                   direction={{ base: 'column', lg: 'row' }}
@@ -78,7 +80,7 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
                       pt={{ base: 3, lg: 2 }}
                     >
                       <TextStyled> {index + 1}. </TextStyled>
-                      <TextStyled fontWeight={'bold'}> {orderFilter.supplier.replace(/['"]+/g, '')}</TextStyled>
+                      <TextStyled textStyle={'header'}> {orderFilter.supplier.replace(/['"]+/g, '')}</TextStyled>
                     </HStack>
                     <GetScreenSize
                       from={'md'}
@@ -94,7 +96,7 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
                           // color: 'white',
                         }}
                       >
-                        {'   ' + orderFilter.company}
+                        {'    ' + orderFilter.company}
                       </Button>
                     </GetScreenSize>
                     <GetScreenSize
@@ -104,11 +106,9 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
                       <Button
                         variant={'link'}
                         _text={{
-                          lineHeight: 0,
                           fontSize: { base: 'sm', lg: 'lg' },
                           fontWeight: 'bold',
                           color: 'blue.600',
-                          // color: 'white',
                         }}
                       >
                         {orderFilter.company}
@@ -120,8 +120,21 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
                     direction={{ base: 'row-reverse', lg: 'column' }}
                     justifyContent={'center'}
                   >
-                    <TextStyled>{orderFilter.transaction_date}</TextStyled>
-                    <TextStyled>{orderFilter.name}</TextStyled>
+                    <HStack>
+                      <HStack
+                        py={{ base: 0.5, lg: 1.5 }}
+                        px={1}
+                      >
+                        <Icon
+                          name='calendar'
+                          size={14}
+                          color={'#808080'}
+                        />
+                      </HStack>
+
+                      <TextStyled textStyle={'body'}>{orderFilter.transaction_date}</TextStyled>
+                    </HStack>
+                    <TextStyled textStyle={'body'}>{orderFilter.name}</TextStyled>
                   </HStack>
                   <HStack
                     w={{ base: 'full', lg: 200 }}
@@ -152,12 +165,7 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
                 </GetScreenSize>
               </VStack>
             </Card>
-          ))
-      ) : Platform.OS === 'ios' ? (
-        <SkeletonList />
-      ) : (
-        Platform.OS === 'android' && <Spinner size='lg' />
-      )}
+          ))}
       {error && <TextStyled> Error Fetching Data Please Check. </TextStyled>}
     </React.Fragment>
   );

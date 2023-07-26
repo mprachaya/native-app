@@ -34,10 +34,10 @@ export const SearchInputFilled = (props) => (
     bg={'blueGray.50'}
     variant={'filled'}
     rounded={12}
-    mx='2'
     placeholder={props.label}
     fontSize={{ base: SIZES.medium, lg: SIZES.large }}
-    w={{ base: 300, lg: 400 }}
+    minW={{ base: 'full', lg: 400 }}
+    w={{ base: 'full', lg: 400 }}
     _focus={{
       borderColor: 'blueGray.300',
       backgroundColor: 'blueGray.100',

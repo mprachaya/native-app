@@ -6,16 +6,11 @@ function MoreButton(props) {
     <Button
       variant={'link'}
       size='lg'
-      // background={'blue.500'}
       px={20}
-      // _pressed={{
-      //   bg: 'blue.300',
-      // }}
       _text={{
         fontSize: 'md',
         fontWeight: 'bold',
-        color: 'blue.600',
-        // color: 'white',
+        color: 'blue.400',
       }}
       {...props}
     >

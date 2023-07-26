@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import GetScreenSize from '../../../hooks/GetScreenSize';
 import { CustomSort } from '../../../components/CustomFilter';
-import { HStack, VStack } from 'native-base';
+import { Center, HStack, VStack } from 'native-base';
 import { SearchInputFilled } from '../../../components/Inputs';
 import { SPACING } from '../../../constants/theme';
 
@@ -23,6 +23,7 @@ function Header({
       >
         <VStack
           space={SPACING.small}
+          mx={{ base: 6, lg: 0 }}
           mb={6}
         >
           <SearchInputFilled
@@ -42,14 +43,16 @@ function Header({
             label={'Company'}
           />
         </VStack>
-        <CustomSort
-          sort={sort}
-          setSort={setSort}
-          sortOption={sortOption}
-          setSortOption={setSortOption}
-          sortOptionDisplay={sortOptionDisplay}
-          setSortOptionDisplay={setSortOptionDisplay}
-        />
+        <Center mt={4}>
+          <CustomSort
+            sort={sort}
+            setSort={setSort}
+            sortOption={sortOption}
+            setSortOption={setSortOption}
+            sortOptionDisplay={sortOptionDisplay}
+            setSortOptionDisplay={setSortOptionDisplay}
+          />
+        </Center>
       </GetScreenSize>
       {/* functional for ios device */}
       <GetScreenSize
