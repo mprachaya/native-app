@@ -1,17 +1,19 @@
 import { Center, VStack, View } from 'native-base';
 import React, { useContext } from 'react';
-import { SafeAreaView } from 'react-native';
+import { Dimensions, SafeAreaView } from 'react-native';
 import { SPACING } from '../../constants/theme';
 import DetectBack from '../../hooks/DetectBack';
 import NavigateStorePath from '../../hooks/NavigateStorePath';
 import { Context } from '../../reducer';
 import TextStyled from '../../components/TextStyled';
 
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+
 const ContainerStyled = (props) => {
   return (
     <View
       pt={12}
-      height={'full'}
+      height={SCREEN_HEIGHT}
       bg={'blueGray.100'}
       {...props}
     >

@@ -9,6 +9,7 @@ import { config, url } from '../../../config';
 import List from './List';
 import SearchFilter from '../../../hooks/SearchFilter';
 import Pagination from '../../../components/Pagination';
+import Animated, { useSharedValue, useAnimatedStyle, useAnimatedScrollHandler } from 'react-native-reanimated';
 
 const ContainerStyled = (props) => {
   return (
@@ -34,6 +35,7 @@ function PurchaseOrder() {
   // for pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [rowNumber, setRowNumber] = useState(0);
+  var perPage = 2;
   // hot reload
   const [hotReload, setHotReload] = useState(false);
   // fetch data
@@ -60,7 +62,7 @@ function PurchaseOrder() {
     dispatch({ type: 'SET_PATHNAME', payload: path });
   }, []);
 
-  // parse purchaseOrder to data
+  // detect scroll position bottom
 
   // call search function
   useMemo(() => {
@@ -73,33 +75,60 @@ function PurchaseOrder() {
     }
   }, [purchaseOrder]);
 
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      if (lastContentOffset.value > event.contentOffset.y && isScrolling.value) {
+        translateY.value = 0;
+        console.log('scrolling up');
+      } else if (lastContentOffset.value < event.contentOffset.y && isScrolling.value) {
+        translateY.value = 100;
+        console.log('scrolling down');
+      }
+      lastContentOffset.value = event.contentOffset.y;
+    },
+    onBeginDrag: (e) => {
+      isScrolling.value = true;
+    },
+    onEndDrag: (e) => {
+      isScrolling.value = false;
+    },
+  });
+
   return (
     <SafeAreaView>
       <ContainerStyled>
         <Center>
           {/* Sort and Filter */}
+          <Header
+            sort={sort}
+            setSort={setSort}
+            sortOption={sortOption}
+            setSortOption={setSortOption}
+            handleSearchChange={setSearchState}
+            sortOptionDisplay={sortOptionDisplay}
+            setSortOptionDisplay={setSortOptionDisplay}
+          />
+          {/* {!loading && ( */}
+
+          {/* )} */}
           <ScrollView
             h='full'
+            w={'full'}
             px={{ base: 0, lg: 24 }}
+            onScroll={({ nativeEvent }) => {
+              // detect only scroll down
+              if (nativeEvent.contentOffset.y > 0 && nativeEvent.contentOffset.y <= 30) {
+                console.log(nativeEvent.contentOffset.y);
+              }
+            }}
+            scrollEventThrottle={1000}
           >
-            <Header
-              sort={sort}
-              setSort={setSort}
-              sortOption={sortOption}
-              setSortOption={setSortOption}
-              handleSearchChange={setSearchState}
-              sortOptionDisplay={sortOptionDisplay}
-              setSortOptionDisplay={setSortOptionDisplay}
-            />
-            {/* {!loading && ( */}
             <Pagination
               rowNumber={rowNumber}
               setCurrentPage={setCurrentPage}
-              perPage={10}
+              perPage={perPage}
               setHotReload={setHotReload}
             />
-            {/* )} */}
-
             <VStack
               space={SPACING.small}
               mt={2}
@@ -107,7 +136,7 @@ function PurchaseOrder() {
             >
               <List
                 loading={loading}
-                perPage={10}
+                perPage={perPage}
                 error={error}
                 data={purchaseOrder}
                 hotReload={hotReload}
