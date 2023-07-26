@@ -24,12 +24,19 @@ const ContainerStyled = (props) => {
 };
 
 function PurchaseOrder() {
+  //reducer
   const [state, dispatch] = useContext(Context);
   const path = 'PurchaseOrder';
+  // sorting
   const [sort, setSort] = useState(true); // true = asc , false = desc
   const [sortOption, setSortOption] = useState('transaction_date');
   const [sortOptionDisplay, setSortOptionDisplay] = useState('Created On');
-  const [totalPage, setTotalPage] = useState(12);
+  // for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowNumber, setRowNumber] = useState(0);
+  // hot reload
+  const [hotReload, setHotReload] = useState(false);
+  // fetch data
   const [searchState, setSearchState] = useState({
     id: '',
     supplier: '',
@@ -62,7 +69,7 @@ function PurchaseOrder() {
 
   useMemo(() => {
     if (purchaseOrder.length > 0) {
-      setTotalPage(purchaseOrder.length);
+      setRowNumber(purchaseOrder.length);
     }
   }, [purchaseOrder]);
 
@@ -84,7 +91,15 @@ function PurchaseOrder() {
               sortOptionDisplay={sortOptionDisplay}
               setSortOptionDisplay={setSortOptionDisplay}
             />
-            <Pagination total={totalPage} />
+            {/* {!loading && ( */}
+            <Pagination
+              rowNumber={rowNumber}
+              setCurrentPage={setCurrentPage}
+              perPage={10}
+              setHotReload={setHotReload}
+            />
+            {/* )} */}
+
             <VStack
               space={SPACING.small}
               mt={2}
@@ -92,11 +107,15 @@ function PurchaseOrder() {
             >
               <List
                 loading={loading}
+                perPage={10}
                 error={error}
                 data={purchaseOrder}
+                hotReload={hotReload}
+                setHotReload={setHotReload}
                 sort={sort}
                 sortOption={sortOption}
                 searchState={searchState}
+                currentPage={currentPage}
               />
             </VStack>
           </ScrollView>

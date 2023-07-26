@@ -9,9 +9,7 @@ import uuid from 'react-native-uuid';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { PurchaseOrderListSkeleton } from '../../../components/Skeleton';
 
-function List({ data, loading, error, searchState, sort, sortOption }) {
-  const [hotReload, setHotReload] = useState(false);
-
+function List({ data, currentPage, perPage, loading, error, hotReload, setHotReload, searchState, sort, sortOption }) {
   const SkeletonList = () => (
     <View mt={6}>
       {Array.from(Array(10).fill()).map((index) => (
@@ -22,7 +20,7 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
     </View>
   );
 
-  useMemo(() => {
+  useEffect(() => {
     setHotReload(true);
   }, [sort, sortOption]);
 
@@ -30,7 +28,7 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
     if (hotReload) {
       setTimeout(function () {
         setHotReload(false);
-      }, 50);
+      }, 700);
     }
   }, [hotReload]);
 
@@ -54,6 +52,7 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
               order.supplier.toLowerCase().includes(searchState.supplier.toLowerCase())
             );
           })
+          .slice(currentPage - 1 === 0 ? 0 : (currentPage - 1) * perPage, perPage * currentPage)
           .map((orderFilter, index) => (
             <Card
               key={uuid.v1()}
@@ -79,7 +78,10 @@ function List({ data, loading, error, searchState, sort, sortOption }) {
                       py={{ base: 3, lg: 0 }}
                       pt={{ base: 3, lg: 2 }}
                     >
-                      <TextStyled> {index + 1}. </TextStyled>
+                      <TextStyled>
+                        {' '}
+                        {currentPage === 1 ? index + 1 : index + 1 + perPage * (currentPage - 1)}.{' '}
+                      </TextStyled>
                       <TextStyled textStyle={'header'}> {orderFilter.supplier.replace(/['"]+/g, '')}</TextStyled>
                     </HStack>
                     <GetScreenSize
