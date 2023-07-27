@@ -1,5 +1,5 @@
 import { Center, ScrollView, VStack, View } from 'native-base';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native';
 import { SPACING } from '../../../constants/theme';
 import { Context } from '../../../reducer';
@@ -10,11 +10,15 @@ import List from './List';
 import SearchFilter from '../../../hooks/SearchFilter';
 import Pagination from '../../../components/Pagination';
 import Animated, { useSharedValue, useAnimatedStyle, useAnimatedScrollHandler } from 'react-native-reanimated';
+import GetScreenSize from '../../../hooks/GetScreenSize';
+import ModalStyled from '../../../components/ModalStyled';
+import Loading from '../../../components/Loading';
+import { SearchInputFilled } from '../../../components/Inputs';
 
 const ContainerStyled = (props) => {
   return (
     <View
-      pt={12}
+      pt={6}
       height={'full'}
       bg={'blueGray.100'}
       {...props}
@@ -35,9 +39,10 @@ function PurchaseOrder() {
   // for pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [rowNumber, setRowNumber] = useState(0);
-  var perPage = 2;
+  var perPage = 5;
   // hot reload
   const [hotReload, setHotReload] = useState(false);
+
   // fetch data
   const [searchState, setSearchState] = useState({
     id: '',
@@ -75,42 +80,79 @@ function PurchaseOrder() {
     }
   }, [purchaseOrder]);
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      if (lastContentOffset.value > event.contentOffset.y && isScrolling.value) {
-        translateY.value = 0;
-        console.log('scrolling up');
-      } else if (lastContentOffset.value < event.contentOffset.y && isScrolling.value) {
-        translateY.value = 100;
-        console.log('scrolling down');
-      }
-      lastContentOffset.value = event.contentOffset.y;
-    },
-    onBeginDrag: (e) => {
-      isScrolling.value = true;
-    },
-    onEndDrag: (e) => {
-      isScrolling.value = false;
-    },
-  });
+  // const scrollHandler = useAnimatedScrollHandler({
+  //   onScroll: (event) => {
+  //     if (lastContentOffset.value > event.contentOffset.y && isScrolling.value) {
+  //       translateY.value = 0;
+  //       console.log('scrolling up');
+  //     } else if (lastContentOffset.value < event.contentOffset.y && isScrolling.value) {
+  //       translateY.value = 100;
+  //       console.log('scrolling down');
+  //     }
+  //     lastContentOffset.value = event.contentOffset.y;
+  //   },
+  //   onBeginDrag: (e) => {
+  //     isScrolling.value = true;
+  //   },
+  //   onEndDrag: (e) => {
+  //     isScrolling.value = false;
+  //   },
+  // });
+
+  if (loading) {
+    return <Loading loading={loading} />;
+  }
 
   return (
     <SafeAreaView>
       <ContainerStyled>
         <Center>
           {/* Sort and Filter */}
-          <Header
-            sort={sort}
-            setSort={setSort}
-            sortOption={sortOption}
-            setSortOption={setSortOption}
-            handleSearchChange={setSearchState}
-            sortOptionDisplay={sortOptionDisplay}
-            setSortOptionDisplay={setSortOptionDisplay}
-          />
-          {/* {!loading && ( */}
+          {!loading && (
+            <Header
+              sort={sort}
+              setSort={setSort}
+              sortOption={sortOption}
+              setSortOption={setSortOption}
+              handleSearchChange={setSearchState}
+              sortOptionDisplay={sortOptionDisplay}
+              setSortOptionDisplay={setSortOptionDisplay}
+              // for small screen
+              modalSearch={
+                <ModalStyled
+                  header={'Search By'}
+                  searchTag={}
+                  bodyContent={
+                    <VStack space={2}>
+                      <SearchInputFilled
+                        label={'ID'}
+                        value={searchState.id}
+                        handleChange={(text) => setSearchState((pre) => ({ ...pre, id: text }))}
+                      />
+                      <SearchInputFilled
+                        label={'Supplier'}
+                        value={searchState.supplier}
+                        handleChange={(text) => setSearchState((pre) => ({ ...pre, supplier: text }))}
+                      />
+                      <SearchInputFilled
+                        label={'Status'}
+                        value={searchState.status}
+                        handleChange={(text) => setSearchState((pre) => ({ ...pre, status: text }))}
+                      />
+                      <SearchInputFilled
+                        label={'Company'}
+                        value={searchState.company}
+                        handleChange={(text) => setSearchState((pre) => ({ ...pre, company: text }))}
+                      />
+                    </VStack>
+                  }
+                  submitLabel={'Search'}
+                  onlyCloseButton={true}
+                />
+              }
+            />
+          )}
 
-          {/* )} */}
           <ScrollView
             h='full'
             w={'full'}
@@ -123,12 +165,17 @@ function PurchaseOrder() {
             }}
             scrollEventThrottle={1000}
           >
-            <Pagination
-              rowNumber={rowNumber}
-              setCurrentPage={setCurrentPage}
-              perPage={perPage}
-              setHotReload={setHotReload}
-            />
+            <GetScreenSize
+              from={'md'}
+              to={'lg'}
+            >
+              <Pagination
+                rowNumber={rowNumber}
+                setCurrentPage={setCurrentPage}
+                perPage={perPage}
+                setHotReload={setHotReload}
+              />
+            </GetScreenSize>
             <VStack
               space={SPACING.small}
               mt={2}
