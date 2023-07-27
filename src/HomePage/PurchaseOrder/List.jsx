@@ -21,7 +21,9 @@ function List({ data, currentPage, perPage, loading, error, hotReload, setHotRel
   );
 
   useEffect(() => {
-    setHotReload(true);
+    if (Platform.OS !== 'android') {
+      setHotReload(true);
+    }
   }, [sort, sortOption]);
 
   useMemo(() => {

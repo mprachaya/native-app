@@ -4,7 +4,9 @@ const Reducer = (state, action) => {
       return state.pathname;
     case 'SET_PATHNAME':
       return { ...state, pathname: action.payload };
+
     default:
+      false;
       return state;
   }
 };
