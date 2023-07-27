@@ -121,7 +121,7 @@ function PurchaseOrder() {
               modalSearch={
                 <ModalStyled
                   header={'Search By'}
-                  searchTag={}
+                  // searchTag={}
                   bodyContent={
                     <VStack space={2}>
                       <SearchInputFilled
