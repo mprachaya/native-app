@@ -1,4 +1,4 @@
-import { Center, ScrollView, VStack, View } from 'native-base';
+import { Center, HStack, ScrollView, Text, VStack, View } from 'native-base';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native';
 import { SPACING } from '../../../constants/theme';
@@ -14,6 +14,7 @@ import GetScreenSize from '../../../hooks/GetScreenSize';
 import ModalStyled from '../../../components/ModalStyled';
 import Loading from '../../../components/Loading';
 import { SearchInputFilled } from '../../../components/Inputs';
+import TextStyled from '../../../components/TextStyled';
 
 const ContainerStyled = (props) => {
   return (
@@ -44,6 +45,13 @@ function PurchaseOrder() {
   const [hotReload, setHotReload] = useState(false);
 
   // fetch data
+  const InitialSearchState = {
+    id: '',
+    supplier: '',
+    status: '',
+    company: '',
+  };
+
   const [searchState, setSearchState] = useState({
     id: '',
     supplier: '',
@@ -80,24 +88,8 @@ function PurchaseOrder() {
     }
   }, [purchaseOrder]);
 
-  // const scrollHandler = useAnimatedScrollHandler({
-  //   onScroll: (event) => {
-  //     if (lastContentOffset.value > event.contentOffset.y && isScrolling.value) {
-  //       translateY.value = 0;
-  //       console.log('scrolling up');
-  //     } else if (lastContentOffset.value < event.contentOffset.y && isScrolling.value) {
-  //       translateY.value = 100;
-  //       console.log('scrolling down');
-  //     }
-  //     lastContentOffset.value = event.contentOffset.y;
-  //   },
-  //   onBeginDrag: (e) => {
-  //     isScrolling.value = true;
-  //   },
-  //   onEndDrag: (e) => {
-  //     isScrolling.value = false;
-  //   },
-  // });
+  // check for create search tag
+  const checkSearchState = Object.entries(searchState).filter(([key, val]) => val !== '');
 
   if (loading) {
     return <Loading loading={loading} />;
@@ -117,38 +109,55 @@ function PurchaseOrder() {
               handleSearchChange={setSearchState}
               sortOptionDisplay={sortOptionDisplay}
               setSortOptionDisplay={setSortOptionDisplay}
+              searchCheck={checkSearchState.length}
+              InitialSearchState={InitialSearchState}
               // for small screen
               modalSearch={
-                <ModalStyled
-                  header={'Search By'}
-                  // searchTag={}
-                  bodyContent={
-                    <VStack space={2}>
-                      <SearchInputFilled
-                        label={'ID'}
-                        value={searchState.id}
-                        handleChange={(text) => setSearchState((pre) => ({ ...pre, id: text }))}
-                      />
-                      <SearchInputFilled
-                        label={'Supplier'}
-                        value={searchState.supplier}
-                        handleChange={(text) => setSearchState((pre) => ({ ...pre, supplier: text }))}
-                      />
-                      <SearchInputFilled
-                        label={'Status'}
-                        value={searchState.status}
-                        handleChange={(text) => setSearchState((pre) => ({ ...pre, status: text }))}
-                      />
-                      <SearchInputFilled
-                        label={'Company'}
-                        value={searchState.company}
-                        handleChange={(text) => setSearchState((pre) => ({ ...pre, company: text }))}
-                      />
-                    </VStack>
-                  }
-                  submitLabel={'Search'}
-                  onlyCloseButton={true}
-                />
+                <HStack justifyContent={'center'}>
+                  <ModalStyled
+                    header={'Search By'}
+                    // show after use text search not null
+                    searchTag={
+                      <HStack p={1}>
+                        {checkSearchState.map(([key, val], index) => (
+                          <TextStyled
+                            color={'blueGray.400'}
+                            key={key}
+                          >
+                            {index + 1 !== checkSearchState.length ? key + ' + ' : key}
+                          </TextStyled>
+                        ))}
+                      </HStack>
+                    }
+                    // modal content
+                    bodyContent={
+                      <VStack space={2}>
+                        <SearchInputFilled
+                          label={'ID'}
+                          value={searchState.id}
+                          handleChange={(text) => setSearchState((pre) => ({ ...pre, id: text }))}
+                        />
+                        <SearchInputFilled
+                          label={'Supplier'}
+                          value={searchState.supplier}
+                          handleChange={(text) => setSearchState((pre) => ({ ...pre, supplier: text }))}
+                        />
+                        <SearchInputFilled
+                          label={'Status'}
+                          value={searchState.status}
+                          handleChange={(text) => setSearchState((pre) => ({ ...pre, status: text }))}
+                        />
+                        <SearchInputFilled
+                          label={'Company'}
+                          value={searchState.company}
+                          handleChange={(text) => setSearchState((pre) => ({ ...pre, company: text }))}
+                        />
+                      </VStack>
+                    }
+                    submitLabel={'Search'}
+                    onlyCloseButton={true}
+                  />
+                </HStack>
               }
             />
           )}
@@ -157,13 +166,13 @@ function PurchaseOrder() {
             h='full'
             w={'full'}
             px={{ base: 0, lg: 24 }}
-            onScroll={({ nativeEvent }) => {
-              // detect only scroll down
-              if (nativeEvent.contentOffset.y > 0 && nativeEvent.contentOffset.y <= 30) {
-                console.log(nativeEvent.contentOffset.y);
-              }
-            }}
-            scrollEventThrottle={1000}
+            // onScroll={({ nativeEvent }) => {
+            //   // detect only scroll down
+            //   if (nativeEvent.contentOffset.y > 0 && nativeEvent.contentOffset.y <= 30) {
+            //     console.log(nativeEvent.contentOffset.y);
+            //   }
+            // }}
+            // scrollEventThrottle={1000}
           >
             <GetScreenSize
               from={'md'}

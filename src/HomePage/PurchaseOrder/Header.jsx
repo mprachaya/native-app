@@ -11,7 +11,9 @@ function Header({
   setSort,
   sortOption,
   modalSearch,
+  searchCheck,
   setSortOption,
+  InitialSearchState,
   handleSearchChange,
   sortOptionDisplay,
   setSortOptionDisplay,
@@ -36,23 +38,17 @@ function Header({
               mx={4}
               justifyContent={'center'}
             >
-              <HStack
-                justifyContent={'start'}
-                w={'1/2'}
-              >
-                {modalSearch}
-              </HStack>
-              {/* <HStack
-                justifyContent={'center'}
-                w={'1/2'}
-              >
-                <IconButtonStyled
-                  active={true}
-                  label={'Clear'}
-                  icon={'clearFilter'}
-                  variant={'contained'}
-                />
-              </HStack> */}
+              {modalSearch}
+              {searchCheck > 0 && (
+                <HStack justifyContent={'center'}>
+                  <IconButtonStyled
+                    active={true}
+                    icon={'clearFilter'}
+                    variant={'contained'}
+                    OnPress={() => handleSearchChange(InitialSearchState)}
+                  />
+                </HStack>
+              )}
             </HStack>
           </GetScreenSize>
 

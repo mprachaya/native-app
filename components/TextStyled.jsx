@@ -8,7 +8,7 @@ function TextStyled(props) {
         letterSpacing={0.2}
         fontWeight={'bold'}
         fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
-        color={'blueGray.700'}
+        color={props.color || 'blueGray.700'}
         {...props}
       >
         {props.children}
@@ -30,8 +30,9 @@ function TextStyled(props) {
     <Text
       // lineHeight={0}
       fontWeight={'light'}
-      fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
-      color={'black'}
+      fontSize={props.fontSize}
+      // fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+      color={props.color || 'black'}
       {...props}
     >
       {props.children}
