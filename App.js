@@ -6,6 +6,7 @@ import HomePage from './src/HomePage';
 import PurchaseOrder from './src/HomePage/PurchaseOrder';
 import OtherTest from './src/HomePage/OtherTest';
 import AppBar from './components/AppBar2';
+import TabMenu from './components/TabMenu';
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +52,7 @@ export default function App() {
               }}
             />
           </Stack.Navigator>
+          <TabMenu />
           {/* </StyledContainer> */}
         </Store>
       </NavigationContainer>

@@ -11,8 +11,8 @@ export default function AppBar(props) {
   return (
     <Box
       safeAreaTop
-      height={'48'}
-      pt={24}
+      height={'32'}
+      pt={10}
       pb={6}
       bg={COLORS.primary}
       shadow={SHADOWS.medium}
