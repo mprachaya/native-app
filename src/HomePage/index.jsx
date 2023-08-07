@@ -1,14 +1,8 @@
-import { Center, HStack, VStack, View } from 'native-base';
-import React, { useContext } from 'react';
+import { Center, HStack, View } from 'native-base';
 import { Dimensions, SafeAreaView } from 'react-native';
 import { COLORS, SPACING } from '../../constants/theme';
-import TextStyled from '../../components/TextStyled';
 import MenuIcon from '../../components/MenuIcon';
-import { Accounts, Advance, Buying, HR, Reports, Shop, Stock } from '../../constants/icons';
-// import DetectBack from '../../hooks/DetectBack';
-// import NavigateStorePath from '../../hooks/NavigateStorePath';
-// import { Context } from '../../reducer';
-// import TextStyled from '../../components/TextStyled';
+import { Accounts, Buying, HR, Reports, Shop, Stock } from '../../constants/icons';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -25,41 +19,26 @@ const ContainerStyled = (props) => {
 };
 
 function HomePage({ navigation }) {
-  // const [state, dispatch] = useContext(Context);
-  // DetectBack(navigation, 'Home');
+  const iconColor = COLORS.primary;
 
   return (
     <SafeAreaView>
       <ContainerStyled>
-        <Center>
-          {/* <Text fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}>Purchase Order</Text> */}
-          <Center
-            pt={12}
-            width={'100%'}
-            background={'white'}
-          >
-            <TextStyled
-              mb={12}
-              fontSize={24}
-              fontWeight={'bold'}
-              color={COLORS.tertiary}
-            >
-              Modules
-            </TextStyled>
-          </Center>
+        <Center w={'full'}>
           <HStack
-            w={320}
-            mt={12}
-            space={SPACING.large}
+            w={400}
+            mt={20}
             flexWrap={'wrap'}
-            justifyContent={'center'}
+            justifyContent={{ base: 'center', lg: 'space-around' }}
           >
             <MenuIcon
+              onPress={() => navigation.navigate('Selling')}
               menuLabel={'Selling'}
               Icon={
                 <Shop
                   width={24}
                   height={24}
+                  color={iconColor}
                 />
               }
             />
@@ -69,6 +48,7 @@ function HomePage({ navigation }) {
                 <Stock
                   width={24}
                   height={24}
+                  color={iconColor}
                 />
               }
             />
@@ -78,16 +58,16 @@ function HomePage({ navigation }) {
                 <Buying
                   width={24}
                   height={24}
+                  color={iconColor}
                 />
               }
             />
           </HStack>
           <HStack
-            w={320}
-            mt={12}
-            space={SPACING.large}
+            w={400}
+            mt={6}
             flexWrap={'wrap'}
-            justifyContent={'center'}
+            justifyContent={{ base: 'center', lg: 'space-around' }}
           >
             <MenuIcon
               menuLabel={'Accounts'}
@@ -95,6 +75,7 @@ function HomePage({ navigation }) {
                 <Accounts
                   width={24}
                   height={24}
+                  color={iconColor}
                 />
               }
             />
@@ -104,6 +85,7 @@ function HomePage({ navigation }) {
                 <HR
                   width={24}
                   height={24}
+                  color={iconColor}
                 />
               }
             />
@@ -113,14 +95,11 @@ function HomePage({ navigation }) {
                 <Reports
                   width={24}
                   height={24}
+                  color={iconColor}
                 />
               }
             />
           </HStack>
-          {/* <TextStyled onPress={() => NavigateStorePath(navigation, 'Purchase Order', dispatch)}>
-              Purchase Order
-            </TextStyled>
-            <TextStyled onPress={() => NavigateStorePath(navigation, 'Other Test', dispatch)}>Other</TextStyled> */}
         </Center>
       </ContainerStyled>
     </SafeAreaView>

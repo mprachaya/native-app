@@ -12,16 +12,13 @@ export default function AppBar(props) {
     <Box
       safeAreaTop
       height={'32'}
-      pt={10}
-      pb={6}
+      pt={{ base: 12, lg: 10 }}
       bg={COLORS.primary}
       shadow={SHADOWS.medium}
-      roundedBottom={24}
     >
       <HStack
-        h='full'
         justifyContent='space-between'
-        marginX={4}
+        marginX={{ base: 0, lg: 2 }}
       >
         <HStack>
           <Box m={4}>
@@ -29,14 +26,14 @@ export default function AppBar(props) {
           </Box>
           <Box my={3}>
             <TextStyled
-              fontSize={24}
+              fontSize={{ base: 16, lg: 24 }}
               fontWeight='bold'
               color={COLORS.tertiary}
             >
               Lorem Ipsum
             </TextStyled>
             <TextStyled
-              fontSize={20}
+              fontSize={{ base: 12, lg: 20 }}
               color={'#919394'}
             >
               Simply dummy · text of the printing

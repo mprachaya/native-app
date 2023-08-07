@@ -1,27 +1,36 @@
-import { Button, Center, Circle, VStack } from 'native-base';
+import { Button, Center, Circle, VStack, View } from 'native-base';
 import React from 'react';
 import { COLORS } from '../constants/theme';
 import TextStyled from './TextStyled';
 
-function MenuIcon({ Icon, menuLabel }) {
+function MenuIcon({ Icon, menuLabel, onPress }) {
   return (
-    <Button
-      variant={'unstyled'}
-      w={'16'}
-      h={'16'}
+    <View
+      w={'1/8'}
+      h={'1/8'}
     >
-      <VStack>
-        <Circle
-          background={'white'}
-          size={'md'}
-        >
-          {Icon}
-        </Circle>
-        <Center my={2}>
-          <TextStyled fontSize={16}>{menuLabel}</TextStyled>
+      <Button
+        variant={'unstyled'}
+        onPress={onPress}
+      >
+        <VStack>
+          <Circle
+            background={'white'}
+            size={'md'}
+          >
+            {Icon}
+          </Circle>
+        </VStack>
+        <Center my={1}>
+          <TextStyled
+            textAlign={'center'}
+            fontSize={{ base: 12, lg: 16 }}
+          >
+            {menuLabel}
+          </TextStyled>
         </Center>
-      </VStack>
-    </Button>
+      </Button>
+    </View>
   );
 }
 

@@ -1,4 +1,4 @@
-import { NativeBaseProvider, StatusBar, Text } from 'native-base';
+import { Box, Button, HStack, NativeBaseProvider, StatusBar, Text } from 'native-base';
 import Store from './reducer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -7,37 +7,71 @@ import PurchaseOrder from './src/HomePage/PurchaseOrder';
 import OtherTest from './src/HomePage/OtherTest';
 import AppBar from './components/AppBar2';
 import TabMenu from './components/TabMenu';
+import SellingPage from './src/HomePage/SellingPage';
+import CustomerPage from './src/HomePage/SellingPage/CustomerPage';
+import { AddNew, Filter, Sort } from './constants/icons';
+import { COLORS } from './constants/theme';
 
 const Stack = createNativeStackNavigator();
 
+const OptionContainer = ({ children }) => (
+  <Box
+    justifyContent={'center'}
+    px={{ base: 1, lg: 4 }}
+  >
+    {children}
+  </Box>
+);
+
 export default function App() {
+  const iconColor = COLORS.primary;
   return (
     <NativeBaseProvider>
       <NavigationContainer>
         {/* stored global state */}
         <Store>
           {/* hidden a status bar IOS/Android */}
-          <StatusBar hidden />
-          {/* <StyledContainer> */}
+          {/* <StatusBar hidden /> */}
+
           <AppBar />
           <Stack.Navigator>
-            <Stack.Screen
-              name='Home'
-              component={HomePage}
-              options={{
-                // title: 'Home Page',
-                // headerTitleAlign: 'center',
-                // headerLeft: () => <Text></Text>,
-                headerShown: false,
-              }}
-            />
+            <Stack.Group>
+              <Stack.Screen
+                name='Home'
+                component={HomePage}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name='Selling'
+                component={SellingPage}
+              />
+              <Stack.Screen
+                name='Customer'
+                component={CustomerPage}
+                options={{
+                  title: '',
+                  headerRight: () => (
+                    <HStack space={6}>
+                      <OptionContainer>
+                        <AddNew color={iconColor} />
+                      </OptionContainer>
+                      <OptionContainer>
+                        <Sort color={iconColor} />
+                      </OptionContainer>
+                      <OptionContainer>
+                        <Filter color={iconColor} />
+                      </OptionContainer>
+                    </HStack>
+                  ),
+                }}
+              />
+            </Stack.Group>
             <Stack.Screen
               name='Purchase Order'
               component={PurchaseOrder}
               options={{
-                // title: 'Home Page',
-                // headerTitleAlign: 'center',
-                // headerLeft: () => <Text></Text>,
                 headerShown: false,
               }}
             />
@@ -45,15 +79,11 @@ export default function App() {
               name='Other Test'
               component={OtherTest}
               options={{
-                // title: 'Home Page',
-                // headerTitleAlign: 'center',
-                // headerLeft: () => <Text></Text>,
                 headerShown: false,
               }}
             />
           </Stack.Navigator>
           <TabMenu />
-          {/* </StyledContainer> */}
         </Store>
       </NavigationContainer>
     </NativeBaseProvider>
