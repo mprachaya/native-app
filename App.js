@@ -9,10 +9,9 @@ import AppBar from './components/AppBar2';
 import TabMenu from './components/TabMenu';
 import SellingPage from './src/HomePage/SellingPage';
 import CustomerPage from './src/HomePage/SellingPage/CustomerPage';
-import { AddNew, Filter, Sort } from './constants/icons';
 import { COLORS } from './constants/theme';
 import NavHeader from './components/NavHeader';
-import { StyleSheet } from 'react-native';
+import { Platform } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,12 +47,24 @@ export default function App() {
               <Stack.Screen
                 name='Selling'
                 component={SellingPage}
+                options={{
+                  title: '',
+                  headerShadowVisible: true,
+                  header: () =>
+                    Platform.OS !== 'ios' ? (
+                      <NavHeader
+                        pageName={'Selling'}
+                        // pageBackName={'Modules'}
+                      />
+                    ) : null,
+                }}
               />
               <Stack.Screen
                 name='Customer'
                 component={CustomerPage}
                 options={{
                   title: '',
+
                   header: () => (
                     <NavHeader
                       pageName={'Customer'}

@@ -1,38 +1,33 @@
-import { Box, Button, HStack, Text, View } from 'native-base';
+import { Button, HStack, Text, View } from 'native-base';
 import React from 'react';
 import { ChevronBackWard } from '../constants/icons';
-import { COLORS } from '../constants/theme';
-import { Dimensions, StyleSheet } from 'react-native';
-import TextStyled from './TextStyled';
+import { Dimensions } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-// const styles = StyleSheet.create({
-//   labelCenter: {
-//     position: 'absolute',
-//     left: 0,
-//     right: 0,
-//     marginLeft: 'auto',
-//     marginRight: 'auto',
-//   },
-// });
-
-function NavHeader({ navigation, pageName, pageBackName }) {
+function NavHeader({ pageName, pageBackName }) {
+  const Navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
   return (
-    <View style={{ backgroundColor: 'white' }}>
+    <View
+      style={{ backgroundColor: 'white' }}
+      shadow={1}
+    >
       <HStack
-        my={1.5}
-        style={{ height: 30, width: windowWidth }}
-        justifyContent={'space-between'}
+        py={1.5}
+        style={{ width: windowWidth }}
       >
         <HStack
           justifyContent={'center'}
           alignItems={'center'}
         >
           <Button
-            ml={-1.5}
+            onPress={() => Navigation.goBack()}
+            p={1}
             variant={'unstyled'}
-            w={pageName !== '' ? '16' : 'full'}
+            w={pageName !== '' ? '40' : 'full'}
+            h={12}
             justifyContent={'start'}
+            // bg={'amber.400'}
           >
             <HStack
               alignItems={'center'}
@@ -63,6 +58,7 @@ function NavHeader({ navigation, pageName, pageBackName }) {
               position={'absolute'}
               left={0}
               right={0}
+              my={2}
             >
               <Text
                 fontWeight={'semibold'}

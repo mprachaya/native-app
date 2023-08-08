@@ -14,7 +14,7 @@ function TabMenu() {
       bottom={0}
       position={'absolute'}
       w={'full'}
-      h={'32'}
+      h={'20'}
       bg={COLORS.primary}
       roundedTop={20}
       justifyContent={'center'}

@@ -2,6 +2,11 @@ import { Center, HStack, Text, VStack, View } from 'native-base';
 import { Dimensions } from 'react-native';
 import { SearchInput } from '../../../../components/Inputs';
 import { COLORS } from '../../../../constants/theme';
+import { CustomerListIOS } from './CustomerList';
+import useFetch from '../../../../hooks/useFetch';
+import { config, url } from '../../../../config';
+import Loading from '../../../../components/Loading';
+import { useMemo } from 'react';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -18,6 +23,25 @@ const ContainerStyled = (props) => {
 };
 
 function CustomerPage() {
+  const {
+    data: customerData,
+    setData: setCustomerData,
+    loading,
+    error,
+  } = useFetch(url.CUSTOMERS, {
+    headers: {
+      Authorization: config.API_TOKEN,
+    },
+  });
+
+  if (loading) {
+    return <Loading loading={loading} />;
+  }
+
+  useMemo(() => {
+    console.log(customerData);
+  }, [customerData]);
+
   return (
     <ContainerStyled>
       <Center
@@ -28,11 +52,11 @@ function CustomerPage() {
           <SearchInput />
           <HStack
             mt={6}
-            mx={6}
+            mr={2}
             justifyContent={'space-evenly'}
           >
             <VStack
-              w={'1/5'}
+              w={'1/4'}
               alignItems={'center'}
             >
               <Text color={COLORS.secondary}>Total</Text>
@@ -45,7 +69,7 @@ function CustomerPage() {
               </Text>
             </VStack>
             <VStack
-              w={'1/5'}
+              w={'1/4'}
               alignItems={'center'}
             >
               <Text color={COLORS.secondary}>Company</Text>
@@ -58,7 +82,7 @@ function CustomerPage() {
               </Text>
             </VStack>
             <VStack
-              w={'1/5'}
+              w={'1/4'}
               alignItems={'center'}
             >
               <Text color={COLORS.secondary}>Individual</Text>
@@ -72,6 +96,10 @@ function CustomerPage() {
             </VStack>
           </HStack>
         </VStack>
+        <CustomerListIOS
+          data={customerData}
+          token={config.API_TOKEN}
+        />
       </Center>
     </ContainerStyled>
   );
