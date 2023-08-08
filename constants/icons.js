@@ -23,6 +23,7 @@ import PaymentEntry from '../assets/icons/payment_entry.svg';
 import AddNew from '../assets/icons/add_new.svg';
 import Sort from '../assets/icons/sort.svg';
 import Filter from '../assets/icons/filter.svg';
+import ChevronBackWard from '../assets/icons/chevron_backward.svg';
 
 export {
   Advance,
@@ -50,4 +51,5 @@ export {
   AddNew,
   Sort,
   Filter,
+  ChevronBackWard,
 };

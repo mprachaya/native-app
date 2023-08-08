@@ -1,4 +1,4 @@
-import { Box, Button, HStack, NativeBaseProvider, StatusBar, Text } from 'native-base';
+import { Box, Button, HStack, NativeBaseProvider, StatusBar, Text, View } from 'native-base';
 import Store from './reducer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -11,6 +11,8 @@ import SellingPage from './src/HomePage/SellingPage';
 import CustomerPage from './src/HomePage/SellingPage/CustomerPage';
 import { AddNew, Filter, Sort } from './constants/icons';
 import { COLORS } from './constants/theme';
+import NavHeader from './components/NavHeader';
+import { StyleSheet } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
@@ -52,19 +54,25 @@ export default function App() {
                 component={CustomerPage}
                 options={{
                   title: '',
-                  headerRight: () => (
-                    <HStack space={6}>
-                      <OptionContainer>
-                        <AddNew color={iconColor} />
-                      </OptionContainer>
-                      <OptionContainer>
-                        <Sort color={iconColor} />
-                      </OptionContainer>
-                      <OptionContainer>
-                        <Filter color={iconColor} />
-                      </OptionContainer>
-                    </HStack>
+                  header: () => (
+                    <NavHeader
+                      pageName={'Customer'}
+                      pageBackName={'Selling'}
+                    />
                   ),
+                  // headerRight: () => (
+                  //   <HStack space={6}>
+                  //     <OptionContainer>
+                  //       <AddNew color={iconColor} />
+                  //     </OptionContainer>
+                  //     <OptionContainer>
+                  //       <Sort color={iconColor} />
+                  //     </OptionContainer>
+                  //     <OptionContainer>
+                  //       <Filter color={iconColor} />
+                  //     </OptionContainer>
+                  //   </HStack>
+                  // ),
                 }}
               />
             </Stack.Group>
