@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { COLORS } from '../constants/theme';
 import { Context } from '../reducer';
 
-function SortModal({ open, setOpen, setReload }) {
+function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
   const toast = useToast();
   const [state, dispatch] = useContext(Context);
 
@@ -43,6 +43,13 @@ function SortModal({ open, setOpen, setReload }) {
     if (type !== 'sortType') {
       Object.keys(sortByState).map((key) => {
         if (key === label) {
+          //clear all state
+          setSortByState(initialsSortBy);
+          // default type when select sort by state
+          !sortByState[key]
+            ? setSortTypeState((pre) => ({ ...pre, DESC: true }))
+            : setSortTypeState((pre) => ({ ...pre, DESC: false }));
+
           !sortByState[key]
             ? toast.show({ description: `Sort By ${label}`, duration: 2000 })
             : toast.show({ description: `Cancel Sort By ${label}`, duration: 2000 });
@@ -58,42 +65,63 @@ function SortModal({ open, setOpen, setReload }) {
     } else {
       Object.keys(sortTypeState).map((key) => {
         if (key === label) {
-          setSortTypeState.ASC === true && sortTypeState[key] === false;
-          key === 'DESC' &&
-            // console.log('Switch ASC false') &&
-            setSortTypeState((pre) => ({ ...pre, ASC: false }));
-          sortTypeState.DESC === true && sortTypeState[key] === false;
-          key === 'ASC' &&
-            // console.log('Switch DESC false') &&
-            setSortTypeState((pre) => ({ ...pre, DESC: false }));
-          !sortTypeState[key]
-            ? toast.show({ description: `Sort Type ${label}`, duration: 2000 })
-            : toast.show({ description: `Cancel Sort Type ${label}`, duration: 2000 });
-          !sortByState[key]
-            ? dispatch({ type: 'SET_CTM_SORT_TYPE', payload: label })
-            : dispatch({ type: 'SET_CTM_SORT_TYPE', payload: '' });
-          !sortTypeState[key]
-            ? setSortTypeState((pre) => ({ ...pre, [key]: true }))
-            : setSortTypeState((pre) => ({ ...pre, [key]: false }));
+          const checkSortBy = Object.keys(sortByState).filter((key) => sortByState[key]);
+          // console.log('checkSortBy', checkSortBy);
+          // console.log('checkSortBy length', );
+          if (checkSortBy.length > 0) {
+            setSortTypeState.ASC === true && sortTypeState[key] === false;
+            key === 'DESC' &&
+              // console.log('Switch ASC false') &&
+              setSortTypeState((pre) => ({ ...pre, ASC: false }));
+            sortTypeState.DESC === true && sortTypeState[key] === false;
+            key === 'ASC' &&
+              // console.log('Switch DESC false') &&
+              setSortTypeState((pre) => ({ ...pre, DESC: false }));
+            !sortTypeState[key]
+              ? toast.show({ description: `Sort Type ${label}`, duration: 2000 })
+              : toast.show({ description: `Cancel Sort Type ${label}`, duration: 2000 });
+            !sortByState[key]
+              ? dispatch({ type: 'SET_CTM_SORT_TYPE', payload: label })
+              : dispatch({ type: 'SET_CTM_SORT_TYPE', payload: '' });
+            !sortTypeState[key]
+              ? setSortTypeState((pre) => ({ ...pre, [key]: true }))
+              : setSortTypeState((pre) => ({ ...pre, [key]: false }));
 
-          setReload(true);
+            setReload(true);
+          } else {
+            toast.show({ description: `Please select sort by`, duration: 2000 });
+          }
         }
       });
     }
     // first sort
-    if (sortTypeState.DESC !== true && sortTypeState.ASC !== true) {
+    const checkSortBy = Object.keys(sortByState).filter((key) => sortByState[key]);
+    if (checkSortBy.length > 0 && sortTypeState.DESC !== true && sortTypeState.ASC !== true) {
       setSortTypeState((pre) => ({ ...pre, DESC: true }));
     }
+
     setOpen(false);
   };
 
-  // useEffect(() => {
-  //   console.log(sortByState);
-  // }, [sortByState]);
+  const handleSort = () => {
+    // value of sortByState
+    const sortValue = Object.values(sortByState).map((data) => data);
+    // find sort by name
+    const sortSelected = Object.keys(sortByState).filter((key, index) => sortValue[index] && key);
+    // value of sortTypeState
+    const sortTypeValue = Object.values(sortTypeState).map((data) => data);
+    // find sort type
+    const sortTypeSelected = Object.keys(sortTypeState).filter((key, index) => sortTypeValue[index] && key);
+    // call sort function
+    if (sortSelected.length !== 0 && sortTypeSelected !== 0) sortBy(data, setData, sortSelected, sortTypeSelected);
+    if (sortSelected.length === 0) {
+      sortBy(data, setData, 'Creation', 'ASC');
+    }
+  };
 
-  // useEffect(() => {
-  //   console.log(sortTypeState);
-  // }, [sortTypeState]);
+  useEffect(() => {
+    handleSort();
+  }, [sortByState, sortTypeState]);
 
   const SortItem = ({ label, handleSort, type }) => (
     <Button
@@ -242,10 +270,11 @@ function SortModal({ open, setOpen, setReload }) {
             onPress={() => {
               setSortByState(initialsSortBy);
               setSortTypeState(initialsSortType);
-              setOpen(false);
-              toast.show({ description: 'Clear all sort', duration: 2000 });
               dispatch({ type: 'SET_CTM_SORT_BY', payload: '' });
               dispatch({ type: 'SET_CTM_SORT_TYPE', payload: '' });
+              sortBy(data, setData, 'Creation', 'ASC');
+              setOpen(false);
+              toast.show({ description: 'Clear all sort', duration: 2000 });
             }}
           >
             Reset All

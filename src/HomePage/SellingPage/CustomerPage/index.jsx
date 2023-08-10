@@ -1,4 +1,4 @@
-import { Center, HStack, Text, VStack, View } from 'native-base';
+import { Button, Center, HStack, Text, VStack, View } from 'native-base';
 import { Dimensions } from 'react-native';
 import { SearchInput } from '../../../../components/Inputs';
 import { COLORS } from '../../../../constants/theme';
@@ -6,9 +6,12 @@ import { CustomerList } from './CustomerList';
 import useFetch from '../../../../hooks/useFetch';
 import { config, url } from '../../../../config';
 import Loading from '../../../../components/Loading';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useState } from 'react';
 import SortModal from '../../../../components/SortModal';
+import { Platform } from 'react-native';
 import { Context } from '../../../../reducer';
+import { useNavigation } from '@react-navigation/native';
+import SortOption from '../../../../components/NavHeaderRight';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -27,6 +30,7 @@ const ContainerStyled = (props) => {
 function CustomerPage({ openState, setOpenState }) {
   const [state, dispatch] = useContext(Context);
   const [reloadState, setReloadState] = useState(true);
+  const navigation = useNavigation();
 
   const {
     data: customerData,
@@ -39,14 +43,15 @@ function CustomerPage({ openState, setOpenState }) {
     },
   });
 
-  const SortBy = (list, setList, key) => {
-    var updatedList = [...list];
-    return setList(() => [...updatedList].sort((a, b) => (a[key] > b[key] ? -1 : 1)));
-  };
-
-  const SortType = (list, setList, key) => {
-    var updatedList = [...list];
-    return setList(() => [...updatedList].sort((a, b) => (a[key] > b[key] ? -1 : 1)));
+  const SortBy = (list, setList, key, type) => {
+    if (list.lenght > 0) {
+      var updatedList = [...list];
+      // console.log('sort Type =', type);
+      if (type === 'DESC') setList(() => [...updatedList].sort((a, b) => (a[key] > b[key] ? -1 : 1)));
+      else {
+        setList(() => [...updatedList].sort((a, b) => (a[key] > b[key] ? 1 : -1)));
+      }
+    }
   };
 
   if (loading) {
@@ -56,10 +61,22 @@ function CustomerPage({ openState, setOpenState }) {
   return (
     <ContainerStyled>
       <Center
-        mt={6}
+        mt={2}
         mx={6}
       >
         <VStack>
+          <HStack
+            mb={2}
+            justifyContent={{ base: 'flex-end', lg: 'flex-end' }}
+          >
+            {Platform.OS === 'android' && (
+              <SortOption
+                // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
+                openSort={() => navigation.navigate('SortAndroid')}
+                // openFilter={() => setOpenState((pre) => ({ ...pre, filter: true }))}
+              />
+            )}
+          </HStack>
           <HStack
             mx={{ base: 0, lg: 24 }}
             justifyContent={{ base: 'center', lg: 'flex-end' }}
@@ -119,13 +136,16 @@ function CustomerPage({ openState, setOpenState }) {
           token={config.API_TOKEN}
         />
       </Center>
-      <SortModal
-        open={openState.sort}
-        setOpen={setOpenState}
-        setReload={setReloadState}
-        sortBy={SortBy}
-        sortType={SortType}
-      />
+      {Platform.OS === 'ios' && (
+        <SortModal
+          open={openState.sort}
+          setOpen={setOpenState}
+          setReload={setReloadState}
+          data={customerData}
+          setData={setCustomerData}
+          sortBy={SortBy}
+        />
+      )}
     </ContainerStyled>
   );
 }

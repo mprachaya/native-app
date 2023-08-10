@@ -5,11 +5,12 @@ import { Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import NavHeaderRight from './NavHeaderRight';
 
-function NavHeader({ pageName, pageBackName, activeFunction, openAdd, openSort, openFilter }) {
+function NavHeader({ pageName, pageBackName, activeFunction, openAdd, openSort, openFilter, noHeader }) {
   const Navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
   return (
     <View
+      _android={{ pt: noHeader ? 12 : 0 }}
       style={{ backgroundColor: 'white' }}
       shadow={1}
     >

@@ -9,9 +9,10 @@ import SellingPage from './src/HomePage/SellingPage';
 import CustomerPage from './src/HomePage/SellingPage/CustomerPage';
 import NavHeader from './components/NavHeader';
 import { Platform } from 'react-native';
-import { AddNew, Filter, Sort } from './constants/icons';
 import NavHeaderRight from './components/NavHeaderRight';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import OtherTest from './src/HomePage/OtherTest';
+import SortAndroid from './src/HomePage/SellingPage/CustomerPage/SortAndroid';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,14 +31,13 @@ export default function App() {
           {/* hidden a status bar IOS/Android */}
           {/* <StatusBar hidden /> */}
 
-          <AppBar />
           <Stack.Navigator>
             <Stack.Group>
               <Stack.Screen
                 name='Home'
                 component={HomePage}
                 options={{
-                  headerShown: false,
+                  header: () => <AppBar />,
                 }}
               />
 
@@ -49,10 +49,13 @@ export default function App() {
                     title: '',
                     headerShadowVisible: true,
                     header: () => (
-                      <NavHeader
-                        pageName={'Selling'}
-                        // pageBackName={'Modules'}
-                      />
+                      <React.Fragment>
+                        <AppBar />
+                        <NavHeader
+                          pageName={'Selling'}
+                          // pageBackName={'Modules'}
+                        />
+                      </React.Fragment>
                     ),
                   }}
                 />
@@ -60,32 +63,59 @@ export default function App() {
                 <Stack.Screen
                   name='Selling'
                   component={SellingPage}
-                />
-              )}
-              {Platform.OS !== 'ios' ? (
-                <Stack.Screen
-                  name='Customer'
                   options={{
                     header: () => (
-                      <NavHeader
-                        openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
-                        openSort={() => setOpenState((pre) => ({ ...pre, sort: true }))}
-                        openFilter={() => setOpenState((pre) => ({ ...pre, filter: true }))}
-                        pageName={'Customer'}
-                        pageBackName={'Selling'}
-                        activeFunction={true}
-                      />
+                      <React.Fragment>
+                        <AppBar />
+                      </React.Fragment>
                     ),
                   }}
-                >
-                  {() => (
-                    <CustomerPage
-                      openState={openState}
-                      setOpenState={setOpenState}
-                    />
-                  )}
-                </Stack.Screen>
-              ) : (
+                />
+              )}
+
+              {Platform.OS === 'android' && (
+                <Stack.Group>
+                  <Stack.Screen
+                    name='Customer'
+                    options={{
+                      header: () => (
+                        <NavHeader
+                          // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
+                          // openSort={() => setOpenState((pre) => ({ ...pre, sort: true }))}
+                          // openFilter={() => setOpenState((pre) => ({ ...pre, filter: true }))}
+                          pageName={'Customer'}
+                          pageBackName={'Selling'}
+                          noHeader={true}
+                          // activeFunction={true}
+                        />
+                      ),
+                    }}
+                  >
+                    {() => (
+                      <CustomerPage
+                        openState={openState}
+                        setOpenState={setOpenState}
+                      />
+                    )}
+                  </Stack.Screen>
+                  <Stack.Screen
+                    name='SortAndroid'
+                    component={SortAndroid}
+                    options={{
+                      title: '',
+                      headerShadowVisible: true,
+                      header: () => (
+                        <NavHeader
+                          pageName={'Sort'}
+                          noHeader={true}
+                          // pageBackName={'Modules'}
+                        />
+                      ),
+                    }}
+                  />
+                </Stack.Group>
+              )}
+              {Platform.OS === 'ios' && (
                 <Stack.Screen
                   name='Customer'
                   options={{
