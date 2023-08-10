@@ -31,37 +31,27 @@ function SortAndroid({ route, navigation }) {
     ASC: false,
   };
 
-  const [sortByState, setSortByState] = useState({
-    Creation: false,
-    Modified: false,
-    Name: false,
-  });
-  const [sortTypeState, setSortTypeState] = useState({
-    DESC: false,
-    ASC: false,
-  });
-
   const [loading, setLoading] = useState(false);
 
   const handleActiveItem = (label, type) => {
     if (type !== 'sortType') {
-      Object.keys(sortByState).map((key) => {
+      Object.keys(sortByst).map((key) => {
         if (key === label) {
           //clear all state
           setSortByst(initialsSortBy);
           // default type when select sort by state
 
-          const checkSortBy = Object.keys(sortByState).filter((key) => sortByState[key]);
-          const checkSortType = Object.keys(sortTypeState).filter((key) => sortTypeState[key]);
+          const checkSortBy = Object.keys(sortByst).filter((key) => sortByst[key]);
+          const checkSortType = Object.keys(sortTypest).filter((key) => sortTypest[key]);
           if (checkSortBy.length > 0 && checkSortType.length > 0) {
           } else {
             setSortTypest((pre) => ({ ...pre, DESC: true }));
           }
 
-          !sortByState[key]
+          !sortByst[key]
             ? dispatch({ type: 'SET_CTM_SORT_BY', payload: label })
             : dispatch({ type: 'SET_CTM_SORT_BY', payload: '' });
-          !sortByState[key]
+          !sortByst[key]
             ? setSortByst((pre) => ({ ...pre, [key]: true }))
             : setSortByst((pre) => ({ ...pre, [key]: false }));
           setReload(true);
@@ -69,20 +59,20 @@ function SortAndroid({ route, navigation }) {
         }
       });
     } else {
-      Object.keys(sortTypeState).map((key) => {
+      Object.keys(sortTypest).map((key) => {
         if (key === label) {
-          const checkSortBy = Object.keys(sortByState).filter((key) => sortByState[key]);
+          const checkSortBy = Object.keys(sortByst).filter((key) => sortByst[key]);
           if (checkSortBy.length > 0) {
             // setSortTypeState.ASC === true && sortTypeState[key] === false;
             key === 'DESC' &&
               // console.log('Switch ASC false') &&
               setSortTypest((pre) => ({ ...pre, ASC: false }));
-            sortTypeState.DESC === true && sortTypeState[key] === false;
+            sortTypest.DESC === true && sortTypest[key] === false;
             key === 'ASC' &&
               // console.log('Switch DESC false') &&
               setSortTypest((pre) => ({ ...pre, DESC: false }));
 
-            !sortByState[key]
+            !sortByst[key]
               ? dispatch({ type: 'SET_CTM_SORT_TYPE', payload: label })
               : dispatch({ type: 'SET_CTM_SORT_TYPE', payload: '' });
 
@@ -110,7 +100,7 @@ function SortAndroid({ route, navigation }) {
       sortBy(data, setData, sortSelected, sortTypeSelected);
     }
     if (sortSelected.length === 0) {
-      sortBy(data, setData, 'Creation', 'ASC');
+      sortBy(data, setData, 'Creation', 'DESC');
     }
   };
 
@@ -118,8 +108,8 @@ function SortAndroid({ route, navigation }) {
     if (loading)
       setTimeout(() => {
         handleSort();
-        navigation.goBack();
         setLoading(false);
+        navigation.goBack();
       }, 100);
   }, [loading]);
 
@@ -286,9 +276,6 @@ function SortAndroid({ route, navigation }) {
               variant={'link'}
               _text={{ color: 'blue.500', fontSize: 'lg' }}
               onPress={() => {
-                // local state
-                setSortByState(initialsSortBy);
-                setSortTypeState(initialsSortType);
                 // index state
                 setSortByst(initialsSortBy);
                 setSortTypest(initialsSortType);

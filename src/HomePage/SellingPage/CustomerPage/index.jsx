@@ -71,8 +71,6 @@ function CustomerPage({ openState, setOpenState }) {
   useEffect(() => {}, []);
 
   useMemo(() => {
-    // console.log(sortByState);
-    // console.log(sortTypeState);
     // value of sortByState
     const sortValue = Object.values(sortByState).map((data) => data);
     // find sort by name
@@ -82,19 +80,21 @@ function CustomerPage({ openState, setOpenState }) {
     // find sort type
     const sortTypeSelected = Object.keys(sortTypeState).filter((key, index) => sortTypeValue[index] && key);
     // call sort function
-    // if (sortSelected.length !== 0 && sortTypeSelected !== 0)
-    //   SortBy(customerData, setCustomerData, sortSelected, sortTypeSelected);
-    // if (sortSelected.length === 0) {
     SortBy(customerData, setCustomerData, 'Creation', 'DESC');
-    // }
-    // console.log(sortByState);
-    // console.log(sortTypeState);
   }, [sortByState, sortTypeState]);
 
   if (loading) {
     return <Loading loading={loading} />;
   }
-
+  if (error) {
+    return (
+      <ContainerStyled>
+        <HStack justifyContent='center'>
+          <Text>ERROR</Text>
+        </HStack>
+      </ContainerStyled>
+    );
+  }
   return (
     <ContainerStyled>
       <Center
