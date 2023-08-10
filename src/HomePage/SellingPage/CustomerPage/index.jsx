@@ -2,11 +2,13 @@ import { Center, HStack, Text, VStack, View } from 'native-base';
 import { Dimensions } from 'react-native';
 import { SearchInput } from '../../../../components/Inputs';
 import { COLORS } from '../../../../constants/theme';
-import { CustomerListIOS } from './CustomerList';
+import { CustomerList } from './CustomerList';
 import useFetch from '../../../../hooks/useFetch';
 import { config, url } from '../../../../config';
 import Loading from '../../../../components/Loading';
-import { useMemo } from 'react';
+import { useContext, useMemo, useState } from 'react';
+import SortModal from '../../../../components/SortModal';
+import { Context } from '../../../../reducer';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -22,7 +24,10 @@ const ContainerStyled = (props) => {
   );
 };
 
-function CustomerPage() {
+function CustomerPage({ openState, setOpenState }) {
+  const [state, dispatch] = useContext(Context);
+  const [reloadState, setReloadState] = useState(true);
+
   const {
     data: customerData,
     setData: setCustomerData,
@@ -34,13 +39,19 @@ function CustomerPage() {
     },
   });
 
+  const SortBy = (list, setList, key) => {
+    var updatedList = [...list];
+    return setList(() => [...updatedList].sort((a, b) => (a[key] > b[key] ? -1 : 1)));
+  };
+
+  const SortType = (list, setList, key) => {
+    var updatedList = [...list];
+    return setList(() => [...updatedList].sort((a, b) => (a[key] > b[key] ? -1 : 1)));
+  };
+
   if (loading) {
     return <Loading loading={loading} />;
   }
-
-  useMemo(() => {
-    console.log(customerData);
-  }, [customerData]);
 
   return (
     <ContainerStyled>
@@ -49,7 +60,12 @@ function CustomerPage() {
         mx={6}
       >
         <VStack>
-          <SearchInput />
+          <HStack
+            mx={{ base: 0, lg: 24 }}
+            justifyContent={{ base: 'center', lg: 'flex-end' }}
+          >
+            <SearchInput />
+          </HStack>
           <HStack
             mt={6}
             mr={2}
@@ -96,11 +112,20 @@ function CustomerPage() {
             </VStack>
           </HStack>
         </VStack>
-        <CustomerListIOS
+        <CustomerList
+          reload={reloadState}
+          setReload={setReloadState}
           data={customerData}
           token={config.API_TOKEN}
         />
       </Center>
+      <SortModal
+        open={openState.sort}
+        setOpen={setOpenState}
+        setReload={setReloadState}
+        sortBy={SortBy}
+        sortType={SortType}
+      />
     </ContainerStyled>
   );
 }

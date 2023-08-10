@@ -1,39 +1,12 @@
-import { Box, Button, FlatList, HStack, Image, ScrollView, Text, VStack, View } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import { Box, FlatList, HStack, Image, Text, VStack, View } from 'native-base';
+import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
-import Badges from '../../../../components/Badges';
-import useImageUrl from '../../../../hooks/useImageUrl';
-import axios from 'axios';
+import GetScreenSize from '../../../../hooks/GetScreenSize';
+import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components/Skeleton';
 
-export function CustomerListIOS({ data, token }) {
+export function CustomerList({ data, token, reload, setReload }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
-  const [image, setImage] = useState(null);
-
-  // const dummyData = [
-  //   { title: 'บริษัท สยามไทยคัทติ่งทูล กำจัด1', desc: 'Thailand', group: 'All Customer Group' },
-  //   { title: 'บริษัท สยามไทยคัทติ่งทูล กำจัด2', desc: 'Thailand', group: 'All Customer Group' },
-  //   { title: 'บริษัท สยามไทยคัทติ่งทูล กำจัด3', desc: 'Thailand', group: 'All Customer Group' },
-  //   { title: 'บริษัท สยามไทยคัทติ่งทูล กำจัด4', desc: 'Thailand', group: 'All Customer Group' },
-  //   { title: 'บริษัท สยามไทยคัทติ่งทูล กำจัด5', desc: 'Thailand', group: 'All Customer Group' },
-  //   { title: 'บริษัท สยามไทยคัทติ่งทูล กำจัด6', desc: 'Thailand', group: 'All Customer Group' },
-  //   { title: 'บริษัท สยามไทยคัทติ่งทูล กำจัด7', desc: 'Thailand', group: 'All Customer Group' },
-  // ];
-  // useEffect(() => {
-  //   const apiUrl = 'http://111.223.38.20/private/files/stk.png';
-  //   const token = '5891d01ccc2961e:0e446b332dc22aa';
-
-  //   const headers = {
-  //     Authorization: `token ${token}`,
-  //     responseType: 'blob', // Response type as array buffer to handle
-  //   };
-  //   axios
-  //     .get(apiUrl, headers)
-  //     .then((response) => console.log(response.config))
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }, []);
 
   const Item = ({ image, title, type, group }) => (
     <View
@@ -43,27 +16,32 @@ export function CustomerListIOS({ data, token }) {
       px={2}
       py={3}
       rounded={12}
-      bg={'white'}
+      w={{ base: SCREEN_WIDTH - 48, lg: '48%' }}
+      bg={COLORS.lightWhite}
       shadow={1}
     >
-      <HStack justifyContent={'space-between'}>
+      <HStack>
         {image !== null ? (
-          <Image
+          <Box
             m={4}
             w={20}
             h={20}
             rounded={6}
-            alt={'image'}
-            source={{
-              width: 25,
-              height: 25,
-              uri: 'http://111.223.38.20' + image,
-              method: 'GET',
-              headers: {
-                Authorization: token,
-              },
-            }}
-          />
+            shadow={1}
+          >
+            <Image
+              style={{ flex: 1, resizeMode: 'cover' }}
+              rounded={6}
+              alt={'customer image'}
+              source={{
+                uri: 'http://111.223.38.20' + image,
+                method: 'GET',
+                headers: {
+                  Authorization: token,
+                },
+              }}
+            />
+          </Box>
         ) : (
           <Box
             m={4}
@@ -71,6 +49,7 @@ export function CustomerListIOS({ data, token }) {
             h={20}
             rounded={6}
             background={'black'}
+            shadow={1}
           >
             <Box
               w={'full'}
@@ -83,8 +62,9 @@ export function CustomerListIOS({ data, token }) {
             </Box>
 
             <Image
-              alt={'image'}
+              alt={'customer image'}
               opacity={'0.5'}
+              rounded={6}
               style={{ flex: 1, resizeMode: 'cover' }}
               source={{
                 uri: 'https://images.pexels.com/photos/2887582/pexels-photo-2887582.jpeg?auto=compress&cs=tinysrgb&w=600',
@@ -101,21 +81,16 @@ export function CustomerListIOS({ data, token }) {
         >
           <HStack space={1.5}>
             <Text
+              w={48}
               fontSize={'xs'}
               fontWeight={'bold'}
             >
               {title}
             </Text>
-
-            <Text
-              color={COLORS.gray}
-              fontSize={'xs'}
-            >
-              {type}
-            </Text>
           </HStack>
           <HStack>
             <Text
+              w={48}
               color={COLORS.tertiary}
               fontSize={'sm'}
             >
@@ -123,27 +98,94 @@ export function CustomerListIOS({ data, token }) {
             </Text>
           </HStack>
         </VStack>
+        <Text
+          color={COLORS.gray}
+          fontSize={'xs'}
+          position={'absolute'}
+          bottom={2}
+          right={4}
+        >
+          {type}
+        </Text>
       </HStack>
     </View>
   );
 
+  useEffect(() => {
+    if (reload) {
+      setTimeout(() => {
+        setReload(false);
+      }, 1000);
+    }
+  }, [reload]);
+
+  if (reload) {
+    return (
+      <View
+        my={4}
+        w={{ base: SCREEN_WIDTH - 24, lg: 1000 }}
+        h={500}
+      >
+        <GetScreenSize
+          from={'sm'}
+          to={'md'}
+        >
+          {new Array(1, 2, 3, 4, 5, 6).map((d) => (
+            <CustomerSkeletonBase key={d} />
+          ))}
+        </GetScreenSize>
+        <GetScreenSize
+          from={'md'}
+          to={'lg'}
+        >
+          <CustomerSkeletonLg />
+        </GetScreenSize>
+      </View>
+    );
+  }
+
   return (
     <View
       my={4}
-      w={SCREEN_WIDTH - 24}
+      w={{ base: SCREEN_WIDTH - 24, lg: 1000 }}
       h={500}
     >
-      <FlatList
-        data={data}
-        renderItem={({ item }) => (
-          <Item
-            image={item.image}
-            title={item.name}
-            type={item.customer_type}
-            group={item.customer_group}
-          />
-        )}
-      />
+      <GetScreenSize
+        from={'md'}
+        to={'lg'}
+      >
+        <FlatList
+          data={data}
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
+          keyExtractor={(item) => item.name}
+          renderItem={({ item }) => (
+            <Item
+              image={item.image}
+              title={item.name}
+              type={item.customer_type}
+              group={item.customer_group}
+            />
+          )}
+        />
+      </GetScreenSize>
+      <GetScreenSize
+        from={'sm'}
+        to={'md'}
+      >
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.name}
+          renderItem={({ item }) => (
+            <Item
+              image={item.image}
+              title={item.name}
+              type={item.customer_type}
+              group={item.customer_group}
+            />
+          )}
+        />
+      </GetScreenSize>
     </View>
   );
 }

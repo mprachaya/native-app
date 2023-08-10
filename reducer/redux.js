@@ -8,11 +8,11 @@ const Reducer = (state, action) => {
     case 'GET_CTM_SORT_TYPE':
       return state.ctm_sort_type;
     case 'SET_CTM_SORT_TYPE':
-      return { ...state, ctm_sort_type: action.payload };
-    case 'GET_CTM_SORT_field':
+      return { ...state, ctm_sort_by: action.payload };
+    case 'GET_CTM_SORT_BY':
       return state.ctm_sort_field;
-    case 'SET_CTM_SORT_field':
-      return { ...state, ctm_sort_field: action.payload };
+    case 'SET_CTM_SORT_BY':
+      return { ...state, ctm_sort_by: action.payload };
     case 'GET_CTM_GROUP_FILTER':
       return state.ctm_group_filter;
     case 'SET_CTM_GROUP_FILTER':

@@ -1,4 +1,4 @@
-import { Center, HStack, View } from 'native-base';
+import { Center, HStack, Text, View } from 'native-base';
 import { Dimensions, SafeAreaView } from 'react-native';
 import { COLORS, SPACING } from '../../constants/theme';
 import MenuIcon from '../../components/MenuIcon';
@@ -25,9 +25,17 @@ function HomePage({ navigation }) {
     <SafeAreaView>
       <ContainerStyled>
         <Center w={'full'}>
+          <Text
+            mt={6}
+            fontSize={'lg'}
+            fontWeight={'bold'}
+            color={COLORS.primary}
+          >
+            Modules
+          </Text>
           <HStack
             w={400}
-            mt={20}
+            mt={12}
             flexWrap={'wrap'}
             justifyContent={{ base: 'center', lg: 'space-around' }}
           >

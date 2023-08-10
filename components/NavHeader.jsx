@@ -3,8 +3,9 @@ import React from 'react';
 import { ChevronBackWard } from '../constants/icons';
 import { Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import NavHeaderRight from './NavHeaderRight';
 
-function NavHeader({ pageName, pageBackName }) {
+function NavHeader({ pageName, pageBackName, activeFunction, openAdd, openSort, openFilter }) {
   const Navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
   return (
@@ -15,6 +16,7 @@ function NavHeader({ pageName, pageBackName }) {
       <HStack
         py={1.5}
         style={{ width: windowWidth }}
+        justifyContent={'space-between'}
       >
         <HStack
           justifyContent={'center'}
@@ -25,11 +27,11 @@ function NavHeader({ pageName, pageBackName }) {
             p={1}
             variant={'unstyled'}
             w={pageName !== '' ? '40' : 'full'}
-            h={12}
             justifyContent={'start'}
             // bg={'amber.400'}
           >
             <HStack
+              ml={1}
               alignItems={'center'}
               w={windowWidth - 24}
               space={2}
@@ -70,6 +72,13 @@ function NavHeader({ pageName, pageBackName }) {
             </HStack>
           )}
         </HStack>
+        {activeFunction && (
+          <NavHeaderRight
+            openSort={openSort}
+            openAdd={openAdd}
+            openFilter={openFilter}
+          />
+        )}
       </HStack>
     </View>
   );

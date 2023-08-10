@@ -5,8 +5,8 @@ const initialState = {
   pathname: '',
   // customer page
   customer: [],
-  ctm_sort_type: 'desc',
-  ctm_sort_field: 'creation',
+  ctm_sort_type: 'DESC',
+  ctm_sort_by: 'Creation',
   ctm_group_filter: '',
   ctm_territory_filter: '',
   ctm_type_filter: '',
