@@ -13,6 +13,7 @@ import NavHeaderRight from './components/NavHeaderRight';
 import React, { useState } from 'react';
 import OtherTest from './src/HomePage/OtherTest';
 import SortAndroid from './src/HomePage/SellingPage/CustomerPage/SortAndroid';
+import { LogBox } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,10 @@ export default function App() {
     sort: false,
     filter: false,
   });
+  // ignore pass function to useNavigation params
+  LogBox.ignoreLogs(['Non-serializable values were found in the navigation state']);
+  // ignore SSR Warning
+  LogBox.ignoreLogs(['In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.']);
 
   return (
     <NativeBaseProvider>

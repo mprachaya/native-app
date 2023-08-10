@@ -12,6 +12,7 @@ import { Platform } from 'react-native';
 import { Context } from '../../../../reducer';
 import { useNavigation } from '@react-navigation/native';
 import SortOption from '../../../../components/NavHeaderRight';
+import React, { useEffect, useMemo } from 'react';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -32,6 +33,19 @@ function CustomerPage({ openState, setOpenState }) {
   const [reloadState, setReloadState] = useState(true);
   const navigation = useNavigation();
 
+  const initialsSortBy = {
+    Creation: false,
+    Modified: false,
+    Name: false,
+  };
+
+  const initialsSortType = {
+    DESC: false,
+    ASC: false,
+  };
+
+  const [sortByState, setSortByState] = useState(initialsSortBy);
+  const [sortTypeState, setSortTypeState] = useState(initialsSortType);
   const {
     data: customerData,
     setData: setCustomerData,
@@ -44,15 +58,38 @@ function CustomerPage({ openState, setOpenState }) {
   });
 
   const SortBy = (list, setList, key, type) => {
-    if (list.lenght > 0) {
+    if (list.length > 0) {
       var updatedList = [...list];
-      // console.log('sort Type =', type);
+      console.log('sort Type =', type);
       if (type === 'DESC') setList(() => [...updatedList].sort((a, b) => (a[key] > b[key] ? -1 : 1)));
       else {
         setList(() => [...updatedList].sort((a, b) => (a[key] > b[key] ? 1 : -1)));
       }
     }
   };
+
+  useEffect(() => {}, []);
+
+  useMemo(() => {
+    // console.log(sortByState);
+    // console.log(sortTypeState);
+    // value of sortByState
+    const sortValue = Object.values(sortByState).map((data) => data);
+    // find sort by name
+    const sortSelected = Object.keys(sortByState).filter((key, index) => sortValue[index] && key);
+    // value of sortTypeState
+    const sortTypeValue = Object.values(sortTypeState).map((data) => data);
+    // find sort type
+    const sortTypeSelected = Object.keys(sortTypeState).filter((key, index) => sortTypeValue[index] && key);
+    // call sort function
+    // if (sortSelected.length !== 0 && sortTypeSelected !== 0)
+    //   SortBy(customerData, setCustomerData, sortSelected, sortTypeSelected);
+    // if (sortSelected.length === 0) {
+    SortBy(customerData, setCustomerData, 'Creation', 'DESC');
+    // }
+    // console.log(sortByState);
+    // console.log(sortTypeState);
+  }, [sortByState, sortTypeState]);
 
   if (loading) {
     return <Loading loading={loading} />;
@@ -72,7 +109,18 @@ function CustomerPage({ openState, setOpenState }) {
             {Platform.OS === 'android' && (
               <SortOption
                 // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
-                openSort={() => navigation.navigate('SortAndroid')}
+                openSort={() =>
+                  navigation.navigate('SortAndroid', {
+                    sortBy: SortBy,
+                    data: customerData,
+                    setData: setCustomerData,
+                    setReload: setReloadState,
+                    sortByst: sortByState,
+                    sortTypest: sortTypeState,
+                    setSortByst: setSortByState,
+                    setSortTypest: setSortTypeState,
+                  })
+                }
                 // openFilter={() => setOpenState((pre) => ({ ...pre, filter: true }))}
               />
             )}

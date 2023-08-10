@@ -46,10 +46,13 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
           //clear all state
           setSortByState(initialsSortBy);
           // default type when select sort by state
-          !sortByState[key]
-            ? setSortTypeState((pre) => ({ ...pre, DESC: true }))
-            : setSortTypeState((pre) => ({ ...pre, DESC: false }));
 
+          const checkSortBy = Object.keys(sortByState).filter((key) => sortByState[key]);
+          const checkSortType = Object.keys(sortTypeState).filter((key) => sortTypeState[key]);
+          if (checkSortBy.length > 0 && checkSortType.length > 0) {
+          } else {
+            setSortTypeState((pre) => ({ ...pre, DESC: true }));
+          }
           !sortByState[key]
             ? toast.show({ description: `Sort By ${label}`, duration: 2000 })
             : toast.show({ description: `Cancel Sort By ${label}`, duration: 2000 });
@@ -66,10 +69,8 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
       Object.keys(sortTypeState).map((key) => {
         if (key === label) {
           const checkSortBy = Object.keys(sortByState).filter((key) => sortByState[key]);
-          // console.log('checkSortBy', checkSortBy);
-          // console.log('checkSortBy length', );
           if (checkSortBy.length > 0) {
-            setSortTypeState.ASC === true && sortTypeState[key] === false;
+            // setSortTypeState.ASC === true && sortTypeState[key] === false;
             key === 'DESC' &&
               // console.log('Switch ASC false') &&
               setSortTypeState((pre) => ({ ...pre, ASC: false }));
@@ -77,15 +78,15 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
             key === 'ASC' &&
               // console.log('Switch DESC false') &&
               setSortTypeState((pre) => ({ ...pre, DESC: false }));
+
             !sortTypeState[key]
               ? toast.show({ description: `Sort Type ${label}`, duration: 2000 })
               : toast.show({ description: `Cancel Sort Type ${label}`, duration: 2000 });
             !sortByState[key]
               ? dispatch({ type: 'SET_CTM_SORT_TYPE', payload: label })
               : dispatch({ type: 'SET_CTM_SORT_TYPE', payload: '' });
-            !sortTypeState[key]
-              ? setSortTypeState((pre) => ({ ...pre, [key]: true }))
-              : setSortTypeState((pre) => ({ ...pre, [key]: false }));
+
+            setSortTypeState((pre) => ({ ...pre, [key]: true }));
 
             setReload(true);
           } else {
@@ -94,12 +95,6 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
         }
       });
     }
-    // first sort
-    const checkSortBy = Object.keys(sortByState).filter((key) => sortByState[key]);
-    if (checkSortBy.length > 0 && sortTypeState.DESC !== true && sortTypeState.ASC !== true) {
-      setSortTypeState((pre) => ({ ...pre, DESC: true }));
-    }
-
     setOpen(false);
   };
 
@@ -115,7 +110,7 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
     // call sort function
     if (sortSelected.length !== 0 && sortTypeSelected !== 0) sortBy(data, setData, sortSelected, sortTypeSelected);
     if (sortSelected.length === 0) {
-      sortBy(data, setData, 'Creation', 'ASC');
+      sortBy(data, setData, 'Creation', 'DESC');
     }
   };
 
@@ -142,19 +137,56 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
       justifyContent={'center'}
       onPress={() => handleSort()}
     >
-      <HStack space={1}>
-        <CheckIcon
-          mt={0.5}
-          size={4}
-          color={'blue.500'}
-        />
-        <Text
-          color={'blue.500'}
-          fontSize={'md'}
-        >
-          {label}
-        </Text>
-      </HStack>
+      {type === 'sortBy' && sortByState[label] && (
+        <HStack space={1}>
+          <CheckIcon
+            mt={0.5}
+            size={4}
+            color={'blue.500'}
+          />
+          <Text
+            color={'blue.500'}
+            fontSize={'md'}
+          >
+            {label}
+          </Text>
+        </HStack>
+      )}
+      {type === 'sortBy' && !sortByState[label] && (
+        <HStack space={1}>
+          <Text
+            color={'gray.400'}
+            fontSize={'md'}
+          >
+            {label}
+          </Text>
+        </HStack>
+      )}
+      {type === 'sortType' && sortTypeState[label] && (
+        <HStack space={1}>
+          <CheckIcon
+            mt={0.5}
+            size={4}
+            color={'blue.500'}
+          />
+          <Text
+            color={'blue.500'}
+            fontSize={'md'}
+          >
+            {label}
+          </Text>
+        </HStack>
+      )}
+      {type === 'sortType' && !sortTypeState[label] && (
+        <HStack space={1}>
+          <Text
+            color={'gray.400'}
+            fontSize={'md'}
+          >
+            {label}
+          </Text>
+        </HStack>
+      )}
     </Button>
   );
 
