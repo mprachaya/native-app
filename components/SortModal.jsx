@@ -50,6 +50,9 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
           const checkSortBy = Object.keys(sortByState).filter((key) => sortByState[key]);
           const checkSortType = Object.keys(sortTypeState).filter((key) => sortTypeState[key]);
           if (checkSortBy.length > 0 && checkSortType.length > 0) {
+            !sortTypeState[0]
+              ? setSortTypeState((pre) => ({ ...pre, DESC: false }))
+              : setSortTypeState((pre) => ({ ...pre, ASC: false }));
           } else {
             setSortTypeState((pre) => ({ ...pre, DESC: true }));
           }

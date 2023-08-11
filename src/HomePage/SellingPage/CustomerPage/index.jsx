@@ -1,18 +1,15 @@
-import { Button, Center, HStack, Text, VStack, View } from 'native-base';
-import { Dimensions } from 'react-native';
-import { SearchInput } from '../../../../components/Inputs';
+import React, { useContext, useState } from 'react';
+import { Center, HStack, Text, VStack, View } from 'native-base';
+import { SearchInput, Loading, SortModal, NavHeaderRight } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { CustomerList } from './CustomerList';
-import useFetch from '../../../../hooks/useFetch';
 import { config, url } from '../../../../config';
-import Loading from '../../../../components/Loading';
-import { useContext, useState } from 'react';
-import SortModal from '../../../../components/SortModal';
-import { Platform } from 'react-native';
 import { Context } from '../../../../reducer';
 import { useNavigation } from '@react-navigation/native';
-import SortOption from '../../../../components/NavHeaderRight';
-import React, { useEffect, useMemo } from 'react';
+import { Platform } from 'react-native';
+import { Dimensions } from 'react-native';
+import { SortBy } from '../../../../utils/sorting';
+import useFetch from '../../../../hooks/useFetch';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -57,32 +54,6 @@ function CustomerPage({ openState, setOpenState }) {
     },
   });
 
-  const SortBy = (list, setList, key, type) => {
-    if (list.length > 0) {
-      var updatedList = [...list];
-      console.log('sort Type =', type);
-      if (type === 'DESC') setList(() => [...updatedList].sort((a, b) => (a[key] > b[key] ? -1 : 1)));
-      else {
-        setList(() => [...updatedList].sort((a, b) => (a[key] > b[key] ? 1 : -1)));
-      }
-    }
-  };
-
-  useEffect(() => {}, []);
-
-  useMemo(() => {
-    // value of sortByState
-    const sortValue = Object.values(sortByState).map((data) => data);
-    // find sort by name
-    const sortSelected = Object.keys(sortByState).filter((key, index) => sortValue[index] && key);
-    // value of sortTypeState
-    const sortTypeValue = Object.values(sortTypeState).map((data) => data);
-    // find sort type
-    const sortTypeSelected = Object.keys(sortTypeState).filter((key, index) => sortTypeValue[index] && key);
-    // call sort function
-    SortBy(customerData, setCustomerData, 'Creation', 'DESC');
-  }, [sortByState, sortTypeState]);
-
   if (loading) {
     return <Loading loading={loading} />;
   }
@@ -107,7 +78,7 @@ function CustomerPage({ openState, setOpenState }) {
             justifyContent={{ base: 'flex-end', lg: 'flex-end' }}
           >
             {Platform.OS === 'android' && (
-              <SortOption
+              <NavHeaderRight
                 // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                 openSort={() =>
                   navigation.navigate('SortAndroid', {

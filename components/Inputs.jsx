@@ -1,4 +1,4 @@
-import { HStack, Input } from 'native-base';
+import { Button, HStack, Input } from 'native-base';
 import { ICON, SIZES, SPACING } from '../constants/theme';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -23,6 +23,23 @@ export const SearchInput = (props) => (
           color={'gray'}
         />
       </HStack>
+    }
+    InputRightElement={
+      props.clear && (
+        <HStack mx={SPACING.small}>
+          <Button
+            variant={'unstyled'}
+            p={1}
+            onPress={props.clearAction}
+          >
+            <Icon
+              name='close'
+              size={ICON.base}
+              color={'gray'}
+            />
+          </Button>
+        </HStack>
+      )
     }
   />
 );

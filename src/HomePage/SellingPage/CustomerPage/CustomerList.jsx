@@ -1,9 +1,9 @@
 import { Box, FlatList, HStack, Image, Text, VStack, View } from 'native-base';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
 import GetScreenSize from '../../../../hooks/GetScreenSize';
-import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components/Skeleton';
+import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components';
 
 export function CustomerList({ data, token, reload, setReload }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');

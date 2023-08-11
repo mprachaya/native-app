@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import { Button, CheckIcon, Divider, HStack, ScrollView, Text, VStack, View } from 'native-base';
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 import { Dimensions } from 'react-native';
@@ -44,10 +44,12 @@ function SortAndroid({ route, navigation }) {
           const checkSortBy = Object.keys(sortByst).filter((key) => sortByst[key]);
           const checkSortType = Object.keys(sortTypest).filter((key) => sortTypest[key]);
           if (checkSortBy.length > 0 && checkSortType.length > 0) {
+            !sortTypest[0]
+              ? setSortTypest((pre) => ({ ...pre, DESC: false }))
+              : setSortTypest((pre) => ({ ...pre, ASC: false }));
           } else {
             setSortTypest((pre) => ({ ...pre, DESC: true }));
           }
-
           !sortByst[key]
             ? dispatch({ type: 'SET_CTM_SORT_BY', payload: label })
             : dispatch({ type: 'SET_CTM_SORT_BY', payload: '' });

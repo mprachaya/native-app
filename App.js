@@ -11,9 +11,9 @@ import NavHeader from './components/NavHeader';
 import { Platform } from 'react-native';
 import NavHeaderRight from './components/NavHeaderRight';
 import React, { useState } from 'react';
-import OtherTest from './src/HomePage/OtherTest';
 import SortAndroid from './src/HomePage/SellingPage/CustomerPage/SortAndroid';
 import { LogBox } from 'react-native';
+import TextSearchDropdown from './_test/TextSearchDropdown';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +38,10 @@ export default function App() {
 
           <Stack.Navigator>
             <Stack.Group>
+              <Stack.Screen
+                name='Test'
+                component={TextSearchDropdown}
+              />
               <Stack.Screen
                 name='Home'
                 component={HomePage}
