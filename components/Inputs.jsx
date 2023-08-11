@@ -11,6 +11,7 @@ export const SearchInput = (props) => (
     placeholder='Search'
     fontSize={{ base: SIZES.medium, lg: SIZES.large }}
     w={{ base: 'full' || props.baseSize, lg: 400 || props.lgSize }}
+    backgroundColor='blueGray.100'
     _focus={{
       borderColor: 'white',
       backgroundColor: 'blueGray.200',

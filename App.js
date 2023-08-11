@@ -38,10 +38,10 @@ export default function App() {
 
           <Stack.Navigator>
             <Stack.Group>
-              <Stack.Screen
+              {/* <Stack.Screen
                 name='Test'
                 component={TextSearchDropdown}
-              />
+              /> */}
               <Stack.Screen
                 name='Home'
                 component={HomePage}

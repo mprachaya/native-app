@@ -19,7 +19,7 @@ function NavHeaderRight({ openAdd, openSort, openFilter }) {
   return (
     <HStack
       // mr={2}
-      _android={{ mr: 4, space: { base: 2, lg: 10 } }}
+      _android={{ mr: 0, space: { base: 2, lg: 10 } }}
       _ios={{ mr: 0, space: { base: 2, lg: 12 } }}
     >
       <OptionContainer handleOpen={() => openAdd(true)}>

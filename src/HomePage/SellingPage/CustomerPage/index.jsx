@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Center, HStack, Text, VStack, View } from 'native-base';
+import { Box, Center, HStack, Text, VStack, View } from 'native-base';
 import { SearchInput, Loading, SortModal, NavHeaderRight } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { CustomerList } from './CustomerList';
@@ -10,12 +10,14 @@ import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
 import useFetch from '../../../../hooks/useFetch';
+import TextSearchDropdown from '../../../../_test/TextSearchDropdown';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const ContainerStyled = (props) => {
   return (
     <View
+      style={{ zIndex: 0 }}
       height={SCREEN_HEIGHT}
       bg={'blueGray.100'}
       {...props}
@@ -28,7 +30,11 @@ const ContainerStyled = (props) => {
 function CustomerPage({ openState, setOpenState }) {
   const [state, dispatch] = useContext(Context);
   const [reloadState, setReloadState] = useState(true);
+  const [showBackgroundSearch, setShowBackgroundSearch] = useState(false);
+  const [lengthSearch, setLengthSearch] = useState(0);
   const navigation = useNavigation();
+
+  const dataColumn = ['customer_group', 'territory', 'name'];
 
   const initialsSortBy = {
     Creation: false,
@@ -70,9 +76,26 @@ function CustomerPage({ openState, setOpenState }) {
     <ContainerStyled>
       <Center
         mt={2}
-        mx={6}
+        mx={{ base: 4, lg: 40 }}
       >
         <VStack>
+          {Platform.OS === 'ios' && showBackgroundSearch && (
+            <Box
+              w={'100%'}
+              h={'800'}
+              top={0}
+              left={0}
+              right={0}
+              bottom={0}
+              // justifyContent='center'
+              alignItems='center'
+              background={'blueGray.100'}
+              position='absolute'
+              zIndex={-1}
+            >
+              {/* {lengthSearch === 0 && <Text mt={24}>Empty</Text>} */}
+            </Box>
+          )}
           <HStack
             mb={2}
             justifyContent={{ base: 'flex-end', lg: 'flex-end' }}
@@ -96,64 +119,84 @@ function CustomerPage({ openState, setOpenState }) {
               />
             )}
           </HStack>
+
           <HStack
             mx={{ base: 0, lg: 24 }}
             justifyContent={{ base: 'center', lg: 'flex-end' }}
           >
-            <SearchInput />
+            {/* <SearchInput /> */}
+
+            <Box
+              w={'full'}
+              height={'16'}
+            />
+            <TextSearchDropdown
+              allData={customerData}
+              dataColumn={dataColumn}
+              returnData={setShowBackgroundSearch}
+              returnLength={setLengthSearch}
+            />
           </HStack>
-          <HStack
-            mt={6}
-            mr={2}
-            justifyContent={'space-evenly'}
-          >
-            <VStack
-              w={'1/4'}
-              alignItems={'center'}
+          {!showBackgroundSearch && (
+            <HStack
+              mt={6}
+              mr={2}
+              justifyContent={'space-evenly'}
             >
-              <Text color={COLORS.secondary}>Total</Text>
-              <Text
-                color={COLORS.primary}
-                fontWeight={'bold'}
-                fontSize={'lg'}
+              <VStack
+                w={'1/4'}
+                alignItems={'center'}
               >
-                1.9k
-              </Text>
-            </VStack>
-            <VStack
-              w={'1/4'}
-              alignItems={'center'}
-            >
-              <Text color={COLORS.secondary}>Company</Text>
-              <Text
-                color={COLORS.primary}
-                fontWeight={'bold'}
-                fontSize={'lg'}
+                <Text color={COLORS.secondary}>Total</Text>
+                <Text
+                  color={COLORS.primary}
+                  fontWeight={'bold'}
+                  fontSize={'lg'}
+                >
+                  1.9k
+                </Text>
+              </VStack>
+              <VStack
+                w={'1/4'}
+                alignItems={'center'}
               >
-                4.6k
-              </Text>
-            </VStack>
-            <VStack
-              w={'1/4'}
-              alignItems={'center'}
-            >
-              <Text color={COLORS.secondary}>Individual</Text>
-              <Text
-                color={COLORS.primary}
-                fontWeight={'bold'}
-                fontSize={'lg'}
+                <Text color={COLORS.secondary}>Company</Text>
+                <Text
+                  color={COLORS.primary}
+                  fontWeight={'bold'}
+                  fontSize={'lg'}
+                >
+                  4.6k
+                </Text>
+              </VStack>
+              <VStack
+                w={'1/4'}
+                alignItems={'center'}
               >
-                902
-              </Text>
-            </VStack>
-          </HStack>
+                <Text color={COLORS.secondary}>Individual</Text>
+                <Text
+                  color={COLORS.primary}
+                  fontWeight={'bold'}
+                  fontSize={'lg'}
+                >
+                  902
+                </Text>
+              </VStack>
+            </HStack>
+          )}
         </VStack>
-        <CustomerList
-          reload={reloadState}
-          setReload={setReloadState}
-          data={customerData}
-          token={config.API_TOKEN}
-        />
+        <HStack
+          style={{
+            zIndex: -2,
+          }}
+        >
+          <CustomerList
+            reload={reloadState}
+            setReload={setReloadState}
+            data={customerData}
+            token={config.API_TOKEN}
+          />
+        </HStack>
       </Center>
       {Platform.OS === 'ios' && (
         <SortModal

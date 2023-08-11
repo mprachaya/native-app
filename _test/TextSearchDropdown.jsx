@@ -1,29 +1,18 @@
-import {
-  Badge,
-  Box,
-  Center,
-  FlatList,
-  Flex,
-  HStack,
-  Pressable,
-  ScrollView,
-  Spacer,
-  Text,
-  VStack,
-  View,
-} from 'native-base';
+import { Badge, Box, Center, FlatList, Flex, HStack, Image, Pressable, Text, VStack, View } from 'native-base';
 import React, { useState, useMemo } from 'react';
 
 import { SafeAreaView } from 'react-native';
 import { SearchInput } from '../components';
-import { Platform } from 'react-native';
 import useFetch from '../hooks/useFetch';
 
 const ContainerStyled = (props) => {
   return (
     <View
-      height={'full'}
-      bg={'blueGray.50'}
+      w={{ base: '96', lg: 'full' }}
+      h={props.Focus ? '600px' : ''}
+      position='absolute'
+      background={'blueGray.100'}
+      zIndex={props.Focus ? 999 : 1}
       {...props}
     >
       {props.children}
@@ -31,108 +20,143 @@ const ContainerStyled = (props) => {
   );
 };
 
-function TextSearchDropdown() {
+function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
   const [onFocus, setOnFocus] = useState(false);
   const [SearchText, setSearchText] = useState('');
-  const [allData, setAllData] = useState([]);
-  const {
-    data: customerData,
-    setData: setCustomerData,
-    loading,
-    error,
-  } = useFetch(
-    'http://111.223.38.20/api/resource/Customer?fields=["name","creation","modified","customer_name","customer_type","customer_group","territory","image"]',
-    {
-      headers: {
-        Authorization: 'token 5891d01ccc2961e:0e446b332dc22aa',
-      },
-    }
-  );
-  const handleSearch = (dataList, setList, searchText, key) => {
-    let tempData = dataList.filter((item) => {
-      return item[key].toLowerCase().indexOf(searchText.toLowerCase()) > -1;
+  const [data, setData] = useState();
+  // const {
+  //   data: allData,
+  //   setData: setAllData,
+  //   loading,
+  //   error,
+  // } = useFetch(url, {
+  //   headers: {
+  //     Authorization: token,
+  //   },
+  // });
+  // 1: first badge 2: second badge 3: main data
+  // const dataColumn = ['customer_group', 'territory', 'name'];
+
+  const handleSearch = (dataList, searchText, key) => {
+    // console.log(key);
+    // if (dataList) {
+    let tempData = dataList?.filter((item) => {
+      return String(item[key]).toLowerCase().indexOf(searchText.toLowerCase()) > -1;
     });
-    setList(tempData);
-    console.log(tempData);
+    // if (tempData)
+    // setList(tempData);
+    if (tempData.length > 0) {
+      // console.log('temp: ', tempData);
+      return tempData;
+    } else {
+      return false;
+    }
+    // console.log('search: ', tempData);
+    // }
   };
 
   const clearSearch = () => {
     setSearchText('');
-    console.log('clear!');
+    // console.log('clear!');
   };
 
   useMemo(() => {
-    if (customerData.length !== 0) {
-      setAllData(customerData);
-      console.log('temp:', customerData);
+    if (allData) {
+      setData(allData);
     }
-  }, [loading]);
+  }, [allData]);
 
   useMemo(() => {
-    if (!SearchText && allData) {
-      setOnFocus(false);
-      console.log('reset : ', allData);
-      setCustomerData(allData);
+    if (!SearchText) {
+      // setOnFocus(false);
+      if (allData) {
+        console.log('reset : ', allData);
+        setData(allData);
+      }
     } else {
       setOnFocus(true);
-      handleSearch(customerData, setCustomerData, SearchText, 'name');
+      Object.keys(allData[0])?.map((key) => {
+        if (key !== 'image') {
+          const search = handleSearch(data, SearchText, key);
+          if (search) {
+            // console.log(key);
+            setData(search);
+            returnLength(search.length);
+          }
+        }
+      });
     }
 
-    console.log(SearchText);
+    // console.log(SearchText);
   }, [SearchText]);
 
+  useMemo(() => {
+    if (onFocus) {
+      returnData(true);
+    }
+  }, [onFocus]);
+
   return (
-    <SafeAreaView>
-      <ContainerStyled>
-        <Center>
+    // <SafeAreaView>
+    <ContainerStyled Focus={onFocus}>
+      <Center>
+        <VStack
+          m={6}
+          justifyContent={'center'}
+          height={'100vh'}
+        >
+          <SearchInput
+            onChangeText={(val) => setSearchText(val)}
+            onFocus={() => setOnFocus(true)}
+            onBlur={() => setOnFocus(false)}
+            value={SearchText}
+            clear={SearchText ? true : false}
+            clearAction={() => clearSearch()}
+          />
+        </VStack>
+        {onFocus && (
           <VStack
             m={6}
-            justifyContent={'center'}
-            height={'100vh'}
+            // mx={{ base: 4 }}
+            w={{ base: '96', lg: 'full' }}
+            position={'absolute'}
+            top={50}
           >
-            <SearchInput
-              onChangeText={(val) => setSearchText(val)}
-              // onFocus={() => setOnFocus(true)}
-              value={SearchText}
-              clear={SearchText ? true : false}
-              clearAction={() => clearSearch()}
-            />
-          </VStack>
-          {onFocus && (
-            <VStack
-              m={6}
-              // mx={{ base: 4 }}
-              w={{ base: '96', lg: 'full' }}
-              position={'absolute'}
-              top={50}
-            >
-              <FlatList
-                mx={{ base: 4, lg: '30%' }}
-                data={customerData}
-                renderItem={({ item }) => (
-                  <Pressable
-                    m={1}
-                    // onPress={() => setOnFocus(false)}
-                  >
-                    {({ isHovered, isFocused, isPressed }) => {
-                      return (
-                        <Box
-                          mb={2}
-                          bg={isPressed ? 'coolGray.200' : isHovered ? 'coolGray.200' : 'coolGray.100'}
-                          style={{
-                            transform: [
-                              {
-                                scale: isPressed ? 0.99 : 1,
-                              },
-                            ],
-                          }}
-                          p='5'
-                          rounded='12'
-                          borderWidth='1'
-                          borderColor='coolGray.300'
-                        >
-                          <HStack alignItems='center'>
+            <FlatList
+              mx={{ base: 4, lg: '30%' }}
+              data={data}
+              renderItem={({ item }) => (
+                <Pressable
+                  m={1}
+                  // onPress={() => setOnFocus(false)}
+                >
+                  {({ isHovered, isFocused, isPressed }) => {
+                    return (
+                      <Box
+                        zIndex={999}
+                        mb={2}
+                        bg={isPressed ? 'coolGray.200' : isHovered ? 'blueGray.200' : 'blueGray.100'}
+                        style={{
+                          transform: [
+                            {
+                              scale: isPressed ? 0.99 : 1,
+                            },
+                          ],
+                        }}
+                        p='5'
+                        rounded='12'
+                        borderWidth='1'
+                        borderColor='coolGray.300'
+                      >
+                        <HStack justifyContent='space-between'>
+                          <HStack
+                            w={{ base: '220px', lg: '72' }}
+                            flexWrap={'wrap'}
+                            alignItems='center'
+                            space={1}
+                          >
                             <Badge
+                              mb={0.5}
                               colorScheme='darkBlue'
                               _text={{
                                 color: 'white',
@@ -140,59 +164,72 @@ function TextSearchDropdown() {
                               variant='solid'
                               rounded='4'
                             >
-                              {item.customer_group}
+                              {item[dataColumn[0]]}
                             </Badge>
-                            <Spacer />
-                            <Text
-                              fontSize={10}
-                              color='coolGray.800'
-                            >
-                              {item.creation.slice(0, 16)}
-                            </Text>
-                          </HStack>
-                          <Text
-                            color='coolGray.800'
-                            mt='3'
-                            fontWeight='medium'
-                            fontSize='xl'
-                          >
-                            {item.name}
-                          </Text>
 
-                          <Flex>
-                            {isFocused ? (
-                              <Text
-                                mt='2'
-                                fontSize={12}
-                                fontWeight='medium'
-                                textDecorationLine='underline'
-                                color='darkBlue.600'
-                                alignSelf='flex-start'
-                              >
-                                Read More
-                              </Text>
-                            ) : (
-                              <Text
-                                mt='2'
-                                fontSize={12}
-                                fontWeight='medium'
-                                color='darkBlue.600'
-                              >
-                                Read More
-                              </Text>
-                            )}
-                          </Flex>
-                        </Box>
-                      );
-                    }}
-                  </Pressable>
-                )}
-              />
-            </VStack>
-          )}
-        </Center>
-      </ContainerStyled>
-    </SafeAreaView>
+                            <Badge
+                              mb={0.5}
+                              colorScheme='info'
+                              _text={{
+                                color: 'white',
+                              }}
+                              variant='solid'
+                              rounded='4'
+                            >
+                              {item[dataColumn[1]]}
+                            </Badge>
+                          </HStack>
+
+                          <Text
+                            fontSize={10}
+                            color='coolGray.800'
+                          >
+                            {item.creation.slice(0, 16)}
+                          </Text>
+                        </HStack>
+                        <Text
+                          color='coolGray.800'
+                          mt='3'
+                          fontWeight='medium'
+                          fontSize='xl'
+                        >
+                          {item[dataColumn[2]]}
+                        </Text>
+
+                        <Flex>
+                          {isFocused ? (
+                            <Text
+                              mt='2'
+                              fontSize={12}
+                              fontWeight='medium'
+                              textDecorationLine='underline'
+                              color='darkBlue.600'
+                              alignSelf='flex-start'
+                            >
+                              Read More
+                            </Text>
+                          ) : (
+                            <Text
+                              mt='2'
+                              fontSize={12}
+                              fontWeight='medium'
+                              color='darkBlue.600'
+                            >
+                              Read More
+                            </Text>
+                          )}
+                        </Flex>
+                      </Box>
+                    );
+                  }}
+                </Pressable>
+              )}
+            />
+          </VStack>
+        )}
+      </Center>
+    </ContainerStyled>
+    // </SafeAreaView>
   );
 }
 
