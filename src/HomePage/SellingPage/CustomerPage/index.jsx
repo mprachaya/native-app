@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useMemo } from 'react';
 import { Box, Center, HStack, Text, VStack, View } from 'native-base';
 import { SearchInput, Loading, SortModal, NavHeaderRight } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
@@ -32,6 +32,7 @@ function CustomerPage({ openState, setOpenState }) {
   const [reloadState, setReloadState] = useState(true);
   const [showBackgroundSearch, setShowBackgroundSearch] = useState(false);
   const [lengthSearch, setLengthSearch] = useState(0);
+  const [dataShowLength, setDataShowLength] = useState(null);
   const navigation = useNavigation();
 
   const dataColumn = ['customer_group', 'territory', 'name'];
@@ -59,6 +60,7 @@ function CustomerPage({ openState, setOpenState }) {
       Authorization: config.API_TOKEN,
     },
   });
+  useMemo(() => console.log(customerData.slice(0, 2)), [customerData]);
 
   if (loading) {
     return <Loading loading={loading} />;
@@ -72,6 +74,7 @@ function CustomerPage({ openState, setOpenState }) {
       </ContainerStyled>
     );
   }
+
   return (
     <ContainerStyled>
       <Center
@@ -185,18 +188,27 @@ function CustomerPage({ openState, setOpenState }) {
             </HStack>
           )}
         </VStack>
-        <HStack
+        <VStack
+          justifyContent={'center'}
           style={{
             zIndex: -2,
           }}
         >
+          <HStack
+            justifyContent='flex-end'
+            mt={6}
+            mr={{ base: 8, lg: 6 }}
+          >
+            <Text>1 to {dataShowLength !== null ? dataShowLength : '1'}</Text>
+          </HStack>
           <CustomerList
             reload={reloadState}
             setReload={setReloadState}
             data={customerData}
             token={config.API_TOKEN}
+            returnDataIndex={setDataShowLength}
           />
-        </HStack>
+        </VStack>
       </Center>
       {Platform.OS === 'ios' && (
         <SortModal

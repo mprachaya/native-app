@@ -1,5 +1,5 @@
 import { Badge, Box, Center, FlatList, Flex, HStack, Image, Pressable, Text, VStack, View } from 'native-base';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 import { SafeAreaView } from 'react-native';
 import { SearchInput } from '../components';
@@ -57,23 +57,27 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
 
   const clearSearch = () => {
     setSearchText('');
+    returnData(false);
+    setOnFocus(false);
     // console.log('clear!');
   };
 
-  useMemo(() => {
+  useEffect(() => {
     if (allData) {
       setData(allData);
     }
   }, [allData]);
 
-  useMemo(() => {
-    if (!SearchText) {
+  useEffect(() => {
+    if (!SearchText && onFocus) {
       // setOnFocus(false);
       if (allData) {
         console.log('reset : ', allData);
         setData(allData);
+        returnData(false);
+        setOnFocus(false);
       }
-    } else {
+    } else if (SearchText && onFocus) {
       setOnFocus(true);
       Object.keys(allData[0])?.map((key) => {
         if (key !== 'image') {
@@ -82,17 +86,23 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
             // console.log(key);
             setData(search);
             returnLength(search.length);
+          } else {
           }
         }
       });
+    } else if (SearchText === '') {
+      returnData(false);
+      setOnFocus(false);
     }
 
     // console.log(SearchText);
   }, [SearchText]);
 
-  useMemo(() => {
+  useEffect(() => {
     if (onFocus) {
       returnData(true);
+    } else if (SearchText.length === 0 && !onFocus) {
+      returnData(false);
     }
   }, [onFocus]);
 
@@ -108,7 +118,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
           <SearchInput
             onChangeText={(val) => setSearchText(val)}
             onFocus={() => setOnFocus(true)}
-            onBlur={() => setOnFocus(false)}
+            onBlur={() => SearchText.length === 0 && setOnFocus(false)}
             value={SearchText}
             clear={SearchText ? true : false}
             clearAction={() => clearSearch()}

@@ -1,17 +1,19 @@
 import { Box, FlatList, HStack, Image, Text, VStack, View } from 'native-base';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
 import GetScreenSize from '../../../../hooks/GetScreenSize';
 import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components';
 import { url } from '../../../../config';
 
-export function CustomerList({ data, token, reload, setReload }) {
+export function CustomerList({ data, token, reload, setReload, returnDataIndex }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
+  const [dataIndex, setDataIndex] = useState(5);
+  const length = 10;
 
   const Item = ({ image, title, type, group }) => (
     <View
-      mt={2}
+      // mt={2}
       mb={2}
       mx={1.5}
       px={2}
@@ -120,6 +122,10 @@ export function CustomerList({ data, token, reload, setReload }) {
     }
   }, [reload]);
 
+  useEffect(() => {
+    returnDataIndex(dataIndex);
+  }, [dataIndex]);
+
   if (reload) {
     return (
       <View
@@ -149,17 +155,31 @@ export function CustomerList({ data, token, reload, setReload }) {
     <View
       my={4}
       w={{ base: SCREEN_WIDTH - 24, lg: 1000 }}
-      h={500}
+      // h={500}
     >
       <GetScreenSize
         from={'md'}
         to={'lg'}
       >
         <FlatList
-          data={data}
+          data={data.slice(0, dataIndex)}
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between' }}
           keyExtractor={(item) => item.name}
+          // onEndReached={() => setDataIndex((pre) => pre + 1)}
+          // onEndReached={() => console.log('triggered onEndReached!')}
+          // onEndReachedThreshold={0.5}
+
+          onScroll={(event) => {
+            // console.log(event.nativeEvent.contentOffset.y);
+            let BottomDetect = event.nativeEvent.contentOffset.y > 60 && event.nativeEvent.contentOffset.y <= 80;
+
+            if (!BottomDetect) {
+            } else {
+              if (dataIndex < data.length)
+                dataIndex + length < data.length ? setDataIndex((post) => post + length) : setDataIndex(data.length);
+            }
+          }}
           renderItem={({ item }) => (
             <Item
               image={item.image}
@@ -175,8 +195,10 @@ export function CustomerList({ data, token, reload, setReload }) {
         to={'md'}
       >
         <FlatList
-          data={data}
+          data={data.slice(0, dataIndex)}
           keyExtractor={(item) => item.name}
+          // onEndReached={() => setDataIndex((pre) => pre + 1)}
+          onEndReached={() => console.log('end of list!')}
           renderItem={({ item }) => (
             <Item
               image={item.image}
@@ -185,6 +207,16 @@ export function CustomerList({ data, token, reload, setReload }) {
               group={item.customer_group}
             />
           )}
+          onScroll={(event) => {
+            // console.log(event.nativeEvent.contentOffset.y);
+            let BottomDetect = event.nativeEvent.contentOffset.y > 60 && event.nativeEvent.contentOffset.y <= 80;
+
+            if (!BottomDetect) {
+            } else {
+              if (dataIndex < data.length)
+                dataIndex + length < data.length ? setDataIndex((post) => post + length) : setDataIndex(data.length);
+            }
+          }}
         />
       </GetScreenSize>
     </View>
