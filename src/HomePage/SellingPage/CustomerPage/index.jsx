@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useMemo, useEffect } from 'react';
 import { Box, Center, HStack, Text, VStack, View } from 'native-base';
 import { SearchInput, Loading, SortModal, NavHeaderRight } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
@@ -11,6 +11,7 @@ import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
 import useFetch from '../../../../hooks/useFetch';
 import TextSearchDropdown from '../../../../_test/TextSearchDropdown';
+import DetectBack from '../../../../hooks/DetectBack';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -48,6 +49,12 @@ function CustomerPage({ openState, setOpenState }) {
     ASC: false,
   };
 
+  const initialOpen = {
+    add: false,
+    sort: false,
+    filter: false,
+  };
+
   const [sortByState, setSortByState] = useState(initialsSortBy);
   const [sortTypeState, setSortTypeState] = useState(initialsSortType);
   const {
@@ -60,12 +67,32 @@ function CustomerPage({ openState, setOpenState }) {
       Authorization: config.API_TOKEN,
     },
   });
-  useMemo(() => console.log(customerData.slice(0, 2)), [customerData]);
 
-  if (loading) {
+  const {
+    data: companyData,
+    setData: setCompanyData,
+    loading: loadingCompany,
+    error: errorCompany,
+  } = useFetch(url.COMPANY, {
+    headers: {
+      Authorization: config.API_TOKEN,
+    },
+  });
+
+  // reset open state modal when navigate from back event
+  useMemo(() => {
+    const handleBack = navigation.addListener('focus', () => {
+      setOpenState(initialOpen);
+    });
+    return handleBack;
+  }, [navigation]);
+
+  // useMemo(() => console.log(customerData.slice(0, 2)), [customerData]);
+
+  if (loading && loadingCompany) {
     return <Loading loading={loading} />;
   }
-  if (error) {
+  if (error && errorCompany) {
     return (
       <ContainerStyled>
         <HStack justifyContent='center'>
@@ -105,7 +132,7 @@ function CustomerPage({ openState, setOpenState }) {
           >
             {Platform.OS === 'android' && (
               <NavHeaderRight
-                // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
+                openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                 openSort={() =>
                   navigation.navigate('SortAndroid', {
                     sortBy: SortBy,
@@ -156,7 +183,7 @@ function CustomerPage({ openState, setOpenState }) {
                   fontWeight={'bold'}
                   fontSize={'lg'}
                 >
-                  1.9k
+                  {customerData.length}
                 </Text>
               </VStack>
               <VStack
@@ -169,7 +196,7 @@ function CustomerPage({ openState, setOpenState }) {
                   fontWeight={'bold'}
                   fontSize={'lg'}
                 >
-                  4.6k
+                  {companyData.length}
                 </Text>
               </VStack>
               <VStack
@@ -182,7 +209,7 @@ function CustomerPage({ openState, setOpenState }) {
                   fontWeight={'bold'}
                   fontSize={'lg'}
                 >
-                  902
+                  SOON
                 </Text>
               </VStack>
             </HStack>
@@ -220,6 +247,7 @@ function CustomerPage({ openState, setOpenState }) {
           sortBy={SortBy}
         />
       )}
+      {openState.add && navigation.navigate('AddNewCustomer')}
     </ContainerStyled>
   );
 }

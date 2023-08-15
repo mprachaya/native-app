@@ -11,6 +11,8 @@ function NavHeader({ pageName, pageBackName, activeFunction, openAdd, openSort, 
   return (
     <View
       _android={{ pt: noHeader ? 12 : 0 }}
+      _ios={{ pt: 12 }}
+      pb={6}
       style={{ backgroundColor: 'white' }}
       shadow={1}
     >
@@ -23,36 +25,39 @@ function NavHeader({ pageName, pageBackName, activeFunction, openAdd, openSort, 
           justifyContent={'center'}
           alignItems={'center'}
         >
-          <Button
-            onPress={() => Navigation.goBack()}
-            p={1}
-            variant={'unstyled'}
-            w={pageName !== '' ? '40' : 'full'}
-            justifyContent={'start'}
-            // bg={'amber.400'}
-          >
-            <HStack
-              ml={1}
-              alignItems={'center'}
-              w={windowWidth - 24}
-              space={2}
+          {!noHeader && (
+            <Button
+              onPress={() => Navigation.goBack()}
+              p={1}
+              variant={'unstyled'}
+              w={pageName !== '' ? '40' : 'full'}
+              justifyContent={'start'}
+              // bg={'amber.400'}
             >
-              <ChevronBackWard
-                color={'#267BFF'}
-                width={32}
-                height={32}
-              />
-              <Text
-                ml={-2}
-                my={1}
-                fontWeight={'semibold'}
-                letterSpacing={0.5}
-                color={'#267BFF'}
+              <HStack
+                ml={1}
+                alignItems={'center'}
+                w={windowWidth - 24}
+                space={2}
               >
-                {pageBackName}
-              </Text>
-            </HStack>
-          </Button>
+                <ChevronBackWard
+                  color={'#267BFF'}
+                  width={32}
+                  height={32}
+                />
+                <Text
+                  ml={-2}
+                  my={1}
+                  fontWeight={'semibold'}
+                  letterSpacing={0.5}
+                  color={'#267BFF'}
+                >
+                  {pageBackName}
+                </Text>
+              </HStack>
+            </Button>
+          )}
+
           {pageName !== '' && (
             <HStack
               justifyContent={'center'}

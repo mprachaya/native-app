@@ -13,7 +13,7 @@ import NavHeaderRight from './components/NavHeaderRight';
 import React, { useState } from 'react';
 import SortAndroid from './src/HomePage/SellingPage/CustomerPage/SortAndroid';
 import { LogBox } from 'react-native';
-import TextSearchDropdown from './_test/TextSearchDropdown';
+import AddNewCustomer from './src/HomePage/SellingPage/CustomerPage/AddNewCustomer';
 
 const Stack = createNativeStackNavigator();
 
@@ -89,7 +89,7 @@ export default function App() {
                     options={{
                       header: () => (
                         <NavHeader
-                          // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
+                          openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                           // openSort={() => setOpenState((pre) => ({ ...pre, sort: true }))}
                           // openFilter={() => setOpenState((pre) => ({ ...pre, filter: true }))}
                           pageName={'Customer'}
@@ -146,7 +146,23 @@ export default function App() {
                   )}
                 </Stack.Screen>
               )}
+              <Stack.Screen
+                name='AddNewCustomer'
+                component={AddNewCustomer}
+                options={{
+                  title: '',
+                  headerShadowVisible: true,
+                  header: () => (
+                    <NavHeader
+                      pageName={'Add New Customer'}
+                      noHeader={true}
+                      // pageBackName={'Modules'}
+                    />
+                  ),
+                }}
+              />
             </Stack.Group>
+
             {/* <Stack.Screen
               name='Purchase Order'
               component={PurchaseOrder}

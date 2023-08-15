@@ -8,8 +8,8 @@ import { url } from '../../../../config';
 
 export function CustomerList({ data, token, reload, setReload, returnDataIndex }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
-  const [dataIndex, setDataIndex] = useState(5);
-  const length = 10;
+  const [dataIndex, setDataIndex] = useState(20);
+  const length = 20;
 
   const Item = ({ image, title, type, group }) => (
     <View
@@ -123,8 +123,11 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
   }, [reload]);
 
   useEffect(() => {
-    returnDataIndex(dataIndex);
-  }, [dataIndex]);
+    if (data.length - dataIndex < 0) returnDataIndex(data.length);
+    else {
+      returnDataIndex(dataIndex);
+    }
+  }, [data]);
 
   if (reload) {
     return (
@@ -155,7 +158,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
     <View
       my={4}
       w={{ base: SCREEN_WIDTH - 24, lg: 1000 }}
-      // h={500}
+      h={400}
     >
       <GetScreenSize
         from={'md'}
@@ -166,12 +169,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between' }}
           keyExtractor={(item) => item.name}
-          // onEndReached={() => setDataIndex((pre) => pre + 1)}
-          // onEndReached={() => console.log('triggered onEndReached!')}
-          // onEndReachedThreshold={0.5}
-
           onScroll={(event) => {
-            // console.log(event.nativeEvent.contentOffset.y);
             let BottomDetect = event.nativeEvent.contentOffset.y > 60 && event.nativeEvent.contentOffset.y <= 80;
 
             if (!BottomDetect) {
@@ -197,8 +195,6 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
         <FlatList
           data={data.slice(0, dataIndex)}
           keyExtractor={(item) => item.name}
-          // onEndReached={() => setDataIndex((pre) => pre + 1)}
-          onEndReached={() => console.log('end of list!')}
           renderItem={({ item }) => (
             <Item
               image={item.image}
