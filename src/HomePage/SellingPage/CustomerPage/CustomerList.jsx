@@ -4,6 +4,7 @@ import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
 import GetScreenSize from '../../../../hooks/GetScreenSize';
 import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components';
+import { url } from '../../../../config';
 
 export function CustomerList({ data, token, reload, setReload }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -34,7 +35,7 @@ export function CustomerList({ data, token, reload, setReload }) {
               rounded={6}
               alt={'customer image'}
               source={{
-                uri: 'http://111.223.38.20' + image,
+                uri: url.BASE_URL + image,
                 method: 'GET',
                 headers: {
                   Authorization: token,
