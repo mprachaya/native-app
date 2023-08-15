@@ -4,6 +4,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
 import { Context } from '../../../../reducer/';
+
 const ContainerStyled = (props) => {
   return (
     <View

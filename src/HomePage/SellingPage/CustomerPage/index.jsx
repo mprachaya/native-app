@@ -1,17 +1,15 @@
-import React, { useContext, useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Box, Center, HStack, Text, VStack, View } from 'native-base';
-import { SearchInput, Loading, SortModal, NavHeaderRight } from '../../../../components';
+import { Loading, SortModal, NavHeaderRight } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { CustomerList } from './CustomerList';
 import { config, url } from '../../../../config';
-import { Context } from '../../../../reducer';
 import { useNavigation } from '@react-navigation/native';
 import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
 import useFetch from '../../../../hooks/useFetch';
 import TextSearchDropdown from '../../../../_test/TextSearchDropdown';
-import DetectBack from '../../../../hooks/DetectBack';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -29,7 +27,6 @@ const ContainerStyled = (props) => {
 };
 
 function CustomerPage({ openState, setOpenState }) {
-  const [state, dispatch] = useContext(Context);
   const [reloadState, setReloadState] = useState(true);
   const [showBackgroundSearch, setShowBackgroundSearch] = useState(false);
   const [lengthSearch, setLengthSearch] = useState(0);
@@ -87,8 +84,6 @@ function CustomerPage({ openState, setOpenState }) {
     return handleBack;
   }, [navigation]);
 
-  // useMemo(() => console.log(customerData.slice(0, 2)), [customerData]);
-
   if (loading && loadingCompany) {
     return <Loading loading={loading} />;
   }
@@ -127,7 +122,7 @@ function CustomerPage({ openState, setOpenState }) {
             </Box>
           )}
           <HStack
-            mb={2}
+            // mb={2}
             justifyContent={{ base: 'flex-end', lg: 'flex-end' }}
           >
             {Platform.OS === 'android' && (

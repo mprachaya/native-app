@@ -2,12 +2,21 @@ import { Button, Center, HStack, Text, View } from 'native-base';
 import React, { useState } from 'react';
 import { COLORS } from '../constants/theme';
 import { AccountSettings, Home, Modules, Notification, Search } from '../constants/icons';
+import { useNavigation } from '@react-navigation/native';
 
-function TabMenu() {
+function TabMenu({ setInitialOpenState }) {
   const activeColor = COLORS.tertiary;
   const inactiveColor = COLORS.gray2;
 
   const [activeMenu, setActiveMenu] = useState('modules');
+
+  const navigation = useNavigation();
+
+  const handleNavigate = (path, activeMenu) => {
+    setInitialOpenState();
+    setActiveMenu(activeMenu);
+    navigation.navigate(path);
+  };
 
   return (
     <View
@@ -39,7 +48,7 @@ function TabMenu() {
         </Center>
         <Center>
           <Button
-            // onPress={() => setActiveMenu('modules')}
+            onPress={() => handleNavigate('Home', 'modules')}
             variant={'unstyled'}
             w={'32'}
             h={'10'}

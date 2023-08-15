@@ -158,7 +158,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
     <View
       my={4}
       w={{ base: SCREEN_WIDTH - 24, lg: 1000 }}
-      h={400}
+      h={{ base: 400, lg: 800 }}
     >
       <GetScreenSize
         from={'md'}

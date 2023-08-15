@@ -14,15 +14,19 @@ import React, { useState } from 'react';
 import SortAndroid from './src/HomePage/SellingPage/CustomerPage/SortAndroid';
 import { LogBox } from 'react-native';
 import AddNewCustomer from './src/HomePage/SellingPage/CustomerPage/AddNewCustomer';
+import { useEffect } from 'react/cjs/react.production.min';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const initialState = { add: false, sort: false, filter: false };
+
   const [openState, setOpenState] = useState({
     add: false,
     sort: false,
     filter: false,
   });
+  const [tabMenuState, setTabMenuState] = useState(true);
   // ignore pass function to useNavigation params
   LogBox.ignoreLogs(['Non-serializable values were found in the navigation state']);
   // ignore SSR Warning
@@ -49,7 +53,7 @@ export default function App() {
                   header: () => <AppBar />,
                 }}
               />
-
+              {/* Selling Page */}
               {Platform.OS !== 'ios' ? (
                 <Stack.Screen
                   name='Selling'
@@ -81,7 +85,7 @@ export default function App() {
                   }}
                 />
               )}
-
+              {/* Customer Page */}
               {Platform.OS === 'android' && (
                 <Stack.Group>
                   <Stack.Screen
@@ -178,7 +182,7 @@ export default function App() {
               }}
             /> */}
           </Stack.Navigator>
-          <TabMenu />
+          <TabMenu setInitialOpenState={() => setOpenState(initialState)} />
         </Store>
       </NavigationContainer>
     </NativeBaseProvider>

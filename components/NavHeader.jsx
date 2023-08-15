@@ -10,9 +10,8 @@ function NavHeader({ pageName, pageBackName, activeFunction, openAdd, openSort, 
   const windowWidth = Dimensions.get('window').width;
   return (
     <View
-      _android={{ pt: noHeader ? 12 : 0 }}
-      _ios={{ pt: 12 }}
-      pb={6}
+      _android={{ pt: noHeader ? 12 : 0, pb: 3 }}
+      _ios={{ pt: 12, pb: 6 }}
       style={{ backgroundColor: 'white' }}
       shadow={1}
     >
