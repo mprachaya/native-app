@@ -10,7 +10,7 @@ export const SearchInput = (props) => (
     mx='2'
     placeholder='Search'
     fontSize={{ base: SIZES.medium, lg: SIZES.large }}
-    w={{ base: 'full' || props.baseSize, lg: 400 || props.lgSize }}
+    w={{ base: 'full' || props.baseSize, lg: 500 || props.lgSize }}
     backgroundColor='blueGray.100'
     _focus={{
       borderColor: 'white',

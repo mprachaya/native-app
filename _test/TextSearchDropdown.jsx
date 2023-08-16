@@ -75,8 +75,8 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
       if (allData) {
         console.log('reset : ', allData);
         setData(allData);
-        returnData(false);
-        setOnFocus(false);
+        // returnData(false);
+        // setOnFocus(false);
       }
     } else if (SearchText && onFocus) {
       setOnFocus(true);

@@ -6,4 +6,6 @@ export const url = {
   CUSTOMERS:
     'https://tonen.vsiam.com/api/resource/Customer?fields=["name","creation","modified","customer_name","customer_type","customer_group","territory","image"]',
   COMPANY: 'https://tonen.vsiam.com/api/resource/Company',
+  CUSTOMER_GROUPS: 'https://tonen.vsiam.com/api/resource/Customer Group',
+  TERRITORY: 'https://tonen.vsiam.com/api/resource/Territory',
 };

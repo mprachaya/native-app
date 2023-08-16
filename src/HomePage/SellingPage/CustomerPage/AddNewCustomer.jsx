@@ -1,25 +1,10 @@
-import {
-  Button,
-  Center,
-  Checkbox,
-  FormControl,
-  HStack,
-  Input,
-  PresenceTransition,
-  ScrollView,
-  Text,
-  TextArea,
-  VStack,
-  View,
-} from 'native-base';
+import { Button, Center, FormControl, HStack, Input, ScrollView, Text, TextArea, VStack, View } from 'native-base';
 import React, { useState, useMemo, useEffect } from 'react';
-import { SafeAreaView } from 'react-native';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
-import { useNavigation } from '@react-navigation/native';
-import { memo } from 'react/cjs/react.production.min';
 import FadeTransition from '../../../../components/FadeTransition';
-import { SearchInput } from '../../../../components';
 import { handleChange } from '../../../../hooks/useValidation';
+import { DynamicSelectPage } from '../../../../components';
+import { url } from '../../../../config';
 
 const ContainerStyled = (props) => {
   return (
@@ -64,6 +49,8 @@ function AddNewCustomer({ handleClose }) {
   const [stepState, setStepState] = useState(1);
   const maxStep = 2;
 
+  const [openSelection, setOpenSelection] = useState(false);
+
   const initialState = {
     customer_name: '',
     customer_type: '',
@@ -86,6 +73,15 @@ function AddNewCustomer({ handleClose }) {
 
   const [state, setState] = useState(initialState);
 
+  const [urlSelected, setUrlSelected] = useState('');
+  const urlCtmGroup = url.CUSTOMER_GROUPS;
+  const urlTerritory = url.TERRITORY;
+
+  const handleChangeURL = (url) => {
+    setUrlSelected(url);
+    setOpenSelection(true);
+  };
+
   const FirstStep = ({ state, setState }) => {
     const [ctmState, setCtmState] = useState(state);
 
@@ -99,15 +95,11 @@ function AddNewCustomer({ handleClose }) {
       setState(initialState);
     };
 
-    // useEffect(() => {
-    //   console.log(ctmState);
-    // }, [ctmState]);
-
     return (
       <React.Fragment>
         <HStack
           position={'absolute'}
-          left={6}
+          left={4}
           top={2}
         >
           <Button
@@ -117,7 +109,7 @@ function AddNewCustomer({ handleClose }) {
             variant={'unstyled'}
             background={COLORS.lightWhite}
             _pressed={{ background: COLORS.white }}
-            _text={{ fontSize: 'lg', fontWeight: 'bold', color: COLORS.tertiary }}
+            _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
             onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
           >
             Back
@@ -135,7 +127,7 @@ function AddNewCustomer({ handleClose }) {
             variant={'unstyled'}
             background={COLORS.tertiary}
             _pressed={{ background: COLORS.tertiary2 }}
-            _text={{ fontSize: 'lg', fontWeight: 'extrabold', color: COLORS.lightWhite }}
+            _text={{ fontSize: 'sm', fontWeight: 'extrabold', color: COLORS.lightWhite }}
             onPress={() => stepState <= maxStep && handleForward()}
           >
             {stepState !== maxStep ? 'Next' : 'Submit'}
@@ -191,14 +183,18 @@ function AddNewCustomer({ handleClose }) {
             </HStack>
             <HStack direction={{ base: 'column', lg: 'row' }}>
               <StyledTextField
+                caretHidden
                 value={ctmState.customer_group}
-                handleChange={(val) => handleChange('customer_group', val, setCtmState)}
+                onPressIn={() => handleChangeURL(urlCtmGroup)}
+                // handleChange={(val) => handleChange('customer_group', val, setCtmState)}
                 label={'Customer Group'}
                 name={'customer_group'}
                 placeholder={'Selection*'}
               />
               <StyledTextField
+                caretHidden
                 value={ctmState.territory}
+                onPressIn={() => handleChangeURL(urlTerritory)}
                 handleChange={(val) => handleChange('territory', val, setCtmState)}
                 label={'Territory'}
                 name={'territory'}
@@ -316,7 +312,7 @@ function AddNewCustomer({ handleClose }) {
       <React.Fragment>
         <HStack
           position={'absolute'}
-          left={6}
+          left={4}
           top={2}
         >
           <Button
@@ -326,7 +322,7 @@ function AddNewCustomer({ handleClose }) {
             variant={'unstyled'}
             background={COLORS.lightWhite}
             _pressed={{ background: COLORS.white }}
-            _text={{ fontSize: 'lg', fontWeight: 'bold', color: COLORS.tertiary }}
+            _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
             onPress={() => handleBack()}
           >
             Back
@@ -344,7 +340,7 @@ function AddNewCustomer({ handleClose }) {
             variant={'unstyled'}
             background={COLORS.tertiary}
             _pressed={{ background: COLORS.tertiary2 }}
-            _text={{ fontSize: 'lg', fontWeight: 'extrabold', color: COLORS.lightWhite }}
+            _text={{ fontSize: 'sm', fontWeight: 'extrabold', color: COLORS.lightWhite }}
             onPress={() => stepState <= maxStep && handleForward()}
           >
             {stepState !== maxStep ? 'Next' : 'Submit'}
@@ -435,16 +431,24 @@ function AddNewCustomer({ handleClose }) {
     <ContainerStyled>
       <FadeTransition animated={stepState}>
         <Center>
-          {stepState === 1 && (
+          {stepState === 1 && !openSelection && (
             <FirstStep
               state={state}
               setState={setState}
             />
           )}
-          {stepState === 2 && (
+          {stepState === 2 && !openSelection && (
             <SecondStep
               state={state}
               setState={setState}
+            />
+          )}
+          {openSelection && (
+            <DynamicSelectPage
+              title={'Customer Groups'}
+              url={urlSelected}
+              open={openSelection}
+              setOpen={setOpenSelection}
             />
           )}
         </Center>

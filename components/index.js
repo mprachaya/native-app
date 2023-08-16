@@ -18,6 +18,7 @@ import { CustomerSkeletonBase, CustomerSkeletonLg, PurchaseOrderListSkeleton } f
 import SortModal from './SortModal';
 import TabMenu from './TabMenu';
 import TextStyled from './TextStyled';
+import DynamicSelectPage from './DynamicSelectPage';
 
 export {
   AppBar,
@@ -43,4 +44,5 @@ export {
   SortModal,
   TabMenu,
   TextStyled,
+  DynamicSelectPage,
 };

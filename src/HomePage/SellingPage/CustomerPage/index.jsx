@@ -10,7 +10,6 @@ import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
 import useFetch from '../../../../hooks/useFetch';
 import TextSearchDropdown from '../../../../_test/TextSearchDropdown';
-import { memo } from 'react/cjs/react.production.min';
 import AddNewCustomer from './AddNewCustomer';
 import FadeTransition from '../../../../components/FadeTransition';
 
