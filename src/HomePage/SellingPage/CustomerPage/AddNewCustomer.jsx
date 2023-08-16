@@ -86,11 +86,6 @@ function AddNewCustomer({ handleClose }) {
 
   const [state, setState] = useState(initialState);
 
-  const handleBack = () => {
-    handleClose();
-    // setCtmState(initialState);
-  };
-
   const FirstStep = ({ state, setState }) => {
     const [ctmState, setCtmState] = useState(state);
 
@@ -116,9 +111,12 @@ function AddNewCustomer({ handleClose }) {
           top={2}
         >
           <Button
-            py={0}
-            px={0}
+            m={2}
+            w={'20'}
+            rounded={'lg'}
             variant={'unstyled'}
+            background={COLORS.lightWhite}
+            _pressed={{ background: COLORS.white }}
             _text={{ fontSize: 'lg', fontWeight: 'bold', color: COLORS.tertiary }}
             onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
           >
@@ -131,10 +129,13 @@ function AddNewCustomer({ handleClose }) {
           top={2}
         >
           <Button
-            py={0}
-            px={0}
+            m={2}
+            w={'20'}
+            rounded={'lg'}
             variant={'unstyled'}
-            _text={{ fontSize: 'lg', fontWeight: 'bold', color: COLORS.tertiary }}
+            background={COLORS.tertiary}
+            _pressed={{ background: COLORS.tertiary2 }}
+            _text={{ fontSize: 'lg', fontWeight: 'extrabold', color: COLORS.lightWhite }}
             onPress={() => stepState <= maxStep && handleForward()}
           >
             {stepState !== maxStep ? 'Next' : 'Submit'}
@@ -319,9 +320,12 @@ function AddNewCustomer({ handleClose }) {
           top={2}
         >
           <Button
-            py={0}
-            px={0}
+            m={2}
+            w={'20'}
+            rounded={'lg'}
             variant={'unstyled'}
+            background={COLORS.lightWhite}
+            _pressed={{ background: COLORS.white }}
             _text={{ fontSize: 'lg', fontWeight: 'bold', color: COLORS.tertiary }}
             onPress={() => handleBack()}
           >
@@ -334,10 +338,13 @@ function AddNewCustomer({ handleClose }) {
           top={2}
         >
           <Button
-            py={0}
-            px={0}
+            m={2}
+            w={'20'}
+            rounded={'lg'}
             variant={'unstyled'}
-            _text={{ fontSize: 'lg', fontWeight: 'bold', color: COLORS.tertiary }}
+            background={COLORS.tertiary}
+            _pressed={{ background: COLORS.tertiary2 }}
+            _text={{ fontSize: 'lg', fontWeight: 'extrabold', color: COLORS.lightWhite }}
             onPress={() => stepState <= maxStep && handleForward()}
           >
             {stepState !== maxStep ? 'Next' : 'Submit'}
@@ -428,11 +435,6 @@ function AddNewCustomer({ handleClose }) {
     <ContainerStyled>
       <FadeTransition animated={stepState}>
         <Center>
-          {/* <SearchInput
-            value={Test}
-            onChangeText={(val) => setTest(val)}
-          /> */}
-
           {stepState === 1 && (
             <FirstStep
               state={state}
