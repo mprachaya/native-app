@@ -289,4 +289,4 @@ function CustomerPage() {
   );
 }
 
-export default memo(CustomerPage);
+export default CustomerPage;
