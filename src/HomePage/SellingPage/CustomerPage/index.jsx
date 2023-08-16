@@ -64,28 +64,6 @@ function CustomerPage() {
     filter: false,
   };
 
-  const initialState = {
-    customer_name: '',
-    customer_type: '',
-    customer_group: '',
-    territory: '',
-    market_segment: '',
-    industry: '',
-    mobile_no: '',
-    email_id: '',
-    tax_id: '',
-    primary_address: '',
-    website: '',
-    print_language: 'English',
-    customer_details: '',
-    default_currency: 'THB',
-    default_price_list: '',
-    default_sales_partner: '',
-    payment_terms: '',
-  };
-
-  const [state, setState] = useState(initialState);
-
   const [sortByState, setSortByState] = useState(initialsSortBy);
   const [sortTypeState, setSortTypeState] = useState(initialsSortType);
 
@@ -201,11 +179,7 @@ function CustomerPage() {
               zIndex={999}
             >
               <FadeTransition animated={openState.add}>
-                <AddNewCustomer
-                  state={state}
-                  initialState={initialState}
-                  handleClose={() => setOpenState((pre) => ({ ...pre, add: false }))}
-                />
+                <AddNewCustomer handleClose={() => setOpenState((pre) => ({ ...pre, add: false }))} />
               </FadeTransition>
             </Box>
           )}

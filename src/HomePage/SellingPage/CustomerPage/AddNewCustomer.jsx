@@ -18,6 +18,8 @@ import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import { useNavigation } from '@react-navigation/native';
 import { memo } from 'react/cjs/react.production.min';
 import FadeTransition from '../../../../components/FadeTransition';
+import { SearchInput } from '../../../../components';
+import { handleChange } from '../../../../hooks/useValidation';
 
 const ContainerStyled = (props) => {
   return (
@@ -37,6 +39,7 @@ const StyledTextField = (props) => {
       <FormControl.Label>{props.label}</FormControl.Label>
       <Input
         {...props}
+        name={props.name}
         value={props.value}
         bg={'blueGray.100'}
         borderWidth={2}
@@ -51,23 +54,48 @@ const StyledTextField = (props) => {
           borderColor: 'blueGray.300',
           backgroundColor: 'blueGray.100',
         }}
-        // onChangeText={props.handleChange}
+        onChangeText={props.handleChange}
       />
     </VStack>
   );
 };
 
-function AddNewCustomer({ state, initialState, handleClose }) {
+function AddNewCustomer({ handleClose }) {
   const [stepState, setStepState] = useState(1);
-  const [ctmState, setCtmState] = useState(state);
   const maxStep = 2;
+
+  const initialState = {
+    customer_name: '',
+    customer_type: '',
+    customer_group: '',
+    territory: '',
+    market_segment: '',
+    industry: '',
+    mobile_no: '',
+    email_id: '',
+    tax_id: '',
+    primary_address: '',
+    website: '',
+    print_language: 'English',
+    customer_details: '',
+    default_currency: 'THB',
+    default_price_list: '',
+    default_sales_partner: '',
+    payment_terms: '',
+  };
 
   const handleBack = () => {
     handleClose();
-    setCtmState(initialState);
+    // setCtmState(initialState);
   };
 
   const FirstStep = () => {
+    const [ctmState, setCtmState] = useState(initialState);
+
+    useMemo(() => {
+      console.log(ctmState);
+    }, [ctmState]);
+
     return (
       <VStack
         m={6}
@@ -78,67 +106,88 @@ function AddNewCustomer({ state, initialState, handleClose }) {
           <HStack direction={{ base: 'column', lg: 'row' }}>
             <StyledTextField
               value={ctmState.customer_name}
+              handleChange={(val) => handleChange('customer_name', val, setCtmState)}
               label={'Name'}
               placeholder={'Customer Name*'}
             />
             <StyledTextField
               value={ctmState.customer_type}
+              handleChange={(val) => handleChange('customer_type', val, setCtmState)}
               label={'Type'}
+              name={'customer_type'}
               placeholder={'Dropdown*'}
             />
           </HStack>
           <HStack direction={{ base: 'column', lg: 'row' }}>
             <StyledTextField
               value={ctmState.customer_group}
+              handleChange={(val) => handleChange('customer_group', val, setCtmState)}
               label={'Customer Group'}
+              name={'customer_group'}
               placeholder={'Selection*'}
             />
             <StyledTextField
               value={ctmState.territory}
+              handleChange={(val) => handleChange('territory', val, setCtmState)}
               label={'Territory'}
+              name={'territory'}
               placeholder={'Selection*'}
             />
           </HStack>
           <HStack direction={{ base: 'column', lg: 'row' }}>
             <StyledTextField
               value={ctmState.market_segment}
+              handleChange={(val) => handleChange('market_segment', val, setCtmState)}
               label={'Market Segment'}
+              name={'market_segment'}
               placeholder={'Selection'}
             />
             <StyledTextField
               value={ctmState.industry}
+              handleChange={(val) => handleChange('industry', val, setCtmState)}
               label={'Industry'}
+              name={'industry'}
               placeholder={'Selection'}
             />
           </HStack>
           <HStack direction={{ base: 'column', lg: 'row' }}>
             <StyledTextField
               value={ctmState.mobile_no}
+              handleChange={(val) => handleChange('mobile_no', val, setCtmState)}
               label={'Mobile Number'}
+              name={'mobile_no'}
               placeholder={'Mobile Number'}
             />
             <StyledTextField
               value={ctmState.email_id}
+              handleChange={(val) => handleChange('email_id', val, setCtmState)}
               label={'Email Address'}
+              name={'email_id'}
               placeholder={'Email Address'}
             />
           </HStack>
           <HStack direction={{ base: 'column', lg: 'row' }}>
             <StyledTextField
-              value={ctmState.email_id}
+              value={ctmState.tax_id}
+              handleChange={(val) => handleChange('tax_id', val, setCtmState)}
               label={'Tax ID'}
+              name={'email_id'}
               placeholder={'Tax ID'}
             />
             <StyledTextField
               value={ctmState.primary_address}
+              handleChange={(val) => handleChange('primary_address', val, setCtmState)}
               label={'Address'}
+              name={'primary_address'}
               placeholder={'Address'}
             />
           </HStack>
           <HStack direction={{ base: 'column', lg: 'row' }}>
             <StyledTextField
               value={ctmState.website}
+              handleChange={(val) => handleChange('website', val, setCtmState)}
               label={'Website'}
+              name={'website'}
               placeholder={'Website'}
             />
           </HStack>
@@ -153,6 +202,8 @@ function AddNewCustomer({ state, initialState, handleClose }) {
               <TextArea
                 h={20}
                 value={ctmState.customer_details}
+                onChangeText={(val) => handleChange('customer_details', val, setCtmState)}
+                name={'customer_details'}
                 placeholder='Customer Details'
                 minW={{ base: 'full', lg: 800 }}
                 bg={'blueGray.100'}
@@ -183,24 +234,32 @@ function AddNewCustomer({ state, initialState, handleClose }) {
           <HStack direction={{ base: 'column', lg: 'row' }}>
             <StyledTextField
               value={ctmState.default_currency}
+              handleChange={(val) => handleChange('default_currency', val, setCtmState)}
               label={'Currency'}
+              name={'default_currency'}
               placeholder={'Selection*'}
             />
             <StyledTextField
               value={ctmState.default_price_list}
+              handleChange={(val) => handleChange('default_price_list', val, setCtmState)}
               label={'Price List'}
+              name={'default_price_list'}
               placeholder={'Selection*'}
             />
           </HStack>
           <HStack direction={{ base: 'column', lg: 'row' }}>
             <StyledTextField
               value={ctmState.default_sales_partner}
+              handleChange={(val) => handleChange('default_sales_partner', val, setCtmState)}
               label={'Sale Partner'}
+              name={'default_sales_partner'}
               placeholder={'Selection'}
             />
             <StyledTextField
               value={ctmState.payment_terms}
+              handleChange={(val) => handleChange('payment_terms', val, setCtmState)}
               label={'Payment Terms Template'}
+              name={'payment_terms'}
               placeholder={'Selection'}
             />
           </HStack>
@@ -214,85 +273,81 @@ function AddNewCustomer({ state, initialState, handleClose }) {
     );
   };
 
-  // const [state, setState] = {};
-
-  useMemo(() => {
-    if (!state) {
-    } else {
-      setCtmState(state);
-      console.log(state);
-    }
-  }, [state]);
-
   return (
-    <SafeAreaView>
-      <ContainerStyled>
-        <FadeTransition animated={stepState}>
-          <Center>
-            <HStack
-              position={'absolute'}
-              left={6}
-              top={2}
+    // <SafeAreaView>
+    <ContainerStyled>
+      <FadeTransition animated={stepState}>
+        <Center>
+          <HStack
+            position={'absolute'}
+            left={6}
+            top={2}
+          >
+            <Button
+              py={0}
+              px={0}
+              variant={'unstyled'}
+              _text={{ fontSize: 'lg', fontWeight: 'bold', color: COLORS.tertiary }}
+              onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
             >
-              <Button
-                py={0}
-                px={0}
-                variant={'unstyled'}
-                _text={{ fontSize: 'lg', fontWeight: 'bold', color: COLORS.tertiary }}
-                onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
-              >
-                Back
-              </Button>
-            </HStack>
-            <HStack
-              position={'absolute'}
-              right={6}
-              top={2}
+              Back
+            </Button>
+          </HStack>
+          <HStack
+            position={'absolute'}
+            right={6}
+            top={2}
+          >
+            <Button
+              py={0}
+              px={0}
+              variant={'unstyled'}
+              _text={{ fontSize: 'lg', fontWeight: 'bold', color: COLORS.tertiary }}
+              onPress={() => stepState < maxStep && setStepState((post) => post + 1)}
             >
-              <Button
-                py={0}
-                px={0}
-                variant={'unstyled'}
-                _text={{ fontSize: 'lg', fontWeight: 'bold', color: COLORS.tertiary }}
-                onPress={() => stepState < maxStep && setStepState((post) => post + 1)}
-              >
-                {stepState !== maxStep ? 'Next' : 'Submit'}
-              </Button>
-            </HStack>
-            <HStack mt={{ base: 6, lg: 24 }}>
-              <Text
-                mt={2}
-                color={COLORS.tertiary}
-                fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
-                fontWeight={'bold'}
-                letterSpacing={2}
-              >
-                {stepState}
-              </Text>
-              <Text
-                mt={2}
-                fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
-                fontWeight={'bold'}
-                letterSpacing={2}
-              >
-                /{maxStep}
-              </Text>
-              <Text
-                mt={2}
-                ml={2}
-                fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
-                fontWeight={'bold'}
-              >
-                STEP
-              </Text>
-            </HStack>
-            {stepState === 1 && <FirstStep />}
-            {stepState === 2 && <SecondStep />}
-          </Center>
-        </FadeTransition>
-      </ContainerStyled>
-    </SafeAreaView>
+              {stepState !== maxStep ? 'Next' : 'Submit'}
+            </Button>
+          </HStack>
+          <HStack mt={{ base: 6, lg: 24 }}>
+            <Text
+              mt={2}
+              color={COLORS.tertiary}
+              fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+              fontWeight={'bold'}
+              letterSpacing={2}
+            >
+              {stepState}
+            </Text>
+            <Text
+              mt={2}
+              fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+              fontWeight={'bold'}
+              letterSpacing={2}
+            >
+              /{maxStep}
+            </Text>
+            <Text
+              mt={2}
+              ml={2}
+              fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+              fontWeight={'bold'}
+            >
+              STEP
+            </Text>
+          </HStack>
+          {/* <SearchInput
+            value={Test}
+            onChangeText={(val) => setTest(val)}
+          /> */}
+          <FirstStep />
+          {/* {stepState === 1 && <FirstStep />} */}
+
+          {stepState === 2 && <SecondStep />}
+        </Center>
+      </FadeTransition>
+    </ContainerStyled>
+    // </SafeAreaView>
   );
 }
 
-export default memo(AddNewCustomer);
+export default AddNewCustomer;
