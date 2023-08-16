@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { SafeAreaView } from 'react-native';
 import { SearchInput } from '../components';
 import useFetch from '../hooks/useFetch';
+import FadeTransition from '../components/FadeTransition';
 
 const ContainerStyled = (props) => {
   return (
@@ -132,109 +133,109 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
             position={'absolute'}
             top={50}
           >
-            <FlatList
-              mx={{ base: 4, lg: '30%' }}
-              data={data}
-              renderItem={({ item }) => (
-                <Pressable
-                  m={1}
-                  // onPress={() => setOnFocus(false)}
-                >
-                  {({ isHovered, isFocused, isPressed }) => {
-                    return (
-                      <Box
-                        zIndex={999}
-                        mb={2}
-                        bg={isPressed ? 'coolGray.200' : isHovered ? 'blueGray.200' : 'blueGray.100'}
-                        style={{
-                          transform: [
-                            {
-                              scale: isPressed ? 0.99 : 1,
-                            },
-                          ],
-                        }}
-                        p='5'
-                        rounded='12'
-                        borderWidth='1'
-                        borderColor='coolGray.300'
-                      >
-                        <HStack justifyContent='space-between'>
-                          <HStack
-                            w={{ base: '220px', lg: '72' }}
-                            flexWrap={'wrap'}
-                            alignItems='center'
-                            space={1}
-                          >
-                            <Badge
-                              mb={0.5}
-                              colorScheme='darkBlue'
-                              _text={{
-                                color: 'white',
-                              }}
-                              variant='solid'
-                              rounded='4'
-                            >
-                              {item[dataColumn[0]]}
-                            </Badge>
-
-                            <Badge
-                              mb={0.5}
-                              colorScheme='info'
-                              _text={{
-                                color: 'white',
-                              }}
-                              variant='solid'
-                              rounded='4'
-                            >
-                              {item[dataColumn[1]]}
-                            </Badge>
-                          </HStack>
-
-                          <Text
-                            fontSize={10}
-                            color='coolGray.800'
-                          >
-                            {item.creation.slice(0, 16)}
-                          </Text>
-                        </HStack>
-                        <Text
-                          color='coolGray.800'
-                          mt='3'
-                          fontWeight='medium'
-                          fontSize='xl'
+            <FadeTransition animated={onFocus}>
+              <FlatList
+                h={500}
+                mx={{ base: 4, lg: '30%' }}
+                data={data}
+                renderItem={({ item }) => (
+                  <Pressable m={1}>
+                    {({ isHovered, isFocused, isPressed }) => {
+                      return (
+                        <Box
+                          zIndex={999}
+                          mb={2}
+                          bg={isPressed ? 'coolGray.200' : isHovered ? 'blueGray.200' : 'blueGray.100'}
+                          style={{
+                            transform: [
+                              {
+                                scale: isPressed ? 0.99 : 1,
+                              },
+                            ],
+                          }}
+                          p='5'
+                          rounded='12'
+                          borderWidth='1'
+                          borderColor='coolGray.300'
                         >
-                          {item[dataColumn[2]]}
-                        </Text>
+                          <HStack justifyContent='space-between'>
+                            <HStack
+                              w={{ base: '220px', lg: '72' }}
+                              flexWrap={'wrap'}
+                              alignItems='center'
+                              space={1}
+                            >
+                              <Badge
+                                mb={0.5}
+                                colorScheme='darkBlue'
+                                _text={{
+                                  color: 'white',
+                                }}
+                                variant='solid'
+                                rounded='4'
+                              >
+                                {item[dataColumn[0]]}
+                              </Badge>
 
-                        <Flex>
-                          {isFocused ? (
+                              <Badge
+                                mb={0.5}
+                                colorScheme='info'
+                                _text={{
+                                  color: 'white',
+                                }}
+                                variant='solid'
+                                rounded='4'
+                              >
+                                {item[dataColumn[1]]}
+                              </Badge>
+                            </HStack>
+
                             <Text
-                              mt='2'
-                              fontSize={12}
-                              fontWeight='medium'
-                              textDecorationLine='underline'
-                              color='darkBlue.600'
-                              alignSelf='flex-start'
+                              fontSize={10}
+                              color='coolGray.800'
                             >
-                              Read More
+                              {item.creation.slice(0, 16)}
                             </Text>
-                          ) : (
-                            <Text
-                              mt='2'
-                              fontSize={12}
-                              fontWeight='medium'
-                              color='darkBlue.600'
-                            >
-                              Read More
-                            </Text>
-                          )}
-                        </Flex>
-                      </Box>
-                    );
-                  }}
-                </Pressable>
-              )}
-            />
+                          </HStack>
+                          <Text
+                            color='coolGray.800'
+                            mt='3'
+                            fontWeight='medium'
+                            fontSize='xl'
+                          >
+                            {item[dataColumn[2]]}
+                          </Text>
+
+                          <Flex>
+                            {isFocused ? (
+                              <Text
+                                mt='2'
+                                fontSize={12}
+                                fontWeight='medium'
+                                textDecorationLine='underline'
+                                color='darkBlue.600'
+                                alignSelf='flex-start'
+                              >
+                                Read More
+                              </Text>
+                            ) : (
+                              <Text
+                                mt='2'
+                                fontSize={12}
+                                fontWeight='medium'
+                                color='darkBlue.600'
+                              >
+                                Read More
+                              </Text>
+                            )}
+                          </Flex>
+                        </Box>
+                      );
+                    }}
+                  </Pressable>
+                )}
+              />
+            </FadeTransition>
           </VStack>
         )}
       </Center>

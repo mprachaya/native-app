@@ -4,6 +4,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
 import { Context } from '../../../../reducer/';
+import { memo } from 'react/cjs/react.production.min';
 
 const ContainerStyled = (props) => {
   return (
@@ -297,4 +298,4 @@ function SortAndroid({ route, navigation }) {
   );
 }
 
-export default SortAndroid;
+export default memo(SortAndroid);

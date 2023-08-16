@@ -10,6 +10,9 @@ import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
 import useFetch from '../../../../hooks/useFetch';
 import TextSearchDropdown from '../../../../_test/TextSearchDropdown';
+import { memo } from 'react/cjs/react.production.min';
+import AddNewCustomer from './AddNewCustomer';
+import FadeTransition from '../../../../components/FadeTransition';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -26,15 +29,24 @@ const ContainerStyled = (props) => {
   );
 };
 
-function CustomerPage({ openState, setOpenState }) {
+function CustomerPage() {
+  // for hot reload
   const [reloadState, setReloadState] = useState(true);
+  // for background search function
   const [showBackgroundSearch, setShowBackgroundSearch] = useState(false);
+  // for display total from list data
   const [lengthSearch, setLengthSearch] = useState(0);
   const [dataShowLength, setDataShowLength] = useState(null);
+  // for navigate between pages
   const navigation = useNavigation();
-
+  // for add ,sort ,filter state controller
+  const [openState, setOpenState] = useState({
+    add: false,
+    sort: false,
+    filter: false,
+  });
+  // column for searching
   const dataColumn = ['customer_group', 'territory', 'name'];
-
   const initialsSortBy = {
     Creation: false,
     Modified: false,
@@ -52,8 +64,32 @@ function CustomerPage({ openState, setOpenState }) {
     filter: false,
   };
 
+  const initialState = {
+    customer_name: '',
+    customer_type: '',
+    customer_group: '',
+    territory: '',
+    market_segment: '',
+    industry: '',
+    mobile_no: '',
+    email_id: '',
+    tax_id: '',
+    primary_address: '',
+    website: '',
+    print_language: 'English',
+    customer_details: '',
+    default_currency: 'THB',
+    default_price_list: '',
+    default_sales_partner: '',
+    payment_terms: '',
+  };
+
+  const [state, setState] = useState(initialState);
+
   const [sortByState, setSortByState] = useState(initialsSortBy);
   const [sortTypeState, setSortTypeState] = useState(initialsSortType);
+
+  // data fetching with custom hook useFetch
   const {
     data: customerData,
     setData: setCustomerData,
@@ -84,9 +120,11 @@ function CustomerPage({ openState, setOpenState }) {
     return handleBack;
   }, [navigation]);
 
+  // hot loading when data still not available
   if (loading && loadingCompany) {
     return <Loading loading={loading} />;
   }
+  // handle error when data is not available
   if (error && errorCompany) {
     return (
       <ContainerStyled>
@@ -143,8 +181,34 @@ function CustomerPage({ openState, setOpenState }) {
                 // openFilter={() => setOpenState((pre) => ({ ...pre, filter: true }))}
               />
             )}
+            {Platform.OS === 'ios' && (
+              <NavHeaderRight
+                openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
+                openSort={() => setOpenState((pre) => ({ ...pre, sort: true }))}
+                // openFilter={() => setOpenState((pre) => ({ ...pre, filter: true }))}
+              />
+            )}
           </HStack>
-
+          {openState.add && (
+            <Box
+              top={0}
+              left={0}
+              right={'25%'}
+              position='absolute'
+              bg={'blueGray.100'}
+              height={SCREEN_HEIGHT}
+              width={'full'}
+              zIndex={999}
+            >
+              <FadeTransition animated={openState.add}>
+                <AddNewCustomer
+                  state={state}
+                  initialState={initialState}
+                  handleClose={() => setOpenState((pre) => ({ ...pre, add: false }))}
+                />
+              </FadeTransition>
+            </Box>
+          )}
           <HStack
             mx={{ base: 0, lg: 24 }}
             justifyContent={{ base: 'center', lg: 'flex-end' }}
@@ -221,30 +285,34 @@ function CustomerPage({ openState, setOpenState }) {
             mt={6}
             mr={{ base: 8, lg: 6 }}
           >
-            <Text>1 to {dataShowLength !== null ? dataShowLength : '1'}</Text>
+            <Text>
+              {dataShowLength} to {customerData.length}
+            </Text>
           </HStack>
-          <CustomerList
-            reload={reloadState}
-            setReload={setReloadState}
-            data={customerData}
-            token={config.API_TOKEN}
-            returnDataIndex={setDataShowLength}
-          />
+          {!showBackgroundSearch && !openState.add && !openState.filter && (
+            <CustomerList
+              reload={reloadState}
+              setReload={setReloadState}
+              data={customerData}
+              token={config.API_TOKEN}
+              returnDataIndex={setDataShowLength}
+            />
+          )}
         </VStack>
       </Center>
-      {Platform.OS === 'ios' && (
-        <SortModal
-          open={openState.sort}
-          setOpen={setOpenState}
-          setReload={setReloadState}
-          data={customerData}
-          setData={setCustomerData}
-          sortBy={SortBy}
-        />
-      )}
-      {openState.add && navigation.navigate('AddNewCustomer')}
+      {/* {Platform.OS === 'ios' && ( */}
+      <SortModal
+        open={openState.sort}
+        setOpen={setOpenState}
+        setReload={setReloadState}
+        data={customerData}
+        setData={setCustomerData}
+        sortBy={SortBy}
+      />
+      {/* )} */}
+      {/* {openState.add && navigation.navigate('AddNewCustomer')} */}
     </ContainerStyled>
   );
 }
 
-export default CustomerPage;
+export default memo(CustomerPage);
