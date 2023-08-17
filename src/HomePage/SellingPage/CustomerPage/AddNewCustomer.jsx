@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
 import { handleChange } from '../../../../hooks/useValidation';
-import { DynamicSelectPage } from '../../../../components';
+import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import { url } from '../../../../config';
 
 const ContainerStyled = (props) => {
@@ -51,6 +51,7 @@ function AddNewCustomer({ handleClose }) {
   const maxStep = 2;
 
   const [openSelection, setOpenSelection] = useState(false);
+  const [openCustomerType, setOpenCustomerType] = useState(false);
 
   const initialState = {
     customer_name: '',
@@ -74,20 +75,30 @@ function AddNewCustomer({ handleClose }) {
 
   const [state, setState] = useState(initialState);
 
+  const [titleSelection, setTitleSelection] = useState('');
+
   const [urlSelected, setUrlSelected] = useState('');
   const urlCtmGroup = url.CUSTOMER_GROUPS;
   const urlTerritory = url.TERRITORY;
 
   const [propertySelected, setPropertySelected] = useState('');
 
+  //option selection with static option
+  const customerTypes = [{ name: 'Company' }, { name: 'Individual' }];
+
   const getValueFromSelection = (name) => {
     setPropertySelected(name);
   };
 
-  const handleChangeURL = (name, url) => {
+  const handleChangeURL = (title, name, url) => {
+    setTitleSelection(title);
     getValueFromSelection(name);
     setUrlSelected(url);
     setOpenSelection(true);
+  };
+
+  const handleOpenStaticSelection = () => {
+    setOpenCustomerType(true);
   };
 
   const FirstStep = ({ state, setState }) => {
@@ -180,8 +191,10 @@ function AddNewCustomer({ handleClose }) {
                 placeholder={'Customer Name*'}
               />
               <StyledTextField
+                caretHidden
+                showSoftInputOnFocus={false} // disable toggle keyboard
                 value={ctmState.customer_type}
-                handleChange={(val) => handleChange('customer_type', val, setCtmState)}
+                onPressIn={() => handleOpenStaticSelection()}
                 label={'Type'}
                 name={'customer_type'}
                 placeholder={'Dropdown*'}
@@ -190,8 +203,9 @@ function AddNewCustomer({ handleClose }) {
             <HStack direction={{ base: 'column', lg: 'row' }}>
               <StyledTextField
                 caretHidden
+                showSoftInputOnFocus={false} // disable toggle keyboard
                 value={ctmState.customer_group}
-                onPressIn={() => handleChangeURL('customer_group', urlCtmGroup)}
+                onPressIn={() => handleChangeURL('Customer Groups', 'customer_group', urlCtmGroup)}
                 // handleChange={(val) => handleChange('customer_group', val, setCtmState)}
                 label={'Customer Group'}
                 name={'customer_group'}
@@ -200,7 +214,8 @@ function AddNewCustomer({ handleClose }) {
               <StyledTextField
                 caretHidden
                 value={ctmState.territory}
-                onPressIn={() => handleChangeURL('territory', urlTerritory)}
+                showSoftInputOnFocus={false} // disable toggle keyboard
+                onPressIn={() => handleChangeURL('Territory', 'territory', urlTerritory)}
                 handleChange={(val) => handleChange('territory', val, setCtmState)}
                 label={'Territory'}
                 name={'territory'}
@@ -445,13 +460,13 @@ function AddNewCustomer({ handleClose }) {
           >
             {title}
           </Text>
-          {stepState === 1 && !openSelection && (
+          {stepState === 1 && !openSelection && !openCustomerType && (
             <FirstStep
               state={state}
               setState={setState}
             />
           )}
-          {stepState === 2 && !openSelection && (
+          {stepState === 2 && !openSelection && !openCustomerType && (
             <SecondStep
               state={state}
               setState={setState}
@@ -459,12 +474,22 @@ function AddNewCustomer({ handleClose }) {
           )}
           {openSelection && (
             <DynamicSelectPage
-              title={'Customer Groups'}
+              title={titleSelection}
               url={urlSelected}
               open={openSelection}
               setOpen={setOpenSelection}
               setState={setState}
               property={propertySelected}
+            />
+          )}
+          {openCustomerType && (
+            <StaticSelectPage
+              title={'Customer Type'}
+              data={customerTypes}
+              open={openCustomerType}
+              setOpen={setOpenCustomerType}
+              setState={setState}
+              property={'customer_type'}
             />
           )}
         </Center>

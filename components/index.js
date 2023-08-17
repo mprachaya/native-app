@@ -19,6 +19,7 @@ import SortModal from './SortModal';
 import TabMenu from './TabMenu';
 import TextStyled from './TextStyled';
 import DynamicSelectPage from './DynamicSelectPage';
+import StaticSelectPage from './StaticSelectPage';
 import TextSearchDropdown from './TextSearchDropdown';
 
 export {
@@ -46,5 +47,6 @@ export {
   TabMenu,
   TextStyled,
   DynamicSelectPage,
+  StaticSelectPage,
   TextSearchDropdown,
 };

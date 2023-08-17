@@ -22,7 +22,7 @@ const ContainerStyled = (props) => {
   );
 };
 
-function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
+function StaticSelectPage({ title, data, open, setOpen, setState, property }) {
   const [list, setList] = useState([]);
   const [SearchText, setSearchText] = useState('');
 
@@ -56,12 +56,6 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
 
   // data fetching with custom hook useFetch
 
-  const { data, loading, error } = useFetch(url, {
-    headers: {
-      Authorization: config.API_TOKEN,
-    },
-  });
-
   const clearSearch = () => {
     setSearchText('');
   };
@@ -79,9 +73,8 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
   };
 
   useEffect(() => {
-    if (data.length !== 0) {
-      setList(data);
-    }
+    setList(data);
+
     // console.log('data: ', data);
     // console.log('option: ', option);
   }, [data]);
@@ -109,27 +102,6 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
 
     console.log(SearchText);
   }, [SearchText]);
-
-  if (loading) {
-    return (
-      <View
-        m={'auto'}
-        mt={40}
-      >
-        <Spinner />
-      </View>
-    );
-  }
-
-  if (error && !option) {
-    return (
-      <ContainerStyled>
-        <HStack justifyContent='center'>
-          <Text>ERROR</Text>
-        </HStack>
-      </ContainerStyled>
-    );
-  }
 
   return (
     <PresenceTransition
@@ -241,4 +213,4 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
   );
 }
 
-export default DynamicSelectPage;
+export default StaticSelectPage;
