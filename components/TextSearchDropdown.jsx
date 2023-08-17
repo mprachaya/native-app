@@ -1,10 +1,7 @@
-import { Badge, Box, Center, FlatList, Flex, HStack, Image, Pressable, Text, VStack, View } from 'native-base';
-import React, { useState, useMemo, useEffect } from 'react';
+import { Badge, Box, Center, FlatList, Flex, HStack, Pressable, Text, VStack, View } from 'native-base';
+import React, { useState, useEffect } from 'react';
 
-import { SafeAreaView } from 'react-native';
-import { SearchInput } from '../components';
-import useFetch from '../hooks/useFetch';
-import FadeTransition from '../components/FadeTransition';
+import { SearchInput, FadeTransition } from '.';
 
 const ContainerStyled = (props) => {
   return (

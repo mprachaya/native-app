@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Box, Center, HStack, Text, VStack, View } from 'native-base';
-import { Loading, SortModal, NavHeaderRight } from '../../../../components';
+import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { CustomerList } from './CustomerList';
 import { config, url } from '../../../../config';
@@ -9,7 +9,6 @@ import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
 import useFetch from '../../../../hooks/useFetch';
-import TextSearchDropdown from '../../../../_test/TextSearchDropdown';
 import AddNewCustomer from './AddNewCustomer';
 import FadeTransition from '../../../../components/FadeTransition';
 

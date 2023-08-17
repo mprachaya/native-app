@@ -46,6 +46,7 @@ const StyledTextField = (props) => {
 };
 
 function AddNewCustomer({ handleClose }) {
+  const title = 'Add New Customer';
   const [stepState, setStepState] = useState(1);
   const maxStep = 2;
 
@@ -77,7 +78,14 @@ function AddNewCustomer({ handleClose }) {
   const urlCtmGroup = url.CUSTOMER_GROUPS;
   const urlTerritory = url.TERRITORY;
 
-  const handleChangeURL = (url) => {
+  const [propertySelected, setPropertySelected] = useState('');
+
+  const getValueFromSelection = (name) => {
+    setPropertySelected(name);
+  };
+
+  const handleChangeURL = (name, url) => {
+    getValueFromSelection(name);
     setUrlSelected(url);
     setOpenSelection(true);
   };
@@ -133,9 +141,8 @@ function AddNewCustomer({ handleClose }) {
             {stepState !== maxStep ? 'Next' : 'Submit'}
           </Button>
         </HStack>
-        <HStack mt={{ base: 6, lg: 24 }}>
+        <HStack mt={{ base: 20, lg: 24 }}>
           <Text
-            mt={2}
             color={COLORS.tertiary}
             fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
             fontWeight={'bold'}
@@ -144,7 +151,6 @@ function AddNewCustomer({ handleClose }) {
             {stepState}
           </Text>
           <Text
-            mt={2}
             fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
             fontWeight={'bold'}
             letterSpacing={2}
@@ -152,7 +158,6 @@ function AddNewCustomer({ handleClose }) {
             /{maxStep}
           </Text>
           <Text
-            mt={2}
             ml={2}
             fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
             fontWeight={'bold'}
@@ -161,6 +166,7 @@ function AddNewCustomer({ handleClose }) {
           </Text>
         </HStack>
         <VStack
+          mt={2}
           m={6}
           space={SPACING.small}
           h={{ base: 500, lg: 1200 }}
@@ -185,7 +191,7 @@ function AddNewCustomer({ handleClose }) {
               <StyledTextField
                 caretHidden
                 value={ctmState.customer_group}
-                onPressIn={() => handleChangeURL(urlCtmGroup)}
+                onPressIn={() => handleChangeURL('customer_group', urlCtmGroup)}
                 // handleChange={(val) => handleChange('customer_group', val, setCtmState)}
                 label={'Customer Group'}
                 name={'customer_group'}
@@ -194,7 +200,7 @@ function AddNewCustomer({ handleClose }) {
               <StyledTextField
                 caretHidden
                 value={ctmState.territory}
-                onPressIn={() => handleChangeURL(urlTerritory)}
+                onPressIn={() => handleChangeURL('territory', urlTerritory)}
                 handleChange={(val) => handleChange('territory', val, setCtmState)}
                 label={'Territory'}
                 name={'territory'}
@@ -431,6 +437,14 @@ function AddNewCustomer({ handleClose }) {
     <ContainerStyled>
       <FadeTransition animated={stepState}>
         <Center>
+          <Text
+            position={'absolute'}
+            fontWeight={'bold'}
+            color={COLORS.tertiary2}
+            top={6}
+          >
+            {title}
+          </Text>
           {stepState === 1 && !openSelection && (
             <FirstStep
               state={state}
@@ -449,6 +463,8 @@ function AddNewCustomer({ handleClose }) {
               url={urlSelected}
               open={openSelection}
               setOpen={setOpenSelection}
+              setState={setState}
+              property={propertySelected}
             />
           )}
         </Center>

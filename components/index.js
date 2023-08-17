@@ -19,6 +19,7 @@ import SortModal from './SortModal';
 import TabMenu from './TabMenu';
 import TextStyled from './TextStyled';
 import DynamicSelectPage from './DynamicSelectPage';
+import TextSearchDropdown from './TextSearchDropdown';
 
 export {
   AppBar,
@@ -45,4 +46,5 @@ export {
   TabMenu,
   TextStyled,
   DynamicSelectPage,
+  TextSearchDropdown,
 };

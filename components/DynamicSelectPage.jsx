@@ -1,11 +1,10 @@
-import { Button, Center, Divider, FlatList, HStack, Text, VStack, View } from 'native-base';
-import React from 'react';
+import { Button, Center, FlatList, HStack, Input, PresenceTransition, Spinner, Text, VStack, View } from 'native-base';
+import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native';
-import FadeTransition from './FadeTransition';
-import { COLORS } from '../constants/theme';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { COLORS, ICON, SIZES, SPACING } from '../constants/theme';
 import useFetch from '../hooks/useFetch';
 import { config } from '../config';
-import { Loading, SearchInput } from '.';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -23,7 +22,15 @@ const ContainerStyled = (props) => {
   );
 };
 
-function DynamicSelectPage({ title, url, open, setOpen }) {
+function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
+  const [list, setList] = useState([]);
+  const [onFocus, setOnFocus] = useState(false);
+  const [SearchText, setSearchText] = useState('');
+
+  const returnValue = (name, value) => {
+    setState((pre) => ({ ...pre, [name]: value }));
+    setOpen(false);
+  };
   const Item = ({ name }) => (
     <Button
       mx={2}
@@ -34,6 +41,7 @@ function DynamicSelectPage({ title, url, open, setOpen }) {
       rounded={12}
       bg={'blueGray.50'}
       _pressed={{ bg: 'blueGray.200' }}
+      onPress={() => returnValue(property, name)}
     >
       <Text
         p={2}
@@ -54,9 +62,59 @@ function DynamicSelectPage({ title, url, open, setOpen }) {
     },
   });
 
+  const clearSearch = () => {
+    setSearchText('');
+  };
+
+  const handleSearch = (dataList, searchText, key) => {
+    let tempData = dataList?.filter((item) => {
+      return String(item[key]).toLowerCase().indexOf(searchText.toLowerCase()) > -1;
+    });
+
+    if (tempData.length > 0) {
+      return tempData;
+    } else {
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    if (data) {
+      setList(data);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (!SearchText) {
+      if (data) {
+        console.log('reset : ', data);
+        setList(data);
+      }
+    } else {
+      // Object.keys(data[0])?.map((key) => {
+      //   if (key !== 'image') {
+      const search = handleSearch(list, SearchText, 'name');
+      if (search) {
+        setList(search);
+      } else {
+        setList([]);
+      }
+    }
+
+    console.log(SearchText);
+  }, [SearchText]);
+
   if (loading) {
-    return <Loading loading={loading} />;
+    return (
+      <View
+        m={'auto'}
+        mt={40}
+      >
+        <Spinner />
+      </View>
+    );
   }
+
   if (error) {
     return (
       <ContainerStyled>
@@ -68,7 +126,18 @@ function DynamicSelectPage({ title, url, open, setOpen }) {
   }
 
   return (
-    <FadeTransition animated={open}>
+    <PresenceTransition
+      visible={open ? true : false}
+      initial={{
+        opacity: 0,
+      }}
+      animate={{
+        opacity: 1,
+        transition: {
+          duration: 500,
+        },
+      }}
+    >
       <ContainerStyled>
         <Center>
           <VStack
@@ -95,7 +164,47 @@ function DynamicSelectPage({ title, url, open, setOpen }) {
             mr={{ base: 6, lg: 0 }}
             justifyContent={'center'}
           >
-            <SearchInput />
+            <Input
+              value={SearchText}
+              onChangeText={(val) => setSearchText(val)}
+              height={{ base: 9, lg: 10 }}
+              rounded={12}
+              mx='2'
+              placeholder='Search'
+              fontSize={{ base: SIZES.medium, lg: SIZES.large }}
+              w={{ base: 'full', lg: 500 }}
+              backgroundColor='blueGray.100'
+              _focus={{
+                borderColor: 'white',
+                backgroundColor: 'blueGray.200',
+              }}
+              InputLeftElement={
+                <HStack mx={SPACING.small}>
+                  <Icon
+                    name='search'
+                    size={ICON.base}
+                    color={'gray'}
+                  />
+                </HStack>
+              }
+              InputRightElement={
+                // clear && (
+                <HStack mx={SPACING.small}>
+                  <Button
+                    variant={'unstyled'}
+                    p={1}
+                    onPress={clearSearch}
+                  >
+                    <Icon
+                      name='close'
+                      size={ICON.base}
+                      color={'gray'}
+                    />
+                  </Button>
+                </HStack>
+                // )
+              }
+            />
           </HStack>
           <VStack
             justifyContent={'center'}
@@ -114,7 +223,7 @@ function DynamicSelectPage({ title, url, open, setOpen }) {
 
             <FlatList
               h={500}
-              data={data}
+              data={list}
               w={{ base: 'sm', lg: 'lg' }}
               // showsHorizontalScrollIndicator={false}
               renderItem={({ item }) => <Item name={item.name} />}
@@ -122,7 +231,7 @@ function DynamicSelectPage({ title, url, open, setOpen }) {
           </VStack>
         </Center>
       </ContainerStyled>
-    </FadeTransition>
+    </PresenceTransition>
   );
 }
 
