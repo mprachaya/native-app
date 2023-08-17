@@ -72,6 +72,11 @@ function StaticSelectPage({ title, data, open, setOpen, setState, property }) {
     }
   };
 
+  const handleClear = (name) => {
+    setState((pre) => ({ ...pre, [name]: '' }));
+    setOpen(false);
+  };
+
   useEffect(() => {
     setList(data);
 
@@ -134,6 +139,18 @@ function StaticSelectPage({ title, data, open, setOpen, setState, property }) {
               onPress={() => setOpen(false)}
             >
               Back
+            </Button>
+            <Button
+              m={2}
+              w={'20'}
+              rounded={'lg'}
+              variant={'unstyled'}
+              background={COLORS.primary}
+              _pressed={{ background: COLORS.secondary }}
+              _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.white }}
+              onPress={() => handleClear(property)}
+            >
+              Clear
             </Button>
           </VStack>
           <HStack

@@ -1,6 +1,7 @@
 import { Button, Center, FormControl, HStack, Input, ScrollView, Text, TextArea, VStack, View } from 'native-base';
 import React, { useState, useMemo, useEffect } from 'react';
-import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { COLORS, ICON, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
 import { handleChange } from '../../../../hooks/useValidation';
 import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
@@ -219,7 +220,7 @@ function AddNewCustomer({ handleClose }) {
                 value={ctmState.customer_name}
                 handleChange={(val) => handleChange('customer_name', val, setCtmState)}
               />
-              {/*test */}
+
               <OnPressContainer onPress={() => handleOpenStaticSelection()}>
                 <StyledTextField
                   caretHidden
