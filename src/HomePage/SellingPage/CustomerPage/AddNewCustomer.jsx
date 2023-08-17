@@ -219,6 +219,7 @@ function AddNewCustomer({ handleClose }) {
                 value={ctmState.customer_name}
                 handleChange={(val) => handleChange('customer_name', val, setCtmState)}
               />
+              {/*test */}
               <OnPressContainer onPress={() => handleOpenStaticSelection()}>
                 <StyledTextField
                   caretHidden
