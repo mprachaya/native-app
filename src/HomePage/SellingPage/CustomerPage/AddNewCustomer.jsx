@@ -5,6 +5,7 @@ import FadeTransition from '../../../../components/FadeTransition';
 import { handleChange } from '../../../../hooks/useValidation';
 import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import { url } from '../../../../config';
+import { Pressable } from 'react-native';
 
 const ContainerStyled = (props) => {
   return (
@@ -80,6 +81,8 @@ function AddNewCustomer({ handleClose }) {
   const [urlSelected, setUrlSelected] = useState('');
   const urlCtmGroup = url.CUSTOMER_GROUPS;
   const urlTerritory = url.TERRITORY;
+  const urlMarketSegment = url.MARKET_SEGMENT;
+  const urlIndustry = url.INDUSTRY;
 
   const [propertySelected, setPropertySelected] = useState('');
 
@@ -97,10 +100,6 @@ function AddNewCustomer({ handleClose }) {
     setOpenSelection(true);
   };
 
-  const handleOpenStaticSelection = () => {
-    setOpenCustomerType(true);
-  };
-
   const FirstStep = ({ state, setState }) => {
     const [ctmState, setCtmState] = useState(state);
 
@@ -114,6 +113,82 @@ function AddNewCustomer({ handleClose }) {
       setState(initialState);
     };
 
+    const handleOpenDynamicSelection = (title, name, url) => {
+      handleChangeURL(title, name, url);
+      setState(ctmState);
+    };
+
+    const handleOpenStaticSelection = () => {
+      setOpenCustomerType(true);
+      setState(ctmState);
+    };
+
+    useEffect(() => {
+      console.log(ctmState);
+    }, [ctmState]);
+    const BackButton = () => (
+      <Button
+        m={2}
+        w={'20'}
+        rounded={'lg'}
+        variant={'unstyled'}
+        background={COLORS.lightWhite}
+        _pressed={{ background: COLORS.white }}
+        _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
+        onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
+      >
+        Back
+      </Button>
+    );
+
+    const ForwardButton = () => (
+      <Button
+        m={2}
+        w={'20'}
+        rounded={'lg'}
+        variant={'unstyled'}
+        background={COLORS.tertiary}
+        _pressed={{ background: COLORS.tertiary2 }}
+        _text={{ fontSize: 'sm', fontWeight: 'extrabold', color: COLORS.lightWhite }}
+        onPress={() => stepState <= maxStep && handleForward()}
+      >
+        {stepState !== maxStep ? 'Next' : 'Submit'}
+      </Button>
+    );
+
+    const DisplayStep = () => (
+      <HStack mt={{ base: 20, lg: 24 }}>
+        <Text
+          color={COLORS.tertiary}
+          fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+          fontWeight={'bold'}
+          letterSpacing={2}
+        >
+          {stepState}
+        </Text>
+        <Text
+          fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+          fontWeight={'bold'}
+          letterSpacing={2}
+        >
+          /{maxStep}
+        </Text>
+        <Text
+          ml={2}
+          fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+          fontWeight={'bold'}
+        >
+          STEP
+        </Text>
+      </HStack>
+    );
+
+    const OnPressContainer = ({ children, onPress }) => (
+      <Pressable onPress={() => onPress()}>
+        <View pointerEvents='none'>{children}</View>
+      </Pressable>
+    );
+
     return (
       <React.Fragment>
         <HStack
@@ -121,61 +196,16 @@ function AddNewCustomer({ handleClose }) {
           left={4}
           top={2}
         >
-          <Button
-            m={2}
-            w={'20'}
-            rounded={'lg'}
-            variant={'unstyled'}
-            background={COLORS.lightWhite}
-            _pressed={{ background: COLORS.white }}
-            _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
-            onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
-          >
-            Back
-          </Button>
+          <BackButton />
         </HStack>
         <HStack
           position={'absolute'}
           right={6}
           top={2}
         >
-          <Button
-            m={2}
-            w={'20'}
-            rounded={'lg'}
-            variant={'unstyled'}
-            background={COLORS.tertiary}
-            _pressed={{ background: COLORS.tertiary2 }}
-            _text={{ fontSize: 'sm', fontWeight: 'extrabold', color: COLORS.lightWhite }}
-            onPress={() => stepState <= maxStep && handleForward()}
-          >
-            {stepState !== maxStep ? 'Next' : 'Submit'}
-          </Button>
+          <ForwardButton />
         </HStack>
-        <HStack mt={{ base: 20, lg: 24 }}>
-          <Text
-            color={COLORS.tertiary}
-            fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
-            fontWeight={'bold'}
-            letterSpacing={2}
-          >
-            {stepState}
-          </Text>
-          <Text
-            fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
-            fontWeight={'bold'}
-            letterSpacing={2}
-          >
-            /{maxStep}
-          </Text>
-          <Text
-            ml={2}
-            fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
-            fontWeight={'bold'}
-          >
-            STEP
-          </Text>
-        </HStack>
+        <DisplayStep />
         <VStack
           mt={2}
           m={6}
@@ -185,73 +215,77 @@ function AddNewCustomer({ handleClose }) {
           <ScrollView>
             <HStack direction={{ base: 'column', lg: 'row' }}>
               <StyledTextField
+                label={'Customer Name*'}
                 value={ctmState.customer_name}
                 handleChange={(val) => handleChange('customer_name', val, setCtmState)}
-                label={'Name'}
-                placeholder={'Customer Name*'}
               />
-              <StyledTextField
-                caretHidden
-                showSoftInputOnFocus={false} // disable toggle keyboard
-                value={ctmState.customer_type}
-                onPressIn={() => handleOpenStaticSelection()}
-                label={'Type'}
-                name={'customer_type'}
-                placeholder={'Dropdown*'}
-              />
+              <OnPressContainer onPress={() => handleOpenStaticSelection()}>
+                <StyledTextField
+                  caretHidden
+                  label={'Company Type*'}
+                  name={'customer_type'}
+                  value={ctmState.customer_type}
+                  showSoftInputOnFocus={false} // disable toggle keyboard
+                />
+              </OnPressContainer>
             </HStack>
             <HStack direction={{ base: 'column', lg: 'row' }}>
-              <StyledTextField
-                caretHidden
-                showSoftInputOnFocus={false} // disable toggle keyboard
-                value={ctmState.customer_group}
-                onPressIn={() => handleChangeURL('Customer Groups', 'customer_group', urlCtmGroup)}
-                // handleChange={(val) => handleChange('customer_group', val, setCtmState)}
-                label={'Customer Group'}
-                name={'customer_group'}
-                placeholder={'Selection*'}
-              />
-              <StyledTextField
-                caretHidden
-                value={ctmState.territory}
-                showSoftInputOnFocus={false} // disable toggle keyboard
-                onPressIn={() => handleChangeURL('Territory', 'territory', urlTerritory)}
-                handleChange={(val) => handleChange('territory', val, setCtmState)}
-                label={'Territory'}
-                name={'territory'}
-                placeholder={'Selection*'}
-              />
+              <OnPressContainer
+                onPress={() => handleOpenDynamicSelection('Customer Groups', 'customer_group', urlCtmGroup)}
+              >
+                <StyledTextField
+                  caretHidden
+                  label={'Customer Group*'}
+                  name={'customer_group'}
+                  value={ctmState.customer_group}
+                  showSoftInputOnFocus={false} // disable toggle keyboard
+                />
+              </OnPressContainer>
+              <OnPressContainer onPress={() => handleOpenDynamicSelection('Territory', 'territory', urlTerritory)}>
+                <StyledTextField
+                  caretHidden
+                  label={'Territory*'}
+                  name={'territory'}
+                  value={ctmState.territory}
+                  showSoftInputOnFocus={false} // disable toggle keyboard
+                />
+              </OnPressContainer>
             </HStack>
             <HStack direction={{ base: 'column', lg: 'row' }}>
-              <StyledTextField
-                value={ctmState.market_segment}
-                handleChange={(val) => handleChange('market_segment', val, setCtmState)}
-                label={'Market Segment'}
-                name={'market_segment'}
-                placeholder={'Selection'}
-              />
-              <StyledTextField
-                value={ctmState.industry}
-                handleChange={(val) => handleChange('industry', val, setCtmState)}
-                label={'Industry'}
-                name={'industry'}
-                placeholder={'Selection'}
-              />
+              <OnPressContainer
+                onPress={() => handleOpenDynamicSelection('Market Segment', 'market_segment', urlMarketSegment)}
+              >
+                <StyledTextField
+                  caretHidden
+                  label={'Market Segment'}
+                  name={'market_segment'}
+                  value={ctmState.market_segment}
+                  showSoftInputOnFocus={false} // disable toggle keyboard
+                />
+              </OnPressContainer>
+              <OnPressContainer onPress={() => handleOpenDynamicSelection('Industry', 'industry', urlIndustry)}>
+                <StyledTextField
+                  caretHidden
+                  label={'Industry'}
+                  name={'industry'}
+                  value={ctmState.industry}
+                />
+              </OnPressContainer>
             </HStack>
             <HStack direction={{ base: 'column', lg: 'row' }}>
               <StyledTextField
                 value={ctmState.mobile_no}
+                keyboardType='number-pad'
+                maxLength={10}
                 handleChange={(val) => handleChange('mobile_no', val, setCtmState)}
                 label={'Mobile Number'}
                 name={'mobile_no'}
-                placeholder={'Mobile Number'}
               />
               <StyledTextField
                 value={ctmState.email_id}
                 handleChange={(val) => handleChange('email_id', val, setCtmState)}
                 label={'Email Address'}
                 name={'email_id'}
-                placeholder={'Email Address'}
               />
             </HStack>
             <HStack direction={{ base: 'column', lg: 'row' }}>
@@ -260,14 +294,12 @@ function AddNewCustomer({ handleClose }) {
                 handleChange={(val) => handleChange('tax_id', val, setCtmState)}
                 label={'Tax ID'}
                 name={'email_id'}
-                placeholder={'Tax ID'}
               />
               <StyledTextField
                 value={ctmState.primary_address}
                 handleChange={(val) => handleChange('primary_address', val, setCtmState)}
                 label={'Address'}
                 name={'primary_address'}
-                placeholder={'Address'}
               />
             </HStack>
             <HStack direction={{ base: 'column', lg: 'row' }}>
@@ -276,7 +308,6 @@ function AddNewCustomer({ handleClose }) {
                 handleChange={(val) => handleChange('website', val, setCtmState)}
                 label={'Website'}
                 name={'website'}
-                placeholder={'Website'}
               />
             </HStack>
             <HStack>
@@ -287,7 +318,6 @@ function AddNewCustomer({ handleClose }) {
                   value={ctmState.customer_details}
                   onChangeText={(val) => handleChange('customer_details', val, setCtmState)}
                   name={'customer_details'}
-                  placeholder='Customer Details'
                   minW={{ base: 'full', lg: 800 }}
                   bg={'blueGray.100'}
                   borderWidth={2}

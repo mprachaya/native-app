@@ -88,6 +88,14 @@ function CustomerPage() {
     },
   });
 
+  var countCompanyType = customerData.filter((cus) => {
+    return cus.customer_type === 'Company';
+  }).length;
+
+  var countIndividualType = customerData.filter((cus) => {
+    return cus.customer_type === 'Individual';
+  }).length;
+
   // reset open state modal when navigate from back event
   useMemo(() => {
     const handleBack = navigation.addListener('focus', () => {
@@ -227,7 +235,8 @@ function CustomerPage() {
                   fontWeight={'bold'}
                   fontSize={'lg'}
                 >
-                  {companyData.length}
+                  {/* {companyData.length} */}
+                  {countCompanyType}
                 </Text>
               </VStack>
               <VStack
@@ -240,7 +249,7 @@ function CustomerPage() {
                   fontWeight={'bold'}
                   fontSize={'lg'}
                 >
-                  SOON
+                  {countIndividualType}
                 </Text>
               </VStack>
             </HStack>

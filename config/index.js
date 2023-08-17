@@ -8,4 +8,6 @@ export const url = {
   COMPANY: 'https://tonen.vsiam.com/api/resource/Company',
   CUSTOMER_GROUPS: 'https://tonen.vsiam.com/api/resource/Customer Group',
   TERRITORY: 'https://tonen.vsiam.com/api/resource/Territory',
+  MARKET_SEGMENT: 'https://tonen.vsiam.com/api/resource/Market Segment',
+  INDUSTRY: 'https://tonen.vsiam.com/api/resource/Industry Type',
 };
