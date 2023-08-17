@@ -1,13 +1,25 @@
-import { Button, Center, FormControl, HStack, Input, ScrollView, Text, TextArea, VStack, View } from 'native-base';
+import {
+  Button,
+  Center,
+  FormControl,
+  HStack,
+  Input,
+  ScrollView,
+  Text,
+  TextArea,
+  VStack,
+  View,
+  WarningOutlineIcon,
+} from 'native-base';
 import React, { useState, useMemo, useEffect } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { COLORS, ICON, SIZES, SPACING } from '../../../../constants/theme';
+import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
+import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
 import { handleChange } from '../../../../hooks/useValidation';
-import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import { url } from '../../../../config';
 import { Pressable } from 'react-native';
 
+// wrap components
 const ContainerStyled = (props) => {
   return (
     <View
@@ -19,42 +31,51 @@ const ContainerStyled = (props) => {
     </View>
   );
 };
-
+// input
 const StyledTextField = (props) => {
   return (
-    <VStack m={1}>
-      <FormControl.Label>{props.label}</FormControl.Label>
-      <Input
-        {...props}
-        name={props.name}
-        value={props.value}
-        bg={'blueGray.100'}
-        borderWidth={2}
-        borderColor={'gray.200'}
-        variant={'filled'}
-        rounded={6}
-        placeholder={props.placeholder}
-        fontSize={{ base: SIZES.medium || props.baseSize, lg: SIZES.large || props.lgSize }}
-        minW={{ base: 'full', lg: 400 }}
-        w={{ base: 'full' || props.baseSize, lg: 400 || props.lgSize }}
-        _focus={{
-          borderColor: 'blueGray.300',
-          backgroundColor: 'blueGray.100',
-        }}
-        onChangeText={props.handleChange}
-      />
+    <VStack>
+      <FormControl isInvalid={props.isRequired || false}>
+        <FormControl.Label>{props.label}</FormControl.Label>
+        <Input
+          {...props}
+          name={props.name}
+          value={props.value}
+          bg={'blueGray.100'}
+          borderWidth={2}
+          borderColor={'gray.200'}
+          variant={'filled'}
+          rounded={6}
+          placeholder={props.placeholder}
+          fontSize={{ base: SIZES.medium || props.baseSize, lg: SIZES.large || props.lgSize }}
+          minW={{ base: 'full', lg: 400 }}
+          w={{ base: 'full' || props.baseSize, lg: 400 || props.lgSize }}
+          _focus={{
+            borderColor: 'blueGray.300',
+            backgroundColor: 'blueGray.100',
+          }}
+          onChangeText={props.handleChange}
+        />
+        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size='xs' />}>Required</FormControl.ErrorMessage>
+      </FormControl>
     </VStack>
   );
 };
-
+// main component
 function AddNewCustomer({ handleClose }) {
+  // page name display
   const title = 'Add New Customer';
+  // navigate step state
   const [stepState, setStepState] = useState(1);
+  // max of steps
   const maxStep = 2;
 
+  // state for show / hide selection (dynamically)
   const [openSelection, setOpenSelection] = useState(false);
+  // state for show / hide selection (static)
   const [openCustomerType, setOpenCustomerType] = useState(false);
 
+  // initial state
   const initialState = {
     customer_name: '',
     customer_type: '',
@@ -75,38 +96,77 @@ function AddNewCustomer({ handleClose }) {
     payment_terms: '',
   };
 
+  // main state
   const [state, setState] = useState(initialState);
-
+  // for handle selection title (dynamic)
   const [titleSelection, setTitleSelection] = useState('');
-
+  // for handle dynamic url selection
   const [urlSelected, setUrlSelected] = useState('');
+  // url path for fetching selection data
   const urlCtmGroup = url.CUSTOMER_GROUPS;
   const urlTerritory = url.TERRITORY;
   const urlMarketSegment = url.MARKET_SEGMENT;
   const urlIndustry = url.INDUSTRY;
 
+  // handle dynamic property for multi selection in page
   const [propertySelected, setPropertySelected] = useState('');
 
   //option selection with static option
   const customerTypes = [{ name: 'Company' }, { name: 'Individual' }];
 
+  // handle change property when open selection (dynamic)
   const getValueFromSelection = (name) => {
     setPropertySelected(name);
   };
-
+  // handle change details of selection
   const handleChangeURL = (title, name, url) => {
     setTitleSelection(title);
     getValueFromSelection(name);
     setUrlSelected(url);
     setOpenSelection(true);
   };
-
+  // sub component first step
   const FirstStep = ({ state, setState }) => {
+    // sub state
     const [ctmState, setCtmState] = useState(state);
+    // start for required validation
+    const [requiredState] = useState(['customer_name', 'customer_type', 'customer_group', 'territory']);
+    const [nullState, setNullState] = useState({
+      customer_name: false,
+      customer_type: false,
+      customer_group: false,
+      territory: false,
+    });
+
+    const handleCheckRequired = () => {
+      requiredState.forEach((st_name) => {
+        if (!ctmState[st_name]) {
+          setNullState((pre) => ({ ...pre, [st_name]: true }));
+        } else {
+          setNullState((pre) => ({ ...pre, [st_name]: false }));
+        }
+      });
+      // console.log(nullState);
+    };
 
     const handleForward = () => {
-      setState(ctmState);
-      setStepState((post) => post + 1);
+      // before go to next step check all required state
+      // check then make input error style
+      handleCheckRequired();
+      // if column required is not filled push property name into check array
+      let check = [];
+      requiredState.forEach((st_name) => {
+        if (!ctmState[st_name]) {
+          check.push(st_name);
+        }
+      });
+      // if have any length of check mean required state is still not filled yet
+      if (check.length !== 0) {
+      } else {
+        // if filled go to next step
+        setStepState((post) => post + 1);
+        setState(ctmState);
+      }
     };
 
     const handleBack = () => {
@@ -116,17 +176,16 @@ function AddNewCustomer({ handleClose }) {
 
     const handleOpenDynamicSelection = (title, name, url) => {
       handleChangeURL(title, name, url);
+      // set main state with sub state
       setState(ctmState);
     };
 
     const handleOpenStaticSelection = () => {
       setOpenCustomerType(true);
+      // set main state with sub state
       setState(ctmState);
     };
 
-    useEffect(() => {
-      console.log(ctmState);
-    }, [ctmState]);
     const BackButton = () => (
       <Button
         m={2}
@@ -214,8 +273,12 @@ function AddNewCustomer({ handleClose }) {
           h={{ base: 500, lg: 1200 }}
         >
           <ScrollView>
-            <HStack direction={{ base: 'column', lg: 'row' }}>
+            <HStack
+              space={2}
+              direction={{ base: 'column', lg: 'row' }}
+            >
               <StyledTextField
+                isRequired={nullState.customer_name}
                 label={'Customer Name*'}
                 value={ctmState.customer_name}
                 handleChange={(val) => handleChange('customer_name', val, setCtmState)}
@@ -224,19 +287,24 @@ function AddNewCustomer({ handleClose }) {
               <OnPressContainer onPress={() => handleOpenStaticSelection()}>
                 <StyledTextField
                   caretHidden
-                  label={'Company Type*'}
+                  isRequired={nullState.customer_type}
+                  label={'Customer Type*'}
                   name={'customer_type'}
                   value={ctmState.customer_type}
                   showSoftInputOnFocus={false} // disable toggle keyboard
                 />
               </OnPressContainer>
             </HStack>
-            <HStack direction={{ base: 'column', lg: 'row' }}>
+            <HStack
+              space={2}
+              direction={{ base: 'column', lg: 'row' }}
+            >
               <OnPressContainer
                 onPress={() => handleOpenDynamicSelection('Customer Groups', 'customer_group', urlCtmGroup)}
               >
                 <StyledTextField
                   caretHidden
+                  isRequired={nullState.customer_group}
                   label={'Customer Group*'}
                   name={'customer_group'}
                   value={ctmState.customer_group}
@@ -246,6 +314,7 @@ function AddNewCustomer({ handleClose }) {
               <OnPressContainer onPress={() => handleOpenDynamicSelection('Territory', 'territory', urlTerritory)}>
                 <StyledTextField
                   caretHidden
+                  isRequired={nullState.territory}
                   label={'Territory*'}
                   name={'territory'}
                   value={ctmState.territory}
@@ -253,7 +322,10 @@ function AddNewCustomer({ handleClose }) {
                 />
               </OnPressContainer>
             </HStack>
-            <HStack direction={{ base: 'column', lg: 'row' }}>
+            <HStack
+              space={2}
+              direction={{ base: 'column', lg: 'row' }}
+            >
               <OnPressContainer
                 onPress={() => handleOpenDynamicSelection('Market Segment', 'market_segment', urlMarketSegment)}
               >
@@ -274,7 +346,10 @@ function AddNewCustomer({ handleClose }) {
                 />
               </OnPressContainer>
             </HStack>
-            <HStack direction={{ base: 'column', lg: 'row' }}>
+            <HStack
+              space={2}
+              direction={{ base: 'column', lg: 'row' }}
+            >
               <StyledTextField
                 value={ctmState.mobile_no}
                 keyboardType='number-pad'
@@ -290,7 +365,10 @@ function AddNewCustomer({ handleClose }) {
                 name={'email_id'}
               />
             </HStack>
-            <HStack direction={{ base: 'column', lg: 'row' }}>
+            <HStack
+              space={2}
+              direction={{ base: 'column', lg: 'row' }}
+            >
               <StyledTextField
                 value={ctmState.tax_id}
                 handleChange={(val) => handleChange('tax_id', val, setCtmState)}
@@ -304,7 +382,10 @@ function AddNewCustomer({ handleClose }) {
                 name={'primary_address'}
               />
             </HStack>
-            <HStack direction={{ base: 'column', lg: 'row' }}>
+            <HStack
+              space={2}
+              direction={{ base: 'column', lg: 'row' }}
+            >
               <StyledTextField
                 value={ctmState.website}
                 handleChange={(val) => handleChange('website', val, setCtmState)}
@@ -339,6 +420,7 @@ function AddNewCustomer({ handleClose }) {
       </React.Fragment>
     );
   };
+  // sub component second step
   const SecondStep = ({ state }) => {
     const [ctmState2, setCtmState2] = useState(state);
 
@@ -474,13 +556,12 @@ function AddNewCustomer({ handleClose }) {
       </React.Fragment>
     );
   };
-
+  // log when state having changed
   useEffect(() => {
     console.log('state: ', state);
   }, [state]);
 
   return (
-    // <SafeAreaView>
     <ContainerStyled>
       <FadeTransition animated={stepState}>
         <Center>
@@ -492,12 +573,14 @@ function AddNewCustomer({ handleClose }) {
           >
             {title}
           </Text>
+          {/* display when step = 1 and do not have any selection displayed */}
           {stepState === 1 && !openSelection && !openCustomerType && (
             <FirstStep
               state={state}
               setState={setState}
             />
           )}
+          {/* display when step = 2 and do not have any selection displayed */}
           {stepState === 2 && !openSelection && !openCustomerType && (
             <SecondStep
               state={state}
@@ -506,28 +589,27 @@ function AddNewCustomer({ handleClose }) {
           )}
           {openSelection && (
             <DynamicSelectPage
-              title={titleSelection}
-              url={urlSelected}
-              open={openSelection}
-              setOpen={setOpenSelection}
-              setState={setState}
-              property={propertySelected}
+              title={titleSelection} // for change dynamic title
+              url={urlSelected} // for change dynamic data in selection
+              open={openSelection} // state for show/hide selection
+              setOpen={setOpenSelection} // for control show/hide
+              setState={setState} // for send data to outside selection and set it in main state by property
+              property={propertySelected} // name of property for send data to outside
             />
           )}
           {openCustomerType && (
             <StaticSelectPage
-              title={'Customer Type'}
-              data={customerTypes}
-              open={openCustomerType}
-              setOpen={setOpenCustomerType}
-              setState={setState}
-              property={'customer_type'}
+              title={'Customer Type'} // name of statice selection
+              data={customerTypes} // data of statice selection
+              open={openCustomerType} // state for show/hide selection
+              setOpen={setOpenCustomerType} // for control show/hide
+              setState={setState} // for send data to outside selection and set it in main state by property
+              property={'customer_type'} // name of property for send data to outside
             />
           )}
         </Center>
       </FadeTransition>
     </ContainerStyled>
-    // </SafeAreaView>
   );
 }
 
