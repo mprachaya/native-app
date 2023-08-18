@@ -67,7 +67,7 @@ const StyledTextField = (props) => {
   );
 };
 // main component
-function AddNewCustomer({ handleClose }) {
+function AddNewCustomer({ handleClose, handleSubmit, refetchData }) {
   // page name display
   const title = 'Add New Customer';
   // navigate step state
@@ -467,8 +467,9 @@ function AddNewCustomer({ handleClose }) {
       if (check.length !== 0) {
       } else {
         // if filled go to next step
+        handleSubmit(ctmState2);
         setStepState((post) => post + 1);
-        setState(ctmState2);
+        // setState(ctmState2);
       }
     };
 
@@ -479,12 +480,6 @@ function AddNewCustomer({ handleClose }) {
 
     const handleOpenDynamicSelection = (title, name, url) => {
       handleChangeURL(title, name, url);
-      // set main state with sub state
-      setState(ctmState2);
-    };
-
-    const handleOpenStaticSelection = () => {
-      setOpenCustomerType(true);
       // set main state with sub state
       setState(ctmState2);
     };
@@ -646,6 +641,7 @@ function AddNewCustomer({ handleClose }) {
   const SuccessMessage = ({ setState }) => {
     const handleBack = () => {
       setState(initialState);
+      refetchData();
       handleClose();
     };
     const handleAddAnother = () => {

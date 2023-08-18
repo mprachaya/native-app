@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Box, Center, HStack, Text, VStack, View } from 'native-base';
+import { Box, Button, Center, HStack, Text, VStack, View } from 'native-base';
 import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { CustomerList } from './CustomerList';
@@ -11,6 +11,7 @@ import { SortBy } from '../../../../utils/sorting';
 import useFetch from '../../../../hooks/useFetch';
 import AddNewCustomer from './AddNewCustomer';
 import FadeTransition from '../../../../components/FadeTransition';
+import useSubmit from '../../../../hooks/useSubmit';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -69,6 +70,7 @@ function CustomerPage() {
   const {
     data: customerData,
     setData: setCustomerData,
+    setRefetch: refetchData,
     loading,
     error,
   } = useFetch(url.CUSTOMERS, {
@@ -77,24 +79,27 @@ function CustomerPage() {
     },
   });
 
-  const {
-    data: companyData,
-    setData: setCompanyData,
-    loading: loadingCompany,
-    error: errorCompany,
-  } = useFetch(url.COMPANY, {
-    headers: {
-      Authorization: config.API_TOKEN,
-    },
-  });
-
-  var countCompanyType = customerData.filter((cus) => {
+  var countType = customerData.filter((cus) => {
     return cus.customer_type === 'Company';
   }).length;
 
   var countIndividualType = customerData.filter((cus) => {
     return cus.customer_type === 'Individual';
   }).length;
+
+  const handleSubmit = (state) => {
+    useSubmit(
+      {
+        headers: {
+          Authorization: config.API_TOKEN,
+        },
+      },
+      url.CUSTOMERS,
+      state,
+      () => void 0,
+      () => void 0
+    );
+  };
 
   // reset open state modal when navigate from back event
   useMemo(() => {
@@ -105,11 +110,11 @@ function CustomerPage() {
   }, [navigation]);
 
   // hot loading when data still not available
-  if (loading && loadingCompany) {
+  if (loading) {
     return <Loading loading={loading} />;
   }
   // handle error when data is not available
-  if (error && errorCompany) {
+  if (error) {
     return (
       <ContainerStyled>
         <HStack justifyContent='center'>
@@ -118,6 +123,9 @@ function CustomerPage() {
       </ContainerStyled>
     );
   }
+  // const reFreshPage = () => {
+  //   refetchData(true);
+  // };
 
   return (
     <ContainerStyled>
@@ -185,7 +193,11 @@ function CustomerPage() {
               zIndex={999}
             >
               <FadeTransition animated={openState.add}>
-                <AddNewCustomer handleClose={() => setOpenState((pre) => ({ ...pre, add: false }))} />
+                <AddNewCustomer
+                  refetchData={() => refetchData(true)}
+                  handleSubmit={handleSubmit}
+                  handleClose={() => setOpenState((pre) => ({ ...pre, add: false }))}
+                />
               </FadeTransition>
             </Box>
           )}
@@ -236,7 +248,7 @@ function CustomerPage() {
                   fontSize={'lg'}
                 >
                   {/* {companyData.length} */}
-                  {countCompanyType}
+                  {countType}
                 </Text>
               </VStack>
               <VStack

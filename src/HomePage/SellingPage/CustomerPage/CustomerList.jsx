@@ -1,17 +1,19 @@
-import { Box, FlatList, HStack, Image, Text, VStack, View } from 'native-base';
+import { Box, FlatList, HStack, Image, Spinner, Text, VStack, View } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
 import GetScreenSize from '../../../../hooks/GetScreenSize';
-import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components';
+import { CustomerSkeletonBase, CustomerSkeletonLg, Loading } from '../../../../components';
 import { url } from '../../../../config';
 
 export function CustomerList({ data, token, reload, setReload, returnDataIndex }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
   const [dataIndex, setDataIndex] = useState(20);
   const length = 20;
+  const [loadMore, setLoadMore] = useState(false);
+  const [tempIndex, setTempIndex] = useState(0);
 
-  const Item = ({ image, title, type, group }) => (
+  const Item = React.memo(({ image, title, type, group }) => (
     <View
       // mt={2}
       mb={2}
@@ -112,8 +114,12 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
         </Text>
       </HStack>
     </View>
-  );
+  ));
 
+  const handleScrollEnd = (number) => {
+    setLoadMore(true);
+    setTempIndex(number);
+  };
   useEffect(() => {
     if (reload) {
       setTimeout(() => {
@@ -121,6 +127,19 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
       }, 1000);
     }
   }, [reload]);
+
+  useEffect(() => {
+    if (loadMore) {
+      setTimeout(() => {
+        setLoadMore(false);
+      }, 50);
+
+      setTimeout(() => {
+        setDataIndex(tempIndex);
+        returnDataIndex(tempIndex);
+      }, 0);
+    }
+  }, [loadMore]);
 
   useEffect(() => {
     if (data.length - dataIndex < 0) returnDataIndex(data.length);
@@ -169,15 +188,21 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between' }}
           keyExtractor={(item) => item.name}
-          onScroll={(event) => {
-            let BottomDetect = event.nativeEvent.contentOffset.y > 60 && event.nativeEvent.contentOffset.y <= 80;
-
-            if (!BottomDetect) {
-            } else {
-              if (dataIndex < data.length)
-                dataIndex + length < data.length ? setDataIndex((post) => post + length) : setDataIndex(data.length);
-            }
-          }}
+          onEndReached={() =>
+            dataIndex < data.length && dataIndex + length < data.length
+              ? handleScrollEnd(post + length)
+              : handleScrollEnd(data.length)
+          }
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={3}
+          initialNumToRender={2}
+          ListFooterComponent={() =>
+            loadMore && dataIndex !== data.length ? (
+              <View>
+                <Spinner />
+              </View>
+            ) : null
+          }
           renderItem={({ item }) => (
             <Item
               image={item.image}
@@ -203,16 +228,21 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
               group={item.customer_group}
             />
           )}
-          onScroll={(event) => {
-            // console.log(event.nativeEvent.contentOffset.y);
-            let BottomDetect = event.nativeEvent.contentOffset.y > 60 && event.nativeEvent.contentOffset.y <= 80;
-
-            if (!BottomDetect) {
-            } else {
-              if (dataIndex < data.length)
-                dataIndex + length < data.length ? setDataIndex((post) => post + length) : setDataIndex(data.length);
-            }
-          }}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={3}
+          initialNumToRender={2}
+          onEndReached={() =>
+            dataIndex < data.length && dataIndex + length < data.length
+              ? handleScrollEnd(post + length)
+              : handleScrollEnd(data.length)
+          }
+          ListFooterComponent={() =>
+            loadMore && dataIndex !== data.length ? (
+              <View>
+                <Spinner />
+              </View>
+            ) : null
+          }
         />
       </GetScreenSize>
     </View>
