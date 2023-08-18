@@ -10,4 +10,8 @@ export const url = {
   TERRITORY: 'https://tonen.vsiam.com/api/resource/Territory',
   MARKET_SEGMENT: 'https://tonen.vsiam.com/api/resource/Market Segment',
   INDUSTRY: 'https://tonen.vsiam.com/api/resource/Industry Type',
+  CURRENCY: 'https://tonen.vsiam.com/api/resource/Currency',
+  PRICE_LIST: 'https://tonen.vsiam.com/api/resource/Price List',
+  SALE_PARTNER: 'https://tonen.vsiam.com/api/resource/Sales Partner',
+  PAYMENT_TERM: 'https://tonen.vsiam.com/api/resource/Payment Term',
 };

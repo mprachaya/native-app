@@ -1,6 +1,11 @@
 import {
+  Box,
   Button,
   Center,
+  CheckIcon,
+  Circle,
+  CircleIcon,
+  Container,
   FormControl,
   HStack,
   Input,
@@ -107,6 +112,10 @@ function AddNewCustomer({ handleClose }) {
   const urlTerritory = url.TERRITORY;
   const urlMarketSegment = url.MARKET_SEGMENT;
   const urlIndustry = url.INDUSTRY;
+  const urlCurrency = url.CURRENCY;
+  const urlPriceList = url.PRICE_LIST;
+  const urlSalePartner = url.SALE_PARTNER;
+  const urlPaymentTerm = url.PAYMENT_TERM;
 
   // handle dynamic property for multi selection in page
   const [propertySelected, setPropertySelected] = useState('');
@@ -253,14 +262,14 @@ function AddNewCustomer({ handleClose }) {
       <React.Fragment>
         <HStack
           position={'absolute'}
-          left={4}
+          left={2}
           top={2}
         >
           <BackButton />
         </HStack>
         <HStack
           position={'absolute'}
-          right={6}
+          right={2}
           top={2}
         >
           <ForwardButton />
@@ -421,23 +430,127 @@ function AddNewCustomer({ handleClose }) {
     );
   };
   // sub component second step
-  const SecondStep = ({ state }) => {
+  const SecondStep = ({ state, setState }) => {
     const [ctmState2, setCtmState2] = useState(state);
 
-    const handleForward = () => {
-      setState(ctmState2);
-      setStepState((post) => post + 1);
+    const [requiredState] = useState([]);
+    const [nullState, setNullState] = useState({
+      customer_name: false,
+      customer_type: false,
+      customer_group: false,
+      territory: false,
+    });
+
+    const handleCheckRequired = () => {
+      requiredState.forEach((st_name) => {
+        if (!ctmState2[st_name]) {
+          setNullState((pre) => ({ ...pre, [st_name]: true }));
+        } else {
+          setNullState((pre) => ({ ...pre, [st_name]: false }));
+        }
+      });
+      // console.log(nullState);
     };
 
-    const handleBack = () => {
-      if (stepState === 1) {
-        handleClose();
-        setState(initialState);
+    const handleForward = () => {
+      // before go to next step check all required state
+      // check then make input error style
+      handleCheckRequired();
+      // if column required is not filled push property name into check array
+      let check = [];
+      requiredState.forEach((st_name) => {
+        if (!ctmState2[st_name]) {
+          check.push(st_name);
+        }
+      });
+      // if have any length of check mean required state is still not filled yet
+      if (check.length !== 0) {
       } else {
-        setStepState((post) => post - 1);
+        // if filled go to next step
+        setStepState((post) => post + 1);
         setState(ctmState2);
       }
     };
+
+    const handleBack = () => {
+      handleClose();
+      setState(initialState);
+    };
+
+    const handleOpenDynamicSelection = (title, name, url) => {
+      handleChangeURL(title, name, url);
+      // set main state with sub state
+      setState(ctmState2);
+    };
+
+    const handleOpenStaticSelection = () => {
+      setOpenCustomerType(true);
+      // set main state with sub state
+      setState(ctmState2);
+    };
+
+    const BackButton = () => (
+      <Button
+        m={2}
+        w={'20'}
+        rounded={'lg'}
+        variant={'unstyled'}
+        background={COLORS.lightWhite}
+        _pressed={{ background: COLORS.white }}
+        _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
+        onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
+      >
+        Back
+      </Button>
+    );
+
+    const ForwardButton = () => (
+      <Button
+        m={2}
+        w={'20'}
+        rounded={'lg'}
+        variant={'unstyled'}
+        background={COLORS.tertiary}
+        _pressed={{ background: COLORS.tertiary2 }}
+        _text={{ fontSize: 'sm', fontWeight: 'extrabold', color: COLORS.lightWhite }}
+        onPress={() => stepState <= maxStep && handleForward()}
+      >
+        {stepState !== maxStep ? 'Next' : 'Submit'}
+      </Button>
+    );
+
+    const DisplayStep = () => (
+      <HStack mt={{ base: 20, lg: 24 }}>
+        <Text
+          color={COLORS.tertiary}
+          fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+          fontWeight={'bold'}
+          letterSpacing={2}
+        >
+          {stepState}
+        </Text>
+        <Text
+          fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+          fontWeight={'bold'}
+          letterSpacing={2}
+        >
+          /{maxStep}
+        </Text>
+        <Text
+          ml={2}
+          fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+          fontWeight={'bold'}
+        >
+          STEP
+        </Text>
+      </HStack>
+    );
+
+    const OnPressContainer = ({ children, onPress }) => (
+      <Pressable onPress={() => onPress()}>
+        <View pointerEvents='none'>{children}</View>
+      </Pressable>
+    );
 
     // useEffect(() => {
     //   console.log(stepState);
@@ -447,104 +560,77 @@ function AddNewCustomer({ handleClose }) {
       <React.Fragment>
         <HStack
           position={'absolute'}
-          left={4}
+          left={2}
           top={2}
         >
-          <Button
-            m={2}
-            w={'20'}
-            rounded={'lg'}
-            variant={'unstyled'}
-            background={COLORS.lightWhite}
-            _pressed={{ background: COLORS.white }}
-            _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
-            onPress={() => handleBack()}
-          >
-            Back
-          </Button>
+          <BackButton />
         </HStack>
         <HStack
           position={'absolute'}
-          right={6}
+          right={2}
           top={2}
         >
-          <Button
-            m={2}
-            w={'20'}
-            rounded={'lg'}
-            variant={'unstyled'}
-            background={COLORS.tertiary}
-            _pressed={{ background: COLORS.tertiary2 }}
-            _text={{ fontSize: 'sm', fontWeight: 'extrabold', color: COLORS.lightWhite }}
-            onPress={() => stepState <= maxStep && handleForward()}
-          >
-            {stepState !== maxStep ? 'Next' : 'Submit'}
-          </Button>
+          <ForwardButton />
         </HStack>
-        <HStack mt={{ base: 6, lg: 24 }}>
-          <Text
-            mt={2}
-            color={COLORS.tertiary}
-            fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
-            fontWeight={'bold'}
-            letterSpacing={2}
-          >
-            {stepState}
-          </Text>
-          <Text
-            mt={2}
-            fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
-            fontWeight={'bold'}
-            letterSpacing={2}
-          >
-            /{maxStep}
-          </Text>
-          <Text
-            mt={2}
-            ml={2}
-            fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
-            fontWeight={'bold'}
-          >
-            STEP
-          </Text>
-        </HStack>
+        <DisplayStep />
         <VStack
+          mt={2}
           m={6}
           space={SPACING.small}
           h={{ base: 500, lg: 1200 }}
         >
           <ScrollView>
-            <HStack direction={{ base: 'column', lg: 'row' }}>
-              <StyledTextField
-                value={ctmState2.default_currency}
-                handleChange={(val) => handleChange('default_currency', val, setCtmState2)}
-                label={'Currency'}
-                name={'default_currency'}
-                placeholder={'Selection*'}
-              />
-              <StyledTextField
-                value={ctmState2.default_price_list}
-                handleChange={(val) => handleChange('default_price_list', val, setCtmState2)}
-                label={'Price List'}
-                name={'default_price_list'}
-                placeholder={'Selection*'}
-              />
+            <HStack
+              space={2}
+              direction={{ base: 'column', lg: 'row' }}
+            >
+              <OnPressContainer onPress={() => handleOpenDynamicSelection('Currency', 'default_currency', urlCurrency)}>
+                <StyledTextField
+                  caretHidden
+                  value={ctmState2.default_currency}
+                  label={'Currency'}
+                  name={'default_currency'}
+                  showSoftInputOnFocus={false}
+                />
+              </OnPressContainer>
+              <OnPressContainer
+                onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
+              >
+                <StyledTextField
+                  caretHidden
+                  value={ctmState2.default_price_list}
+                  label={'Price List'}
+                  name={'default_price_list'}
+                  showSoftInputOnFocus={false}
+                />
+              </OnPressContainer>
             </HStack>
-            <HStack direction={{ base: 'column', lg: 'row' }}>
-              <StyledTextField
-                value={ctmState2.default_sales_partner}
-                handleChange={(val) => handleChange('default_sales_partner', val, setCtmState2)}
-                label={'Sale Partner'}
-                name={'default_sales_partner'}
-                placeholder={'Selection'}
-              />
-              <StyledTextField
-                value={ctmState2.payment_terms}
-                handleChange={(val) => handleChange('payment_terms', val, setCtmState2)}
-                label={'Payment Terms Template'}
-                name={'payment_terms'}
-                placeholder={'Selection'}
-              />
+            <HStack
+              space={2}
+              direction={{ base: 'column', lg: 'row' }}
+            >
+              <OnPressContainer
+                onPress={() => handleOpenDynamicSelection('Sales Partner', 'default_sales_partner', urlSalePartner)}
+              >
+                <StyledTextField
+                  caretHidden
+                  value={ctmState2.default_sales_partner}
+                  label={'Sale Partner'}
+                  name={'default_sales_partner'}
+                  showSoftInputOnFocus={false}
+                />
+              </OnPressContainer>
+              <OnPressContainer
+                onPress={() => handleOpenDynamicSelection('Payment Terms', 'payment_terms', urlPaymentTerm)}
+              >
+                <StyledTextField
+                  caretHidden
+                  value={ctmState2.payment_terms}
+                  label={'Payment Terms Template'}
+                  name={'payment_terms'}
+                  showSoftInputOnFocus={false}
+                />
+              </OnPressContainer>
             </HStack>
             <StyledTextField
               isDisabled
@@ -556,6 +642,85 @@ function AddNewCustomer({ handleClose }) {
       </React.Fragment>
     );
   };
+
+  const SuccessMessage = ({ setState }) => {
+    const handleBack = () => {
+      setState(initialState);
+      handleClose();
+    };
+    const handleAddAnother = () => {
+      setState(initialState);
+      setStepState(1);
+    };
+
+    return (
+      <FadeTransition animated={stepState === 3 && true}>
+        <Container
+          h='80%'
+          w='100%'
+          alignItems='center'
+          justifyContent={'center'}
+        >
+          <VStack
+            alignItems='center'
+            space={6}
+            m={2}
+            mt={{ base: 24, lg: 0 }}
+          >
+            <Box
+              w={'24'}
+              h={'24'}
+              rounded={'full'}
+              borderWidth={4}
+              borderColor={'green.500'}
+              justifyContent={'center'}
+            >
+              <CheckIcon
+                m={5}
+                mt={6}
+                size='12'
+                color='emerald.500'
+              />
+            </Box>
+            <Text
+              textAlign={'center'}
+              color={COLORS.gray}
+              textWeight={'bold'}
+              fontSize={24}
+            >
+              {'Registration\nSuccess!'}
+            </Text>
+
+            <VStack
+              mt={{ base: 16, lg: 24 }}
+              space={6}
+            >
+              <Button
+                rounded={24}
+                minW={{ base: 'full', lg: 400 }}
+                bg={COLORS.white}
+                _text={{ color: COLORS.gray }}
+                _pressed={{ bg: 'blueGray.200' }}
+                onPress={() => handleBack()}
+              >
+                Back to Customer Page
+              </Button>
+              <Button
+                rounded={24}
+                minW={{ base: 'full', lg: 400 }}
+                bg={COLORS.tertiary}
+                _text={{ fontWeight: 'bold' }}
+                _pressed={{ bg: COLORS.tertiary2 }}
+                onPress={() => handleAddAnother()}
+              >
+                Add another customer
+              </Button>
+            </VStack>
+          </VStack>
+        </Container>
+      </FadeTransition>
+    );
+  };
   // log when state having changed
   useEffect(() => {
     console.log('state: ', state);
@@ -565,14 +730,16 @@ function AddNewCustomer({ handleClose }) {
     <ContainerStyled>
       <FadeTransition animated={stepState}>
         <Center>
-          <Text
-            position={'absolute'}
-            fontWeight={'bold'}
-            color={COLORS.tertiary2}
-            top={6}
-          >
-            {title}
-          </Text>
+          {stepState !== 3 && (
+            <Text
+              position={'absolute'}
+              fontWeight={'bold'}
+              color={COLORS.tertiary2}
+              top={6}
+            >
+              {title}
+            </Text>
+          )}
           {/* display when step = 1 and do not have any selection displayed */}
           {stepState === 1 && !openSelection && !openCustomerType && (
             <FirstStep
@@ -587,6 +754,7 @@ function AddNewCustomer({ handleClose }) {
               setState={setState}
             />
           )}
+          {stepState === 3 && !openSelection && !openCustomerType && <SuccessMessage setState={setState} />}
           {openSelection && (
             <DynamicSelectPage
               title={titleSelection} // for change dynamic title

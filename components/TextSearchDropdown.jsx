@@ -1,7 +1,9 @@
 import { Badge, Box, Center, FlatList, Flex, HStack, Pressable, Text, VStack, View } from 'native-base';
 import React, { useState, useEffect } from 'react';
+import { SearchInput } from './Inputs';
+import FadeTransition from './FadeTransition';
 
-import { SearchInput, FadeTransition } from '.';
+// import { SearchInput, FadeTransition } from '.';
 
 const ContainerStyled = (props) => {
   return (
@@ -41,23 +43,18 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
     let tempData = dataList?.filter((item) => {
       return String(item[key]).toLowerCase().indexOf(searchText.toLowerCase()) > -1;
     });
-    // if (tempData)
-    // setList(tempData);
+
     if (tempData.length > 0) {
-      // console.log('temp: ', tempData);
       return tempData;
     } else {
       return false;
     }
-    // console.log('search: ', tempData);
-    // }
   };
 
   const clearSearch = () => {
     setSearchText('');
     returnData(false);
     setOnFocus(false);
-    // console.log('clear!');
   };
 
   useEffect(() => {
@@ -68,12 +65,9 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
 
   useEffect(() => {
     if (!SearchText && onFocus) {
-      // setOnFocus(false);
       if (allData) {
         console.log('reset : ', allData);
         setData(allData);
-        // returnData(false);
-        // setOnFocus(false);
       }
     } else if (SearchText && onFocus) {
       setOnFocus(true);
@@ -81,7 +75,6 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
         if (key !== 'image') {
           const search = handleSearch(data, SearchText, key);
           if (search) {
-            // console.log(key);
             setData(search);
             returnLength(search.length);
           } else {
@@ -92,8 +85,6 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
       returnData(false);
       setOnFocus(false);
     }
-
-    // console.log(SearchText);
   }, [SearchText]);
 
   useEffect(() => {
@@ -105,7 +96,6 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
   }, [onFocus]);
 
   return (
-    // <SafeAreaView>
     <ContainerStyled Focus={onFocus}>
       <Center>
         <VStack
@@ -237,7 +227,6 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
         )}
       </Center>
     </ContainerStyled>
-    // </SafeAreaView>
   );
 }
 
