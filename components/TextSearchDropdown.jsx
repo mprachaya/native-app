@@ -1,4 +1,17 @@
-import { Badge, Box, Center, FlatList, Flex, HStack, Pressable, Text, VStack, View } from 'native-base';
+import {
+  Badge,
+  Box,
+  Button,
+  Center,
+  CloseIcon,
+  FlatList,
+  Flex,
+  HStack,
+  Pressable,
+  Text,
+  VStack,
+  View,
+} from 'native-base';
 import React, { useState, useEffect } from 'react';
 import { SearchInput } from './Inputs';
 import FadeTransition from './FadeTransition';
@@ -20,7 +33,7 @@ const ContainerStyled = (props) => {
   );
 };
 
-function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
+function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, handleClick }) {
   const [onFocus, setOnFocus] = useState(false);
   const [SearchText, setSearchText] = useState('');
   const [data, setData] = useState();
@@ -49,6 +62,11 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
     } else {
       return false;
     }
+  };
+
+  const handleCloseClick = () => {
+    handleClick();
+    setOnFocus(false);
   };
 
   const clearSearch = () => {
@@ -81,9 +99,6 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
           }
         }
       });
-    } else if (SearchText === '') {
-      returnData(false);
-      setOnFocus(false);
     }
   }, [SearchText]);
 
@@ -106,7 +121,6 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
           <SearchInput
             onChangeText={(val) => setSearchText(val)}
             onFocus={() => setOnFocus(true)}
-            onBlur={() => SearchText.length === 0 && setOnFocus(false)}
             value={SearchText}
             clear={SearchText ? true : false}
             clearAction={() => clearSearch()}
@@ -122,11 +136,37 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength }) {
           >
             <FadeTransition animated={onFocus}>
               <FlatList
-                h={500}
+                h={{ base: 500, lg: 'full' }}
                 mx={{ base: 4, lg: '30%' }}
                 data={data}
+                ListHeaderComponent={() => (
+                  <View
+                    w='full'
+                    alignItems='flex-end'
+                  >
+                    <Button
+                      w={24}
+                      mr={2}
+                      my={2}
+                      rounded={'lg'}
+                      bg='error.600'
+                      _text={{ fontWeight: 'bold', letterSpacing: 1 }}
+                      leftIcon={<CloseIcon />}
+                      onPress={() => {
+                        returnData(false);
+                        setOnFocus(false);
+                      }}
+                      _pressed={{ bg: 'error.800' }}
+                    >
+                      Close
+                    </Button>
+                  </View>
+                )}
                 renderItem={({ item }) => (
-                  <Pressable m={1}>
+                  <Pressable
+                    m={1}
+                    onPress={() => handleCloseClick()}
+                  >
                     {({ isHovered, isFocused, isPressed }) => {
                       return (
                         <Box

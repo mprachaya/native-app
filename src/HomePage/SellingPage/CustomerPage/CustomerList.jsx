@@ -1,12 +1,12 @@
-import { Box, FlatList, HStack, Image, Spinner, Text, VStack, View } from 'native-base';
 import React, { useEffect, useState } from 'react';
+import { Box, FlatList, HStack, Image, Pressable, Spinner, Text, VStack, View } from 'native-base';
+import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components';
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
-import GetScreenSize from '../../../../hooks/GetScreenSize';
-import { CustomerSkeletonBase, CustomerSkeletonLg, Loading } from '../../../../components';
 import { url } from '../../../../config';
+import GetScreenSize from '../../../../hooks/GetScreenSize';
 
-export function CustomerList({ data, token, reload, setReload, returnDataIndex }) {
+export function CustomerList({ data, token, reload, setReload, returnDataIndex, handleClickDetails }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
   const [dataIndex, setDataIndex] = useState(20);
   const length = 20;
@@ -14,8 +14,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
   const [tempIndex, setTempIndex] = useState(0);
 
   const Item = React.memo(({ image, title, type, group }) => (
-    <View
-      // mt={2}
+    <Pressable
       mb={2}
       mx={1.5}
       px={2}
@@ -24,6 +23,8 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
       w={{ base: SCREEN_WIDTH - 48, lg: '48%' }}
       bg={COLORS.lightWhite}
       shadow={1}
+      _pressed={{ bg: COLORS.white }}
+      onPress={() => handleClickDetails()}
     >
       <HStack>
         {image !== null ? (
@@ -113,7 +114,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex }
           {type}
         </Text>
       </HStack>
-    </View>
+    </Pressable>
   ));
 
   const handleScrollEnd = (number) => {

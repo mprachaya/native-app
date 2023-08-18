@@ -24,6 +24,7 @@ import AddNew from '../assets/icons/add_new.svg';
 import Sort from '../assets/icons/sort.svg';
 import Filter from '../assets/icons/filter.svg';
 import ChevronBackWard from '../assets/icons/chevron_backward.svg';
+import Edit from '../assets/icons/edit.svg';
 
 export {
   Advance,
@@ -52,4 +53,5 @@ export {
   Sort,
   Filter,
   ChevronBackWard,
+  Edit,
 };

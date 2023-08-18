@@ -3,8 +3,6 @@ import {
   Button,
   Center,
   CheckIcon,
-  Circle,
-  CircleIcon,
   Container,
   FormControl,
   HStack,
@@ -16,7 +14,7 @@ import {
   View,
   WarningOutlineIcon,
 } from 'native-base';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';

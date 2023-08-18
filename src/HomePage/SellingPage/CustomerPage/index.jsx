@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Box, Button, Center, HStack, Text, VStack, View } from 'native-base';
+import { Box, Center, HStack, Text, VStack, View } from 'native-base';
 import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { CustomerList } from './CustomerList';
@@ -12,6 +12,7 @@ import useFetch from '../../../../hooks/useFetch';
 import AddNewCustomer from './AddNewCustomer';
 import FadeTransition from '../../../../components/FadeTransition';
 import useSubmit from '../../../../hooks/useSubmit';
+import DetailsPage from './CustomerDetails';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -43,6 +44,7 @@ function CustomerPage() {
     add: false,
     sort: false,
     filter: false,
+    details: false,
   });
   // column for searching
   const dataColumn = ['customer_group', 'territory', 'name'];
@@ -123,9 +125,6 @@ function CustomerPage() {
       </ContainerStyled>
     );
   }
-  // const reFreshPage = () => {
-  //   refetchData(true);
-  // };
 
   return (
     <ContainerStyled>
@@ -201,6 +200,26 @@ function CustomerPage() {
               </FadeTransition>
             </Box>
           )}
+          {openState.details && (
+            <Box
+              top={0}
+              left={0}
+              right={'25%'}
+              position='absolute'
+              bg={'blueGray.100'}
+              height={SCREEN_HEIGHT}
+              width={'full'}
+              zIndex={999}
+            >
+              <FadeTransition animated={openState.details}>
+                <DetailsPage
+                  // refetchData={() => refetchData(true)}
+                  // handleSubmit={handleSubmit}
+                  handleClose={() => setOpenState((pre) => ({ ...pre, details: false }))}
+                />
+              </FadeTransition>
+            </Box>
+          )}
           <HStack
             mx={{ base: 0, lg: 24 }}
             justifyContent={{ base: 'center', lg: 'flex-end' }}
@@ -216,6 +235,7 @@ function CustomerPage() {
               dataColumn={dataColumn}
               returnData={setShowBackgroundSearch}
               returnLength={setLengthSearch}
+              handleClick={() => setOpenState((pre) => ({ ...pre, details: true }))}
             />
           </HStack>
           {!showBackgroundSearch && (
@@ -289,6 +309,7 @@ function CustomerPage() {
               data={customerData}
               token={config.API_TOKEN}
               returnDataIndex={setDataShowLength}
+              handleClickDetails={() => setOpenState((pre) => ({ ...pre, details: true }))}
             />
           )}
         </VStack>
