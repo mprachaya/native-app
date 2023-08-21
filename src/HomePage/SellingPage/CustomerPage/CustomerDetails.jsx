@@ -49,11 +49,11 @@ function DetailsPage({ route, navigation }) {
     <Button
       m={2}
       w={'12'}
-      rounded={'sm'}
+      rounded={'xs'}
       variant={'unstyled'}
       background={COLORS.lightWhite}
       _pressed={{ background: COLORS.white }}
-      _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
+      _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => {
         // handleClose();
         navigation.goBack();
@@ -66,16 +66,56 @@ function DetailsPage({ route, navigation }) {
     <Button
       m={2}
       w={'12'}
-      rounded={'sm'}
+      rounded={'xs'}
       variant={'unstyled'}
       background={COLORS.lightWhite}
       _pressed={{ background: COLORS.white }}
-      _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
+      _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
 
       // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
     >
       <Edit color={COLORS.primary} />
     </Button>
+  );
+  const DisplayTextLeft = ({ children }) => (
+    <Text
+      textAlign='right'
+      maxWidth={20}
+      fontWeight={'bold'}
+      fontSize={'xs'}
+      letterSpacing={1}
+    >
+      {children}
+    </Text>
+  );
+  const SubTextLeft = ({ children }) => (
+    <Text
+      fontSize={'xs'}
+      textAlign={'right'}
+      color={COLORS.gray}
+    >
+      {children}
+    </Text>
+  );
+  const DisplayTextRight = ({ children }) => (
+    <Text
+      textAlign='left'
+      maxWidth={20}
+      fontWeight={'bold'}
+      fontSize={'xs'}
+      letterSpacing={1}
+    >
+      {children}
+    </Text>
+  );
+  const SubTextRight = ({ children }) => (
+    <Text
+      fontSize={'xs'}
+      textAlign={'left'}
+      color={COLORS.gray}
+    >
+      {children}
+    </Text>
   );
   if (loading) {
     return <Loading loading={loading} />;
@@ -106,10 +146,10 @@ function DetailsPage({ route, navigation }) {
             <EditButton />
           </HStack>
         </HStack>
-        <ScrollView>
+        <ScrollView w={'full'}>
           <VStack
-            _android={{ h: 1000 }}
-            m={4}
+            h={1000}
+            m={2}
             alignItems={'center'}
             space={2}
           >
@@ -167,102 +207,60 @@ function DetailsPage({ route, navigation }) {
 
             {/* <Avatar size={'xl'} /> */}
             <VStack
+              // bg={'black'}
               justifyContent={'center'}
               alignItems={'center'}
             >
               <Text
                 fontWeight={'bold'}
-                fontSize={'sm'}
+                fontSize={'xs'}
               >
                 {data.customer_name}
               </Text>
               <Text color={COLORS.gray}> {data.email_id}</Text>
 
               <HStack
-                space={12}
+                alignItems='center'
+                justifyContent='center'
+                space={6}
                 mt={6}
               >
                 <VStack
                   space={2}
-                  minWidth={100}
                   alignItems={'flex-end'}
                 >
                   <VStack
                     alignItems={'center'}
                     minHeight={16}
                   >
-                    <Text
-                      fontWeight={'bold'}
-                      fontSize={'sm'}
-                    >
-                      0.0
-                    </Text>
-                    <Text
-                      textAlign={'center'}
-                      color={COLORS.gray}
-                    >
-                      {'Customer\nBalance'}
-                    </Text>
+                    <DisplayTextLeft>0.0</DisplayTextLeft>
+                    <SubTextLeft>{'Customer\nBalance'}</SubTextLeft>
                   </VStack>
                   <VStack
                     alignItems={'flex-end'}
                     minHeight={12}
                   >
-                    <Text
-                      fontWeight={'bold'}
-                      fontSize={'sm'}
-                      letterSpacing={1}
-                    >
-                      {data.customer_type}
-                    </Text>
-                    <Text
-                      textAlign={'center'}
-                      color={COLORS.gray}
-                    >
-                      {'Customer Type'}
-                    </Text>
+                    <DisplayTextLeft>{data.customer_type}</DisplayTextLeft>
+                    <SubTextLeft>{'Customer Type'}</SubTextLeft>
                   </VStack>
                   <VStack
                     alignItems={'flex-end'}
                     minHeight={12}
                   >
-                    <Text
-                      fontWeight={'bold'}
-                      fontSize={'sm'}
-                      letterSpacing={1}
-                    >
-                      {data.customer_group}
-                    </Text>
-                    <Text
-                      textAlign={'center'}
-                      color={COLORS.gray}
-                    >
-                      {'Customer Group'}
-                    </Text>
+                    <DisplayTextLeft>{data.customer_group}</DisplayTextLeft>
+                    <SubTextLeft>{'Customer Group'}</SubTextLeft>
                   </VStack>
                   <VStack
                     alignItems={'flex-end'}
                     minHeight={12}
                   >
-                    <Text
-                      fontWeight={'bold'}
-                      fontSize={'sm'}
-                      letterSpacing={1}
-                    >
-                      {data.territory}
-                    </Text>
-                    <Text
-                      textAlign={'center'}
-                      color={COLORS.gray}
-                    >
-                      {'Territory'}
-                    </Text>
+                    <DisplayTextLeft>{data.territory}</DisplayTextLeft>
+                    <SubTextLeft>{'Territory'}</SubTextLeft>
                   </VStack>
                 </VStack>
                 <Divider orientation='vertical' />
                 <VStack
                   space={2}
-                  minWidth={100}
                   alignItems={'flex-start'}
                 >
                   <VStack
@@ -276,55 +274,22 @@ function DetailsPage({ route, navigation }) {
                     alignItems={'flex-start'}
                     minHeight={12}
                   >
-                    <Text
-                      fontWeight={'bold'}
-                      fontSize={'sm'}
-                      letterSpacing={1}
-                    >
-                      {data.industry ? data.industry : '-'}
-                    </Text>
-                    <Text
-                      textAlign={'center'}
-                      color={COLORS.gray}
-                    >
-                      {'Industry'}
-                    </Text>
+                    <DisplayTextRight>{data.industry ? data.industry : '-'}</DisplayTextRight>
+                    <SubTextRight>{'Industry'}</SubTextRight>
                   </VStack>
                   <VStack
                     alignItems={'flex-start'}
                     minHeight={12}
                   >
-                    <Text
-                      fontWeight={'bold'}
-                      fontSize={'sm'}
-                      letterSpacing={0.5}
-                    >
-                      {data.tax_id ? data.tax_id : '-'}
-                    </Text>
-                    <Text
-                      textAlign={'center'}
-                      color={COLORS.gray}
-                    >
-                      {'Tax ID'}
-                    </Text>
+                    <DisplayTextRight>{data.tax_id ? data.tax_id : '-'}</DisplayTextRight>
+                    <SubTextRight>{'Tax ID'}</SubTextRight>
                   </VStack>
                   <VStack
                     alignItems={'flex-start'}
                     minHeight={12}
                   >
-                    <Text
-                      fontWeight={'bold'}
-                      fontSize={'sm'}
-                      letterSpacing={0.5}
-                    >
-                      {data.market_segment ? data.market_segment : '-'}
-                    </Text>
-                    <Text
-                      textAlign={'center'}
-                      color={COLORS.gray}
-                    >
-                      {'Market Segment'}
-                    </Text>
+                    <DisplayTextRight>{data.market_segment ? data.market_segment : '-'}</DisplayTextRight>
+                    <SubTextRight>{'Market Segment'}</SubTextRight>
                   </VStack>
                 </VStack>
               </HStack>
@@ -336,16 +301,14 @@ function DetailsPage({ route, navigation }) {
                 <Text
                   w={250}
                   fontWeight={'bold'}
-                  fontSize={'sm'}
+                  fontSize={'xs'}
                   letterSpacing={0.5}
                   textAlign='center'
                 >
-                  <WebView
-                    originWhitelist={['*']}
-                    source={{ html: data.primary_address ? `${data.primary_address}` : '-' }}
-                  />
+                  {data.primary_address ? `${data.primary_address.replaceAll(/<\/?[^>]+(>|$)/gi, '')}` : '-'}
                 </Text>
                 <Text
+                  fontSize={'xs'}
                   textAlign={'center'}
                   color={COLORS.gray}
                 >
@@ -358,11 +321,12 @@ function DetailsPage({ route, navigation }) {
               >
                 <Text
                   fontWeight={'bold'}
-                  fontSize={'sm'}
+                  fontSize={'xs'}
                 >
                   {data.mobile_no ? data.mobile_no : '-'}
                 </Text>
                 <Text
+                  fontSize={'xs'}
                   textAlign={'center'}
                   color={COLORS.gray}
                 >
@@ -370,50 +334,53 @@ function DetailsPage({ route, navigation }) {
                 </Text>
               </VStack>
             </VStack>
-            <Divider mt={2} />
+            <Divider
+              w={'200'}
+              mt={2}
+            />
             <VStack
               mt={6}
               space={2}
               alignItems='center'
             >
               <HStack
-                w={200}
+                w={150}
                 space={6}
                 justifyContent='space-between'
               >
-                <Text>Currency</Text>
+                <Text fontSize={'xs'}>Currency</Text>
                 <Text fontWeight='bold'>{data.default_currency ? data.default_currency : '-'}</Text>
               </HStack>
               <HStack
-                w={200}
+                w={150}
                 space={6}
                 justifyContent='space-between'
               >
-                <Text>Price List</Text>
+                <Text fontSize={'xs'}>Price List</Text>
                 <Text fontWeight='bold'>{data.default_price_list ? data.default_price_list : '-'}</Text>
               </HStack>
               <HStack
-                w={200}
+                w={150}
                 space={6}
                 justifyContent='space-between'
               >
-                <Text>Sale Partner</Text>
+                <Text fontSize={'xs'}>Sale Partner</Text>
                 <Text fontWeight='bold'>{data.default_sales_partner ? data.default_sales_partner : '-'}</Text>
               </HStack>
               <HStack
-                w={200}
+                w={150}
                 space={6}
                 justifyContent='space-between'
               >
-                <Text>Payment Terms</Text>
+                <Text fontSize={'xs'}>Payment Terms</Text>
                 <Text fontWeight='bold'>{data.payment_terms ? data.payment_terms : '-'}</Text>
               </HStack>
               <HStack
-                w={200}
+                w={150}
                 space={6}
                 justifyContent='space-between'
               >
-                <Text>Credit Limit</Text>
+                <Text fontSize={'xs'}>Credit Limit</Text>
                 <Text fontWeight='bold'>0.00</Text>
               </HStack>
             </VStack>

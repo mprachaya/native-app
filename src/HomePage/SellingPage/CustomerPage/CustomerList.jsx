@@ -178,14 +178,13 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
     <View
       my={4}
       w={{ base: SCREEN_WIDTH - 24, lg: 1000 }}
-      h={{ base: 400, lg: 800 }}
+      h={{ base: 450, lg: 800 }}
     >
       <GetScreenSize
         from={'md'}
         to={'lg'}
       >
         <FlatList
-          // _ios={{ h: 500 }}
           data={data.slice(0, dataIndex)}
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between' }}
