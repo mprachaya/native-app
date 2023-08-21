@@ -12,6 +12,7 @@ import { Platform } from 'react-native';
 import React, { useState } from 'react';
 import SortAndroid from './src/HomePage/SellingPage/CustomerPage/SortAndroid';
 import { LogBox } from 'react-native';
+import CustomerDetails from './src/HomePage/SellingPage/CustomerPage/CustomerDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -99,6 +100,20 @@ export default function App() {
                   header: () => (
                     <NavHeader
                       pageName={'Sort'}
+                      noHeader={true}
+                    />
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name='CustomerDetails'
+                component={CustomerDetails}
+                options={{
+                  title: '',
+                  headerShadowVisible: true,
+                  header: () => (
+                    <NavHeader
+                      pageName={'Customer Details'}
                       noHeader={true}
                     />
                   ),

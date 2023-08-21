@@ -5,6 +5,7 @@ export const url = {
   BASE_URL: 'https://tonen.vsiam.com',
   CUSTOMERS:
     'https://tonen.vsiam.com/api/resource/Customer?limit=500&fields=["name","creation","modified","customer_name","customer_type","customer_group","territory","image"]',
+  CUSTOMER: 'https://tonen.vsiam.com/api/resource/Customer/',
   COMPANY: 'https://tonen.vsiam.com/api/resource/Company',
   CUSTOMER_GROUPS: 'https://tonen.vsiam.com/api/resource/Customer Group',
   TERRITORY: 'https://tonen.vsiam.com/api/resource/Territory',

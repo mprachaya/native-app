@@ -24,7 +24,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
       bg={COLORS.lightWhite}
       shadow={1}
       _pressed={{ bg: COLORS.white }}
-      onPress={() => handleClickDetails()}
+      onPress={() => handleClickDetails(title)}
     >
       <HStack>
         {image !== null ? (
@@ -185,6 +185,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
         to={'lg'}
       >
         <FlatList
+          // _ios={{ h: 500 }}
           data={data.slice(0, dataIndex)}
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between' }}

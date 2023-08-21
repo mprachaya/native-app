@@ -12,7 +12,6 @@ import useFetch from '../../../../hooks/useFetch';
 import AddNewCustomer from './AddNewCustomer';
 import FadeTransition from '../../../../components/FadeTransition';
 import useSubmit from '../../../../hooks/useSubmit';
-import DetailsPage from './CustomerDetails';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -101,6 +100,12 @@ function CustomerPage() {
       () => void 0,
       () => void 0
     );
+  };
+
+  const handleClickDetails = (name) => {
+    navigation.navigate('CustomerDetails', {
+      name: name,
+    });
   };
 
   // reset open state modal when navigate from back event
@@ -200,7 +205,7 @@ function CustomerPage() {
               </FadeTransition>
             </Box>
           )}
-          {openState.details && (
+          {/* {openState.details && (
             <Box
               top={0}
               left={0}
@@ -219,7 +224,7 @@ function CustomerPage() {
                 />
               </FadeTransition>
             </Box>
-          )}
+          )} */}
           <HStack
             mx={{ base: 0, lg: 24 }}
             justifyContent={{ base: 'center', lg: 'flex-end' }}
@@ -309,7 +314,7 @@ function CustomerPage() {
               data={customerData}
               token={config.API_TOKEN}
               returnDataIndex={setDataShowLength}
-              handleClickDetails={() => setOpenState((pre) => ({ ...pre, details: true }))}
+              handleClickDetails={handleClickDetails}
             />
           )}
         </VStack>

@@ -1,20 +1,25 @@
 import {
   Avatar,
+  Box,
   Button,
   Center,
-  CheckIcon,
   Checkbox,
   ChevronLeftIcon,
   Divider,
   HStack,
+  Image,
   ScrollView,
   Text,
   VStack,
   View,
 } from 'native-base';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { COLORS } from '../../../../constants/theme';
 import { Edit } from '../../../../constants/icons';
+import { useNavigation } from '@react-navigation/native';
+import { config, url } from '../../../../config';
+import useFetch from '../../../../hooks/useFetch';
+import { Loading } from '../../../../components';
 // import { ChevronBackWard } from '../../../../constants/icons';
 
 // wrap components
@@ -30,19 +35,34 @@ const ContainerStyled = (props) => {
   );
 };
 
-function DetailsPage({ handleClose }) {
+function DetailsPage({ route, navigation }) {
   const title = 'Customer Details';
+  const { name } = route.params;
+
+  // data fetching with custom hook useFetch
+  const { data, setData, setRefetch, loading, error } = useFetch(url.CUSTOMER + name, {
+    headers: {
+      Authorization: config.API_TOKEN,
+    },
+  });
+
+  // useEffect(() => {
+  //   if (data) console.log(data);
+  // }, [data]);
 
   const BackButton = () => (
     <Button
       m={2}
       w={'12'}
-      rounded={'lg'}
+      rounded={'sm'}
       variant={'unstyled'}
       background={COLORS.lightWhite}
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
-      onPress={() => handleClose()}
+      onPress={() => {
+        // handleClose();
+        navigation.goBack();
+      }}
     >
       <ChevronLeftIcon />
     </Button>
@@ -51,7 +71,7 @@ function DetailsPage({ handleClose }) {
     <Button
       m={2}
       w={'12'}
-      rounded={'lg'}
+      rounded={'sm'}
       variant={'unstyled'}
       background={COLORS.lightWhite}
       _pressed={{ background: COLORS.white }}
@@ -62,12 +82,25 @@ function DetailsPage({ handleClose }) {
       <Edit color={COLORS.primary} />
     </Button>
   );
-
+  if (loading) {
+    return <Loading loading={loading} />;
+  }
+  // handle error when data is not available
+  if (error) {
+    return (
+      <ContainerStyled>
+        <HStack justifyContent='center'>
+          <Text>ERROR</Text>
+        </HStack>
+      </ContainerStyled>
+    );
+  }
   return (
     <ContainerStyled>
       <Center>
         <HStack
           top={2}
+          px={4}
           w={'full'}
           justifyContent={'space-between'}
         >
@@ -85,18 +118,70 @@ function DetailsPage({ handleClose }) {
             alignItems={'center'}
             space={2}
           >
-            <Avatar size={'xl'} />
+            {data.image ? (
+              <Box
+                m={4}
+                w={20}
+                h={20}
+                rounded={6}
+                shadow={1}
+              >
+                <Image
+                  style={{ flex: 1, resizeMode: 'cover' }}
+                  rounded={6}
+                  alt={'customer image'}
+                  source={{
+                    uri: url.BASE_URL + data.image,
+                    method: 'GET',
+                    headers: {
+                      Authorization: config.API_TOKEN,
+                    },
+                  }}
+                />
+              </Box>
+            ) : (
+              <Box
+                m={4}
+                w={20}
+                h={20}
+                rounded={6}
+                background={'black'}
+                shadow={1}
+              >
+                <Box
+                  w={'full'}
+                  h={'full'}
+                  justifyContent={'center'}
+                  alignItems={'center'}
+                  position={'absolute'}
+                >
+                  <Text color={'white'}>No Image</Text>
+                </Box>
+
+                <Image
+                  alt={'customer image'}
+                  opacity={'0.5'}
+                  rounded={6}
+                  style={{ flex: 1, resizeMode: 'cover' }}
+                  source={{
+                    uri: 'https://images.pexels.com/photos/2887582/pexels-photo-2887582.jpeg?auto=compress&cs=tinysrgb&w=600',
+                  }}
+                />
+              </Box>
+            )}
+
+            {/* <Avatar size={'xl'} /> */}
             <VStack
               justifyContent={'center'}
               alignItems={'center'}
             >
               <Text
                 fontWeight={'bold'}
-                fontSize={'lg'}
+                fontSize={'sm'}
               >
-                Name
+                {data.customer_name}
               </Text>
-              <Text color={COLORS.gray}>Email</Text>
+              <Text color={COLORS.gray}> {data.email_id}</Text>
 
               <HStack
                 space={12}
@@ -113,7 +198,7 @@ function DetailsPage({ handleClose }) {
                   >
                     <Text
                       fontWeight={'bold'}
-                      fontSize={'lg'}
+                      fontSize={'sm'}
                     >
                       0.0
                     </Text>
@@ -130,10 +215,10 @@ function DetailsPage({ handleClose }) {
                   >
                     <Text
                       fontWeight={'bold'}
-                      fontSize={'lg'}
+                      fontSize={'sm'}
                       letterSpacing={1}
                     >
-                      COMPANY
+                      {data.customer_type}
                     </Text>
                     <Text
                       textAlign={'center'}
@@ -148,10 +233,10 @@ function DetailsPage({ handleClose }) {
                   >
                     <Text
                       fontWeight={'bold'}
-                      fontSize={'lg'}
+                      fontSize={'sm'}
                       letterSpacing={1}
                     >
-                      COMMERCIAL
+                      {data.customer_group}
                     </Text>
                     <Text
                       textAlign={'center'}
@@ -166,10 +251,10 @@ function DetailsPage({ handleClose }) {
                   >
                     <Text
                       fontWeight={'bold'}
-                      fontSize={'lg'}
+                      fontSize={'sm'}
                       letterSpacing={1}
                     >
-                      THAILAND
+                      {data.territory}
                     </Text>
                     <Text
                       textAlign={'center'}
@@ -198,10 +283,10 @@ function DetailsPage({ handleClose }) {
                   >
                     <Text
                       fontWeight={'bold'}
-                      fontSize={'lg'}
+                      fontSize={'sm'}
                       letterSpacing={1}
                     >
-                      ACCOUNTING
+                      {data.industry ? data.industry : '-'}
                     </Text>
                     <Text
                       textAlign={'center'}
@@ -216,10 +301,10 @@ function DetailsPage({ handleClose }) {
                   >
                     <Text
                       fontWeight={'bold'}
-                      fontSize={'lg'}
+                      fontSize={'sm'}
                       letterSpacing={0.5}
                     >
-                      32321245
+                      {data.tax_id ? data.tax_id : '-'}
                     </Text>
                     <Text
                       textAlign={'center'}
@@ -234,10 +319,10 @@ function DetailsPage({ handleClose }) {
                   >
                     <Text
                       fontWeight={'bold'}
-                      fontSize={'lg'}
+                      fontSize={'sm'}
                       letterSpacing={0.5}
                     >
-                      -
+                      {data.market_segment ? data.market_segment : '-'}
                     </Text>
                     <Text
                       textAlign={'center'}
@@ -252,12 +337,15 @@ function DetailsPage({ handleClose }) {
                 mt={6}
                 alignItems='center'
               >
+                {/* <WebView html></WebView> */}
                 <Text
+                  w={250}
                   fontWeight={'bold'}
-                  fontSize={'lg'}
+                  fontSize={'sm'}
                   letterSpacing={0.5}
+                  textAlign='center'
                 >
-                  {'Haitham-Billing'}
+                  {data.primary_address ? `${data.primary_address}` : '-'}
                 </Text>
                 <Text
                   textAlign={'center'}
@@ -272,9 +360,9 @@ function DetailsPage({ handleClose }) {
               >
                 <Text
                   fontWeight={'bold'}
-                  fontSize={'lg'}
+                  fontSize={'sm'}
                 >
-                  {'01028349192'}
+                  {data.mobile_no ? data.mobile_no : '-'}
                 </Text>
                 <Text
                   textAlign={'center'}
@@ -296,7 +384,7 @@ function DetailsPage({ handleClose }) {
                 justifyContent='space-between'
               >
                 <Text>Currency</Text>
-                <Text fontWeight='bold'>EGP</Text>
+                <Text fontWeight='bold'>{data.default_currency ? data.default_currency : '-'}</Text>
               </HStack>
               <HStack
                 w={200}
@@ -304,7 +392,7 @@ function DetailsPage({ handleClose }) {
                 justifyContent='space-between'
               >
                 <Text>Price List</Text>
-                <Text fontWeight='bold'>A</Text>
+                <Text fontWeight='bold'>{data.default_price_list ? data.default_price_list : '-'}</Text>
               </HStack>
               <HStack
                 w={200}
@@ -312,7 +400,7 @@ function DetailsPage({ handleClose }) {
                 justifyContent='space-between'
               >
                 <Text>Sale Partner</Text>
-                <Text fontWeight='bold'>-</Text>
+                <Text fontWeight='bold'>{data.default_sales_partner ? data.default_sales_partner : '-'}</Text>
               </HStack>
               <HStack
                 w={200}
@@ -320,7 +408,7 @@ function DetailsPage({ handleClose }) {
                 justifyContent='space-between'
               >
                 <Text>Payment Terms</Text>
-                <Text fontWeight='bold'>-</Text>
+                <Text fontWeight='bold'>{data.payment_terms ? data.payment_terms : '-'}</Text>
               </HStack>
               <HStack
                 w={200}
