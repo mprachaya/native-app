@@ -64,8 +64,8 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
     }
   };
 
-  const handleCloseClick = () => {
-    handleClick();
+  const handleCloseClick = (name) => {
+    handleClick(name);
     setOnFocus(false);
   };
 
@@ -165,7 +165,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
                 renderItem={({ item }) => (
                   <Pressable
                     m={1}
-                    onPress={() => handleCloseClick()}
+                    onPress={() => handleCloseClick(item.name)}
                   >
                     {({ isHovered, isFocused, isPressed }) => {
                       return (

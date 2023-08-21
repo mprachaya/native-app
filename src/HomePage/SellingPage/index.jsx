@@ -64,7 +64,7 @@ function SellingPage({ navigation }) {
                 }
               />
               <MenuIcon
-                onPress={() => navigation.navigate('Customer')}
+                onPress={() => navigation.navigate('Customer', { filterData: [] })}
                 menuLabel={'Customer'}
                 Icon={
                   <Customer

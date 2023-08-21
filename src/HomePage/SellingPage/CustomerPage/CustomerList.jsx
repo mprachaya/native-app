@@ -13,7 +13,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
   const [loadMore, setLoadMore] = useState(false);
   const [tempIndex, setTempIndex] = useState(0);
 
-  const Item = React.memo(({ image, title, type, group }) => (
+  const Item = React.memo(({ name, image, title, type, group }) => (
     <Pressable
       mb={2}
       mx={1.5}
@@ -24,7 +24,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
       bg={COLORS.lightWhite}
       shadow={1}
       _pressed={{ bg: COLORS.white }}
-      onPress={() => handleClickDetails(title)}
+      onPress={() => handleClickDetails(name)}
     >
       <HStack>
         {image !== null ? (
@@ -206,8 +206,9 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
           }
           renderItem={({ item }) => (
             <Item
+              name={item.name}
               image={item.image}
-              title={item.name}
+              title={item.customer_name}
               type={item.customer_type}
               group={item.customer_group}
             />
@@ -223,8 +224,9 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
           keyExtractor={(item) => item.name}
           renderItem={({ item }) => (
             <Item
+              name={item.name}
               image={item.image}
-              title={item.name}
+              title={item.customer_name}
               type={item.customer_type}
               group={item.customer_group}
             />

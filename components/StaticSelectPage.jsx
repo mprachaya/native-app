@@ -84,14 +84,14 @@ function StaticSelectPage({ title, data, open, setOpen, setState, property }) {
     // console.log('option: ', option);
   }, [data]);
 
-  useEffect(() => {
-    console.log('list :', list);
-  }, [list]);
+  // useEffect(() => {
+  //   console.log('list :', list);
+  // }, [list]);
 
   useEffect(() => {
     if (!SearchText) {
       if (data) {
-        console.log('reset : ', data);
+        // console.log('reset : ', data);
         setList(data);
       }
     } else {
@@ -105,7 +105,7 @@ function StaticSelectPage({ title, data, open, setOpen, setState, property }) {
       }
     }
 
-    console.log(SearchText);
+    // console.log(SearchText);
   }, [SearchText]);
 
   return (

@@ -20,6 +20,7 @@ import { config, url } from '../../../../config';
 import { Loading } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
 import WebView from 'react-native-webview';
+import useUpdate from '../../../../hooks/useUpdate';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -44,6 +45,27 @@ function DetailsPage({ route, navigation }) {
       Authorization: config.API_TOKEN,
     },
   });
+
+  const handleDisable = () => {
+    const tempState = { ...data };
+    tempState.disabled = !tempState.disabled;
+
+    useUpdate(
+      {
+        headers: {
+          Authorization: config.API_TOKEN,
+        },
+      },
+      url.CUSTOMER + name,
+      tempState,
+      () => void 0,
+      () => setRefetch(1)
+    );
+  };
+
+  const handleOpenUpdate = () => {
+    navigation.navigate('UpdateCustomer', { name: data.name, preState: data });
+  };
 
   const BackButton = () => (
     <Button
@@ -71,7 +93,7 @@ function DetailsPage({ route, navigation }) {
       background={COLORS.lightWhite}
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
-
+      onPress={() => handleOpenUpdate()}
       // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
     >
       <Edit color={COLORS.primary} />
@@ -267,7 +289,12 @@ function DetailsPage({ route, navigation }) {
                     alignItems={'center'}
                     minHeight={16}
                   >
-                    <Checkbox aria-label='disable-check' />
+                    <Checkbox
+                      aria-label='disable-check'
+                      isChecked={data.disabled || 0}
+                      _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
+                      onPress={() => handleDisable()}
+                    />
                     <Text color={COLORS.gray}>{'Disable'}</Text>
                   </VStack>
                   <VStack

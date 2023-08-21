@@ -13,6 +13,9 @@ import React, { useState } from 'react';
 import SortAndroid from './src/HomePage/SellingPage/CustomerPage/SortAndroid';
 import { LogBox } from 'react-native';
 import CustomerDetails from './src/HomePage/SellingPage/CustomerPage/CustomerDetails';
+import UpdateCustomer from './src/HomePage/SellingPage/CustomerPage/UpdateCustomer';
+import AddNewCustomer from './src/HomePage/SellingPage/CustomerPage/AddNewCustomer';
+import FilterCustomer from './src/HomePage/SellingPage/CustomerPage/FilterCustomer';
 
 const Stack = createNativeStackNavigator();
 
@@ -74,6 +77,7 @@ export default function App() {
             <Stack.Group>
               <Stack.Screen
                 name='Customer'
+                component={CustomerPage}
                 options={{
                   header: () => (
                     <NavHeader
@@ -83,14 +87,8 @@ export default function App() {
                     />
                   ),
                 }}
-              >
-                {() => (
-                  <CustomerPage
-                    openState={openState}
-                    setOpenState={setOpenState}
-                  />
-                )}
-              </Stack.Screen>
+              />
+
               <Stack.Screen
                 name='SortAndroid'
                 component={SortAndroid}
@@ -119,9 +117,50 @@ export default function App() {
                   ),
                 }}
               />
+              <Stack.Screen
+                name='AddNewCustomer'
+                component={AddNewCustomer}
+                options={{
+                  title: '',
+                  headerShadowVisible: true,
+                  header: () => (
+                    <NavHeader
+                      pageName={'Add New Customer'}
+                      noHeader={true}
+                    />
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name='UpdateCustomer'
+                component={UpdateCustomer}
+                options={{
+                  title: '',
+                  headerShadowVisible: true,
+                  header: () => (
+                    <NavHeader
+                      pageName={'Customer Update'}
+                      noHeader={true}
+                    />
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name='FilterCustomer'
+                component={FilterCustomer}
+                options={{
+                  title: '',
+                  headerShadowVisible: true,
+                  header: () => (
+                    <NavHeader
+                      pageName={'Filter Customer'}
+                      noHeader={true}
+                    />
+                  ),
+                }}
+              />
             </Stack.Group>
           </Stack.Navigator>
-          <TabMenu setInitialOpenState={() => setOpenState(initialState)} />
         </Store>
       </NavigationContainer>
     </NativeBaseProvider>

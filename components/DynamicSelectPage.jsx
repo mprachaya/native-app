@@ -90,14 +90,14 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
     // console.log('option: ', option);
   }, [data]);
 
-  useEffect(() => {
-    console.log('list :', list);
-  }, [list]);
+  // useEffect(() => {
+  //   console.log('list :', list);
+  // }, [list]);
 
   useEffect(() => {
     if (!SearchText) {
       if (data) {
-        console.log('reset : ', data);
+        // console.log('reset : ', data);
         setList(data);
       }
     } else {
@@ -111,16 +111,18 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
       }
     }
 
-    console.log(SearchText);
+    // console.log(SearchText);
   }, [SearchText]);
 
   if (loading) {
     return (
       <View
-        m={'auto'}
+        // m={'auto'}
         mt={40}
       >
-        <Spinner />
+        <Center>
+          <Spinner />
+        </Center>
       </View>
     );
   }
@@ -232,7 +234,7 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
             justifyContent={'center'}
             alignItems={'center'}
             space={12}
-            mt={12}
+            mt={20}
             mx={{ base: 10, lg: 0 }}
           >
             <Text

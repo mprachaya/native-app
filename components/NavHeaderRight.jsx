@@ -1,4 +1,4 @@
-import { Box, Button, HStack } from 'native-base';
+import { Box, Button, HStack, Text } from 'native-base';
 import React from 'react';
 import { AddNew, Filter, Sort } from '../constants/icons';
 import { COLORS } from '../constants/theme';
@@ -8,9 +8,11 @@ function NavHeaderRight({ openAdd, openSort, openFilter }) {
 
   const OptionContainer = ({ handleOpen, children }) => (
     <Button
+      rounded={12}
       variant={'unstyled'}
       justifyContent={'center'}
       onPress={handleOpen}
+      _pressed={{ bg: 'blueGray.200' }}
     >
       {children}
     </Button>

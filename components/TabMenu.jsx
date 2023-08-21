@@ -4,7 +4,7 @@ import { COLORS } from '../constants/theme';
 import { AccountSettings, Home, Modules, Notification, Search } from '../constants/icons';
 import { useNavigation } from '@react-navigation/native';
 
-function TabMenu({ setInitialOpenState }) {
+function TabMenu() {
   const activeColor = COLORS.tertiary;
   const inactiveColor = COLORS.gray2;
 
@@ -13,7 +13,6 @@ function TabMenu({ setInitialOpenState }) {
   const navigation = useNavigation();
 
   const handleNavigate = (path, activeMenu) => {
-    setInitialOpenState();
     setActiveMenu(activeMenu);
     navigation.navigate(path);
   };
@@ -23,11 +22,12 @@ function TabMenu({ setInitialOpenState }) {
       bottom={0}
       position={'absolute'}
       w={'full'}
-      h={'20'}
+      h={'24'}
       bg={COLORS.primary}
       roundedTop={20}
       justifyContent={'center'}
       px={4}
+      zIndex={999}
     >
       <HStack
         justifyContent={'space-around'}

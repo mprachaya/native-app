@@ -19,8 +19,10 @@ import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
 import { handleChange } from '../../../../hooks/useValidation';
-import { url } from '../../../../config';
+import { config, url } from '../../../../config';
 import { Pressable } from 'react-native';
+import useFetch from '../../../../hooks/useFetch';
+import useUpdate from '../../../../hooks/useUpdate';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -65,9 +67,11 @@ const StyledTextField = (props) => {
   );
 };
 // main component
-function UpdateCustomer({ handleClose, handleSubmit, refetchData, updateState }) {
+function UpdateCustomer({ route, navigation, handleClose }) {
+  const { name, preState } = route.params;
   // page name display
   const title = 'Add New Customer';
+  const mainPage = 'Customer';
   // navigate step state
   const [stepState, setStepState] = useState(1);
   // max of steps
@@ -77,6 +81,11 @@ function UpdateCustomer({ handleClose, handleSubmit, refetchData, updateState })
   const [openSelection, setOpenSelection] = useState(false);
   // state for show / hide selection (static)
   const [openCustomerType, setOpenCustomerType] = useState(false);
+
+  useEffect(() => {
+    console.log(preState);
+    // console.log(preData);
+  }, [preState]);
 
   // initial state
   const initialState = {
@@ -100,7 +109,7 @@ function UpdateCustomer({ handleClose, handleSubmit, refetchData, updateState })
   };
 
   // main state
-  const [state, setState] = useState(initialState);
+  const [state, setState] = useState(preState);
   // for handle selection title (dynamic)
   const [titleSelection, setTitleSelection] = useState('');
   // for handle dynamic url selection
@@ -120,6 +129,20 @@ function UpdateCustomer({ handleClose, handleSubmit, refetchData, updateState })
 
   //option selection with static option
   const customerTypes = [{ name: 'Company' }, { name: 'Individual' }];
+
+  const handleUpdate = (state) => {
+    useUpdate(
+      {
+        headers: {
+          Authorization: config.API_TOKEN,
+        },
+      },
+      url.CUSTOMER + name,
+      state,
+      () => void 0,
+      () => void 0
+    );
+  };
 
   // handle change property when open selection (dynamic)
   const getValueFromSelection = (name) => {
@@ -177,7 +200,8 @@ function UpdateCustomer({ handleClose, handleSubmit, refetchData, updateState })
     };
 
     const handleBack = () => {
-      handleClose();
+      // handleClose();
+      navigation.goBack();
       setState(initialState);
     };
 
@@ -199,7 +223,7 @@ function UpdateCustomer({ handleClose, handleSubmit, refetchData, updateState })
         w={'20'}
         rounded={'lg'}
         variant={'unstyled'}
-        background={COLORS.lightWhite}
+        _pressed={{ bg: 'blueGray.200' }}
         _pressed={{ background: COLORS.white }}
         _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
         onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
@@ -465,7 +489,7 @@ function UpdateCustomer({ handleClose, handleSubmit, refetchData, updateState })
       if (check.length !== 0) {
       } else {
         // if filled go to next step
-        handleSubmit(ctmState2);
+        handleUpdate(ctmState2);
         setStepState((post) => post + 1);
         // setState(ctmState2);
       }
@@ -636,15 +660,9 @@ function UpdateCustomer({ handleClose, handleSubmit, refetchData, updateState })
     );
   };
 
-  const SuccessMessage = ({ setState }) => {
+  const SuccessMessage = () => {
     const handleBack = () => {
-      setState(initialState);
-      refetchData();
-      handleClose();
-    };
-    const handleAddAnother = () => {
-      setState(initialState);
-      setStepState(1);
+      navigation.navigate(mainPage);
     };
 
     return (
@@ -682,7 +700,7 @@ function UpdateCustomer({ handleClose, handleSubmit, refetchData, updateState })
               textWeight={'bold'}
               fontSize={24}
             >
-              {'Registration\nSuccess!'}
+              {'Update\nSuccess!'}
             </Text>
 
             <VStack
@@ -706,9 +724,9 @@ function UpdateCustomer({ handleClose, handleSubmit, refetchData, updateState })
     );
   };
   // log when state having changed
-  useEffect(() => {
-    console.log('state: ', state);
-  }, [state]);
+  // useEffect(() => {
+  //   console.log('state: ', state);
+  // }, [state]);
 
   return (
     <ContainerStyled>

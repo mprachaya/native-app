@@ -1,4 +1,15 @@
-import { Actionsheet, Button, CheckIcon, Divider, HStack, ScrollView, Text, VStack, useToast } from 'native-base';
+import {
+  Actionsheet,
+  Button,
+  CheckIcon,
+  Divider,
+  HStack,
+  ScrollView,
+  Text,
+  VStack,
+  useDisclose,
+  useToast,
+} from 'native-base';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { COLORS } from '../constants/theme';
 import { Context } from '../reducer';
@@ -6,7 +17,6 @@ import { Context } from '../reducer';
 function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
   const toast = useToast();
   const [state, dispatch] = useContext(Context);
-
   const ModalContainer = ({ children }) => (
     <Actionsheet
       isOpen={open}

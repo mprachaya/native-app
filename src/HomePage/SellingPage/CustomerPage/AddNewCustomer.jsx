@@ -19,8 +19,9 @@ import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
 import { handleChange } from '../../../../hooks/useValidation';
-import { url } from '../../../../config';
+import { config, url } from '../../../../config';
 import { Pressable } from 'react-native';
+import useSubmit from '../../../../hooks/useSubmit';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -65,7 +66,7 @@ const StyledTextField = (props) => {
   );
 };
 // main component
-function AddNewCustomer({ handleClose, handleSubmit, refetchData }) {
+function AddNewCustomer({ navigation }) {
   // page name display
   const title = 'Add New Customer';
   // navigate step state
@@ -120,6 +121,20 @@ function AddNewCustomer({ handleClose, handleSubmit, refetchData }) {
 
   //option selection with static option
   const customerTypes = [{ name: 'Company' }, { name: 'Individual' }];
+
+  const handleSubmit = (state) => {
+    useSubmit(
+      {
+        headers: {
+          Authorization: config.API_TOKEN,
+        },
+      },
+      url.CUSTOMERS,
+      state,
+      () => void 0,
+      () => void 0
+    );
+  };
 
   // handle change property when open selection (dynamic)
   const getValueFromSelection = (name) => {
@@ -177,7 +192,8 @@ function AddNewCustomer({ handleClose, handleSubmit, refetchData }) {
     };
 
     const handleBack = () => {
-      handleClose();
+      // handleClose();
+      navigation.goBack();
       setState(initialState);
     };
 
@@ -200,7 +216,7 @@ function AddNewCustomer({ handleClose, handleSubmit, refetchData }) {
         rounded={'lg'}
         variant={'unstyled'}
         background={COLORS.lightWhite}
-        _pressed={{ background: COLORS.white }}
+        _pressed={{ bg: 'blueGray.200' }}
         _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
         onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
       >
@@ -472,7 +488,7 @@ function AddNewCustomer({ handleClose, handleSubmit, refetchData }) {
     };
 
     const handleBack = () => {
-      handleClose();
+      navigation.goBack();
       setState(initialState);
     };
 
@@ -638,9 +654,9 @@ function AddNewCustomer({ handleClose, handleSubmit, refetchData }) {
 
   const SuccessMessage = ({ setState }) => {
     const handleBack = () => {
-      setState(initialState);
-      refetchData();
-      handleClose();
+      // setState(initialState);
+      // refetchData();
+      navigation.navigate('Customer');
     };
     const handleAddAnother = () => {
       setState(initialState);
@@ -716,9 +732,9 @@ function AddNewCustomer({ handleClose, handleSubmit, refetchData }) {
     );
   };
   // log when state having changed
-  useEffect(() => {
-    console.log('state: ', state);
-  }, [state]);
+  // useEffect(() => {
+  //   console.log('state: ', state);
+  // }, [state]);
 
   return (
     <ContainerStyled>

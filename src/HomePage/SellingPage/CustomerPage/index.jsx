@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Box, Center, HStack, Text, VStack, View } from 'native-base';
 import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
@@ -9,9 +9,7 @@ import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
 import useFetch from '../../../../hooks/useFetch';
-import AddNewCustomer from './AddNewCustomer';
-import FadeTransition from '../../../../components/FadeTransition';
-import useSubmit from '../../../../hooks/useSubmit';
+import { FilterList } from '../../../../utils/filter';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -28,7 +26,8 @@ const ContainerStyled = (props) => {
   );
 };
 
-function CustomerPage() {
+function CustomerPage({ route }) {
+  const { filterData } = route.params;
   // for hot reload
   const [reloadState, setReloadState] = useState(true);
   // for background search function
@@ -38,15 +37,13 @@ function CustomerPage() {
   const [dataShowLength, setDataShowLength] = useState(null);
   // for navigate between pages
   const navigation = useNavigation();
-  // for add ,sort ,filter state controller
+
   const [openState, setOpenState] = useState({
-    add: false,
     sort: false,
-    filter: false,
-    details: false,
   });
+
   // column for searching
-  const dataColumn = ['customer_group', 'territory', 'name'];
+  const dataColumn = ['customer_group', 'territory', 'customer_name'];
   const initialsSortBy = {
     Creation: false,
     Modified: false,
@@ -58,15 +55,16 @@ function CustomerPage() {
     ASC: false,
   };
 
-  const initialOpen = {
-    add: false,
-    sort: false,
-    filter: false,
+  const initialsFilterState = {
+    customer_type: '',
+    customer_group: '',
+    territory: '',
   };
 
   const [sortByState, setSortByState] = useState(initialsSortBy);
   const [sortTypeState, setSortTypeState] = useState(initialsSortType);
 
+  const [filterState, setFilterState] = useState(initialsFilterState);
   // data fetching with custom hook useFetch
   const {
     data: customerData,
@@ -88,33 +86,38 @@ function CustomerPage() {
     return cus.customer_type === 'Individual';
   }).length;
 
-  const handleSubmit = (state) => {
-    useSubmit(
-      {
-        headers: {
-          Authorization: config.API_TOKEN,
-        },
-      },
-      url.CUSTOMERS,
-      state,
-      () => void 0,
-      () => void 0
-    );
-  };
-
   const handleClickDetails = (name) => {
     navigation.navigate('CustomerDetails', {
       name: name,
     });
   };
 
-  // reset open state modal when navigate from back event
+  // // reset open state modal when navigate from back event
   useMemo(() => {
     const handleBack = navigation.addListener('focus', () => {
-      setOpenState(initialOpen);
+      refetchData();
+      setReloadState(true);
     });
-    return handleBack;
+
+    handleBack();
   }, [navigation]);
+
+  // useMemo(() => {
+  //   if (filterData) setFilterState(filterData);
+  // }, [filterData]);
+
+  useMemo(() => {
+    // console.log('FilterState: ', filterData);
+    if (filterData) {
+      FilterList(
+        customerData,
+        setCustomerData,
+        ['customer_type', 'customer_group', 'territory'],
+        Object.values(filterData)
+      );
+      console.log(filterData);
+    }
+  }, [filterData]);
 
   // hot loading when data still not available
   if (loading) {
@@ -155,13 +158,15 @@ function CustomerPage() {
               {/* {lengthSearch === 0 && <Text mt={24}>Empty</Text>} */}
             </Box>
           )}
+
           <HStack
             // mb={2}
             justifyContent={{ base: 'flex-end', lg: 'flex-end' }}
           >
             {Platform.OS === 'android' && (
               <NavHeaderRight
-                openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
+                openAdd={() => navigation.navigate('AddNewCustomer')}
+                // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                 openSort={() =>
                   navigation.navigate('SortAndroid', {
                     sortBy: SortBy,
@@ -174,57 +179,19 @@ function CustomerPage() {
                     setSortTypest: setSortTypeState,
                   })
                 }
-                // openFilter={() => setOpenState((pre) => ({ ...pre, filter: true }))}
+                openFilter={() => navigation.navigate('FilterCustomer')}
               />
             )}
             {Platform.OS === 'ios' && (
               <NavHeaderRight
-                openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
+                openAdd={() => navigation.navigate('AddNewCustomer')}
+                // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                 openSort={() => setOpenState((pre) => ({ ...pre, sort: true }))}
-                // openFilter={() => setOpenState((pre) => ({ ...pre, filter: true }))}
+                openFilter={() => navigation.navigate('FilterCustomer')}
               />
             )}
           </HStack>
-          {openState.add && (
-            <Box
-              top={0}
-              left={0}
-              right={'25%'}
-              position='absolute'
-              bg={'blueGray.100'}
-              height={SCREEN_HEIGHT}
-              width={'full'}
-              zIndex={999}
-            >
-              <FadeTransition animated={openState.add}>
-                <AddNewCustomer
-                  refetchData={() => refetchData(true)}
-                  handleSubmit={handleSubmit}
-                  handleClose={() => setOpenState((pre) => ({ ...pre, add: false }))}
-                />
-              </FadeTransition>
-            </Box>
-          )}
-          {/* {openState.details && (
-            <Box
-              top={0}
-              left={0}
-              right={'25%'}
-              position='absolute'
-              bg={'blueGray.100'}
-              height={SCREEN_HEIGHT}
-              width={'full'}
-              zIndex={999}
-            >
-              <FadeTransition animated={openState.details}>
-                <DetailsPage
-                  // refetchData={() => refetchData(true)}
-                  // handleSubmit={handleSubmit}
-                  handleClose={() => setOpenState((pre) => ({ ...pre, details: false }))}
-                />
-              </FadeTransition>
-            </Box>
-          )} */}
+
           <HStack
             mx={{ base: 0, lg: 24 }}
             justifyContent={{ base: 'center', lg: 'flex-end' }}
@@ -240,7 +207,8 @@ function CustomerPage() {
               dataColumn={dataColumn}
               returnData={setShowBackgroundSearch}
               returnLength={setLengthSearch}
-              handleClick={() => setOpenState((pre) => ({ ...pre, details: true }))}
+              handleClick={handleClickDetails}
+              // handleClick={() => setOpenState((pre) => ({ ...pre, details: true }))}
             />
           </HStack>
           {!showBackgroundSearch && (
@@ -307,7 +275,7 @@ function CustomerPage() {
               {dataShowLength} to {customerData.length}
             </Text>
           </HStack>
-          {!showBackgroundSearch && !openState.add && !openState.filter && (
+          {!showBackgroundSearch && (
             <CustomerList
               reload={reloadState}
               setReload={setReloadState}
@@ -320,6 +288,7 @@ function CustomerPage() {
         </VStack>
       </Center>
       {/* {Platform.OS === 'ios' && ( */}
+
       <SortModal
         open={openState.sort}
         setOpen={setOpenState}
@@ -328,6 +297,7 @@ function CustomerPage() {
         setData={setCustomerData}
         sortBy={SortBy}
       />
+
       {/* )} */}
       {/* {openState.add && navigation.navigate('AddNewCustomer')} */}
     </ContainerStyled>

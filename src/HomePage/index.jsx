@@ -1,17 +1,18 @@
 import { Center, HStack, Text, View } from 'native-base';
-import { Dimensions, SafeAreaView } from 'react-native';
+import { SafeAreaView, useWindowDimensions } from 'react-native';
 import { COLORS, SPACING } from '../../constants/theme';
 import MenuIcon from '../../components/MenuIcon';
 import { Accounts, Buying, HR, Reports, Shop, Stock } from '../../constants/icons';
-
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+import { TabMenu } from '../../components';
 
 const ContainerStyled = (props) => {
+  const { height, width } = useWindowDimensions();
   return (
     <View
-      height={SCREEN_HEIGHT}
-      bg={'blueGray.100'}
       {...props}
+      _android={{ height: (height * 88) / 100 }}
+      _ios={{ height: { base: (height * 81) / 100, lg: height > width ? (height * 91) / 100 : (height * 88) / 100 } }}
+      bg={'blueGray.100'}
     >
       {props.children}
     </View>
@@ -110,6 +111,7 @@ function HomePage({ navigation }) {
           </HStack>
         </Center>
       </ContainerStyled>
+      <TabMenu />
     </SafeAreaView>
   );
 }
