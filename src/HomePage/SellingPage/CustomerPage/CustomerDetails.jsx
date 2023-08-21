@@ -16,10 +16,9 @@ import {
 import React, { useEffect } from 'react';
 import { COLORS } from '../../../../constants/theme';
 import { Edit } from '../../../../constants/icons';
-import { useNavigation } from '@react-navigation/native';
 import { config, url } from '../../../../config';
-import useFetch from '../../../../hooks/useFetch';
 import { Loading } from '../../../../components';
+import useFetch from '../../../../hooks/useFetch';
 // import { ChevronBackWard } from '../../../../constants/icons';
 
 // wrap components

@@ -137,7 +137,6 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
             <FadeTransition animated={onFocus}>
               <FlatList
                 h={{ base: 500, lg: 800 }}
-                // h={{ base: 500 }}
                 mx={{ base: 4, lg: '30%' }}
                 data={data}
                 ListHeaderComponent={() => (
