@@ -19,7 +19,7 @@ import { Edit } from '../../../../constants/icons';
 import { config, url } from '../../../../config';
 import { Loading } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
-// import { ChevronBackWard } from '../../../../constants/icons';
+import WebView from 'react-native-webview';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -44,10 +44,6 @@ function DetailsPage({ route, navigation }) {
       Authorization: config.API_TOKEN,
     },
   });
-
-  // useEffect(() => {
-  //   if (data) console.log(data);
-  // }, [data]);
 
   const BackButton = () => (
     <Button
@@ -344,7 +340,10 @@ function DetailsPage({ route, navigation }) {
                   letterSpacing={0.5}
                   textAlign='center'
                 >
-                  {data.primary_address ? `${data.primary_address}` : '-'}
+                  <WebView
+                    originWhitelist={['*']}
+                    source={{ html: data.primary_address ? `${data.primary_address}` : '-' }}
+                  />
                 </Text>
                 <Text
                   textAlign={'center'}
