@@ -1,5 +1,5 @@
 import { Button, Center, FormControl, HStack, Input, Pressable, VStack, View } from 'native-base';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import { COLORS, SIZES } from '../../../../constants/theme';
@@ -18,12 +18,27 @@ const ContainerStyled = (props) => {
   );
 };
 
-function FilterCustomer({ navigation }) {
+function FilterCustomer({ route, navigation }) {
+  const { storeFilter } = route.params; // get State from storeFilter
+
+  const initialsFilterState = {
+    customer_type: '',
+    customer_group: '',
+    territory: '',
+  };
+
   const [filterState, setFilterState] = useState({
     customer_type: '',
     customer_group: '',
     territory: '',
   });
+
+  useMemo(() => {
+    // if filtered set state with storeFilter
+    if (storeFilter !== undefined) {
+      setFilterState(storeFilter);
+    }
+  }, [storeFilter]);
 
   // for handle selection title (dynamic)
   const [titleSelection, setTitleSelection] = useState('');
@@ -60,9 +75,8 @@ function FilterCustomer({ navigation }) {
   };
 
   const handleSetFilter = () => {
-    // const filter = { ...filterState };
-    navigation.navigate('Customer', { filterData: filterState });
-    // navigation.navigate('Customer');
+    navigation.pop();
+    navigation.replace('Customer', { filterData: filterState, toggleFilter: true });
   };
 
   const StyledTextField = (props) => {
@@ -196,9 +210,12 @@ function FilterCustomer({ navigation }) {
             // bg={COLORS.tertiary2}
             _text={{ color: 'blueGray.400', fontWeight: 'semibold', letterSpacing: 0.5 }}
             _pressed={{ bg: 'blueGray.200' }}
-            onPress={() => navigation.goBack()}
+            onPress={() => {
+              navigation.pop();
+              navigation.replace('Customer', { filterData: initialsFilterState, toggleFilter: true });
+            }}
           >
-            CLOSE
+            CLEAR
           </Button>
         </HStack>
       </Center>

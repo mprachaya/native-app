@@ -11,7 +11,7 @@ export default function useUpdate(header, url, state, closemodal, refetch) {
       })
       .catch((err) => {
         console.log('An error occurred. Awkward.. : ', err);
-        alert('Status: ' + err.response.data.status + ' ' + err.response.data.message);
+        alert('Status Error: ' + err);
       })
       .finally(() => {
         closemodal();

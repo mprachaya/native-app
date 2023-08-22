@@ -27,7 +27,7 @@ const ContainerStyled = (props) => {
 };
 
 function CustomerPage({ route }) {
-  const { filterData } = route.params;
+  const { filterData, toggleFilter } = route.params;
   // for hot reload
   const [reloadState, setReloadState] = useState(true);
   // for background search function
@@ -55,16 +55,10 @@ function CustomerPage({ route }) {
     ASC: false,
   };
 
-  const initialsFilterState = {
-    customer_type: '',
-    customer_group: '',
-    territory: '',
-  };
-
   const [sortByState, setSortByState] = useState(initialsSortBy);
   const [sortTypeState, setSortTypeState] = useState(initialsSortType);
 
-  const [filterState, setFilterState] = useState(initialsFilterState);
+  const [tempData, setTempData] = useState(null); // for store filtered Data
   // data fetching with custom hook useFetch
   const {
     data: customerData,
@@ -92,6 +86,33 @@ function CustomerPage({ route }) {
     });
   };
 
+  const handleFilter = (active) => {
+    if (active && filterData !== undefined) {
+      const dataTemp = [...customerData];
+      // create new object for re formatting filter data and get only not equal ''
+      const newObjFilter = Object.fromEntries(Object.entries(filterData)?.filter(([key, value]) => value !== ''));
+      // console.log('FilterState: ', newObjFilter);
+      // filtering
+      // console.log(newObjFilter[0]);
+      const filterResult = dataTemp.filter((item) => {
+        if (Object.keys(newObjFilter).length > 0) {
+          for (let key in newObjFilter) {
+            if (item[key] === '' || !newObjFilter[key].includes(item[key])) {
+              return false;
+              // console.log(filterData[key]);
+            }
+          }
+        }
+        return true;
+      });
+      if (filterResult.length > 0) setTempData(filterResult);
+      else {
+        setTempData(customerData);
+      }
+      // console.log('filterResult:', filterResult);
+    }
+  };
+
   // // reset open state modal when navigate from back event
   useMemo(() => {
     const handleBack = navigation.addListener('focus', () => {
@@ -102,27 +123,22 @@ function CustomerPage({ route }) {
     handleBack();
   }, [navigation]);
 
-  // useMemo(() => {
-  //   if (filterData) setFilterState(filterData);
-  // }, [filterData]);
+  useMemo(() => {
+    console.log(tempData);
+  }, [tempData]);
 
   useMemo(() => {
-    // console.log('FilterState: ', filterData);
-    if (filterData) {
-      FilterList(
-        customerData,
-        setCustomerData,
-        ['customer_type', 'customer_group', 'territory'],
-        Object.values(filterData)
-      );
-      console.log(filterData);
+    if (toggleFilter === undefined) {
+    } else {
+      handleFilter(toggleFilter);
+      console.log('filtered');
     }
-  }, [filterData]);
+  }, [customerData, toggleFilter]);
 
   // hot loading when data still not available
-  if (loading) {
-    return <Loading loading={loading} />;
-  }
+  // if (loading) {
+  //   return <Loading loading={loading} />;
+  // }
   // handle error when data is not available
   if (error) {
     return (
@@ -179,7 +195,9 @@ function CustomerPage({ route }) {
                     setSortTypest: setSortTypeState,
                   })
                 }
-                openFilter={() => navigation.navigate('FilterCustomer')}
+                openFilter={() => {
+                  navigation.navigate('FilterCustomer', { toggleFilter: false, storeFilter: filterData });
+                }}
               />
             )}
             {Platform.OS === 'ios' && (
@@ -187,7 +205,9 @@ function CustomerPage({ route }) {
                 openAdd={() => navigation.navigate('AddNewCustomer')}
                 // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                 openSort={() => setOpenState((pre) => ({ ...pre, sort: true }))}
-                openFilter={() => navigation.navigate('FilterCustomer')}
+                openFilter={() =>
+                  navigation.navigate('FilterCustomer', { toggleFilter: false, storeFilter: filterData })
+                }
               />
             )}
           </HStack>
@@ -272,14 +292,14 @@ function CustomerPage({ route }) {
             mr={{ base: 8, lg: 6 }}
           >
             <Text>
-              {dataShowLength} to {customerData.length}
+              {dataShowLength} to {tempData?.length || customerData?.length}
             </Text>
           </HStack>
           {!showBackgroundSearch && (
             <CustomerList
               reload={reloadState}
               setReload={setReloadState}
-              data={customerData}
+              data={tempData || customerData}
               token={config.API_TOKEN}
               returnDataIndex={setDataShowLength}
               handleClickDetails={handleClickDetails}

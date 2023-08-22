@@ -143,7 +143,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
   }, [loadMore]);
 
   useEffect(() => {
-    if (data.length - dataIndex < 0) returnDataIndex(data.length);
+    if (Object.values(data).length - dataIndex < 0) returnDataIndex(Object.values(data).length);
     else {
       returnDataIndex(dataIndex);
     }

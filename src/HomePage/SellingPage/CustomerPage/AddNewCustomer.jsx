@@ -656,7 +656,8 @@ function AddNewCustomer({ navigation }) {
     const handleBack = () => {
       // setState(initialState);
       // refetchData();
-      navigation.navigate('Customer');
+      navigation.pop();
+      navigation.replace('Customer', { filterData: [] });
     };
     const handleAddAnother = () => {
       setState(initialState);

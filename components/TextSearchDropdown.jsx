@@ -119,6 +119,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
           height={'100vh'}
         >
           <SearchInput
+            isFocused={onFocus}
             onChangeText={(val) => setSearchText(val)}
             onFocus={() => setOnFocus(true)}
             value={SearchText}
