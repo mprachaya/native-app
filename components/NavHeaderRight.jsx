@@ -3,16 +3,17 @@ import React from 'react';
 import { AddNew, Filter, Sort } from '../constants/icons';
 import { COLORS } from '../constants/theme';
 
-function NavHeaderRight({ openAdd, openSort, openFilter }) {
+function NavHeaderRight({ sortActive, filterActive, openAdd, openSort, openFilter }) {
   const iconColor = COLORS.primary;
 
-  const OptionContainer = ({ handleOpen, children }) => (
+  const OptionContainer = ({ filterName, handleOpen, children, active }) => (
     <Button
       rounded={12}
       variant={'unstyled'}
       justifyContent={'center'}
       onPress={handleOpen}
       _pressed={{ bg: 'blueGray.200' }}
+      bg={active !== undefined && active === filterName && 'blueGray.300'}
     >
       {children}
     </Button>
@@ -27,10 +28,18 @@ function NavHeaderRight({ openAdd, openSort, openFilter }) {
       <OptionContainer handleOpen={() => openAdd(true)}>
         <AddNew color={iconColor} />
       </OptionContainer>
-      <OptionContainer handleOpen={() => openSort(true)}>
+      <OptionContainer
+        filterName={'sort'}
+        handleOpen={() => openSort(true)}
+        active={sortActive}
+      >
         <Sort color={iconColor} />
       </OptionContainer>
-      <OptionContainer handleOpen={() => openFilter(true)}>
+      <OptionContainer
+        filterName={'filter'}
+        handleOpen={() => openFilter(true)}
+        active={filterActive}
+      >
         <Filter color={iconColor} />
       </OptionContainer>
     </HStack>

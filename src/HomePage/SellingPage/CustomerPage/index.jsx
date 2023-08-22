@@ -9,7 +9,6 @@ import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
 import useFetch from '../../../../hooks/useFetch';
-import { FilterList } from '../../../../utils/filter';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -60,6 +59,8 @@ function CustomerPage({ route }) {
 
   const [tempData, setTempData] = useState(null); // for store filtered Data
   // data fetching with custom hook useFetch
+  const [filterActive, setFilterActive] = useState(false);
+  const [sortActive, setSortActive] = useState(false);
   const {
     data: customerData,
     setData: setCustomerData,
@@ -86,12 +87,26 @@ function CustomerPage({ route }) {
     });
   };
 
+  const checkFilter = () => {
+    const check = Object.fromEntries(Object.entries(filterData)?.filter(([key, value]) => value !== ''));
+    var result = Object.values(check).length;
+    return result > 0 ? setFilterActive(true) : setFilterActive(false);
+  };
+
+  const checkSort = () => {
+    const checkSortBy = Object.keys(sortByState).filter((key) => sortByState[key]);
+    const checkSortType = Object.keys(sortTypeState).filter((key) => sortTypeState[key]);
+
+    var result = Object.values(checkSortBy).length && Object.values(checkSortType).length;
+    return result > 0 ? setSortActive(true) : setSortActive(false);
+  };
+
   const handleFilter = (active) => {
     if (active && filterData !== undefined) {
       const dataTemp = [...customerData];
       // create new object for re formatting filter data and get only not equal ''
       const newObjFilter = Object.fromEntries(Object.entries(filterData)?.filter(([key, value]) => value !== ''));
-      // console.log('FilterState: ', newObjFilter);
+      // console.log('FilterState: ', Object.values(newObjFilter).length);
       // filtering
       // console.log(newObjFilter[0]);
       const filterResult = dataTemp.filter((item) => {
@@ -124,21 +139,27 @@ function CustomerPage({ route }) {
   }, [navigation]);
 
   useMemo(() => {
-    console.log(tempData);
-  }, [tempData]);
+    console.log('filterActive ', filterActive);
+  }, [filterActive]);
+
+  useMemo(() => {
+    console.log('sortActive ', sortActive);
+  }, [sortActive]);
 
   useMemo(() => {
     if (toggleFilter === undefined) {
     } else {
       handleFilter(toggleFilter);
-      console.log('filtered');
     }
+    checkFilter();
+    checkSort();
+    // console.log(filterData);
   }, [customerData, toggleFilter]);
 
   // hot loading when data still not available
-  // if (loading) {
-  //   return <Loading loading={loading} />;
-  // }
+  if (loading) {
+    return <Loading loading={loading} />;
+  }
   // handle error when data is not available
   if (error) {
     return (
@@ -181,6 +202,8 @@ function CustomerPage({ route }) {
           >
             {Platform.OS === 'android' && (
               <NavHeaderRight
+                filterActive={filterActive ? 'filter' : null} // for active option bg color
+                sortActive={sortActive ? 'sort' : null}
                 openAdd={() => navigation.navigate('AddNewCustomer')}
                 // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                 openSort={() =>
@@ -202,6 +225,8 @@ function CustomerPage({ route }) {
             )}
             {Platform.OS === 'ios' && (
               <NavHeaderRight
+                filterActive={filterActive ? 'filter' : null} // for active option bg color
+                sortActive={sortActive ? 'sort' : null}
                 openAdd={() => navigation.navigate('AddNewCustomer')}
                 // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                 openSort={() => setOpenState((pre) => ({ ...pre, sort: true }))}
