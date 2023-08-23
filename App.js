@@ -16,17 +16,11 @@ import CustomerDetails from './src/HomePage/SellingPage/CustomerPage/CustomerDet
 import UpdateCustomer from './src/HomePage/SellingPage/CustomerPage/UpdateCustomer';
 import AddNewCustomer from './src/HomePage/SellingPage/CustomerPage/AddNewCustomer';
 import FilterCustomer from './src/HomePage/SellingPage/CustomerPage/FilterCustomer';
+import QRScanner_Autofull from './_test/QRScanner_Autofull';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const initialState = { add: false, sort: false, filter: false };
-
-  const [openState, setOpenState] = useState({
-    add: false,
-    sort: false,
-    filter: false,
-  });
   // ignore pass function to useNavigation params
   LogBox.ignoreLogs(['Non-serializable values were found in the navigation state']);
   // ignore SSR Warning
@@ -37,6 +31,13 @@ export default function App() {
       <NavigationContainer>
         <Store>
           <Stack.Navigator>
+            <Stack.Screen
+              name='TestQRScanner'
+              component={QRScanner_Autofull}
+              // options={{
+              //   header: () => <AppBar />,
+              // }}
+            />
             <Stack.Screen
               name='Home'
               component={HomePage}
