@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomePage from './src/HomePage';
 import AppBar from './components/AppBar2';
-import TabMenu from './components/TabMenu';
 import SellingPage from './src/HomePage/SellingPage';
 import CustomerPage from './src/HomePage/SellingPage/CustomerPage';
 import NavHeader from './components/NavHeader';
@@ -16,7 +15,7 @@ import CustomerDetails from './src/HomePage/SellingPage/CustomerPage/CustomerDet
 import UpdateCustomer from './src/HomePage/SellingPage/CustomerPage/UpdateCustomer';
 import AddNewCustomer from './src/HomePage/SellingPage/CustomerPage/AddNewCustomer';
 import FilterCustomer from './src/HomePage/SellingPage/CustomerPage/FilterCustomer';
-import QRScanner_Autofull from './_test/QRScanner_Autofull';
+import QRScannerAutofill from './_test/QRScannerAutofill';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,7 +32,7 @@ export default function App() {
           <Stack.Navigator>
             <Stack.Screen
               name='TestQRScanner'
-              component={QRScanner_Autofull}
+              component={QRScannerAutofill}
               // options={{
               //   header: () => <AppBar />,
               // }}
