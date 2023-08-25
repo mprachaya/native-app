@@ -4,6 +4,7 @@ import { useWindowDimensions } from 'react-native';
 import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import { COLORS, SIZES } from '../../../../constants/theme';
 import { url } from '../../../../config';
+import useConfig from '../../../../config/path';
 
 const ContainerStyled = (props) => {
   const { height } = useWindowDimensions();
@@ -19,6 +20,7 @@ const ContainerStyled = (props) => {
 };
 
 function FilterCustomer({ route, navigation }) {
+  const { baseURL, CUSTOMER_GROUPS, TERRITORY } = useConfig(true);
   const { storeFilter } = route.params; // get State from storeFilter
 
   const initialsFilterState = {
@@ -45,8 +47,8 @@ function FilterCustomer({ route, navigation }) {
   // for handle dynamic url selection
   const [urlSelected, setUrlSelected] = useState('');
   // url path for fetching selection data
-  const urlCtmGroup = url.CUSTOMER_GROUPS;
-  const urlTerritory = url.TERRITORY;
+  const urlCtmGroup = baseURL + CUSTOMER_GROUPS;
+  const urlTerritory = baseURL + TERRITORY;
 
   // handle dynamic property for multi selection in page
   const [propertySelected, setPropertySelected] = useState('');

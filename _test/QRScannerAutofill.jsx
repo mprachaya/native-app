@@ -1,12 +1,15 @@
 import {
   Button,
+  Center,
   ChevronLeftIcon,
   CloseIcon,
+  FlatList,
   FormControl,
   HStack,
   Input,
   Modal,
   Pressable,
+  Text,
   VStack,
   View,
   WarningOutlineIcon,
@@ -14,24 +17,30 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React, { useState, useEffect } from 'react';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { Alert, Linking, StyleSheet, useWindowDimensions } from 'react-native';
+import { Alert, Linking, StyleSheet } from 'react-native';
 import { COLORS, SIZES } from '../constants/theme';
 import axios from 'axios';
 import { config } from '../config';
 
-function QRScannerAutofill({ navigation }) {
+function QRScannerAutofill() {
   // const { height, width } = useWindowDimensions();
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const initialState = {
-    item_code: '',
-
-    stock_uom: '',
-  };
-  const [qrCodeData, setQrCodeData] = useState({
-    item_code: '',
-  });
+  const [itemCode, setItemCode] = useState('');
+  const [items, setItems] = useState([]);
+  const [itemsLength, setItemLength] = useState(0);
+  const [qrCodeData, setQrCodeData] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
+
+  const [state, setState] = useState({
+    name: 'SAL-QTN-2023-00002',
+    quotation_to: 'Customer',
+    doctype: 'Quotation',
+    customer: 'บริษัท สยามไทยคัทติ่งทูล กำจัด',
+  });
+
+  const urlGetItemsQuotation =
+    'https://tonen.vsiam.com/api/method/frappe.quotation.oneitem?quotation_name=SAL-QTN-2023-00002';
 
   const AskCameraPermission = () =>
     Alert.alert('Ask for Permission', '"ERP Next" Would Like to Access the Camera', [
@@ -51,7 +60,6 @@ function QRScannerAutofill({ navigation }) {
         },
       },
     ]);
-
   const getBarCodeScannerPermissions = async () => {
     const { status } = await BarCodeScanner.requestPermissionsAsync();
     if (status !== 'granted') {
@@ -60,23 +68,10 @@ function QRScannerAutofill({ navigation }) {
       setHasPermission(true);
     }
   };
-
-  useEffect(() => {
-    getBarCodeScannerPermissions();
-  }, []);
-
-  useEffect(() => {
-    // console.log(hasPermission);
-    if (!hasPermission && scanned) {
-      getBarCodeScannerPermissions();
-    }
-    // console.log(permission !== null && permission.granted);
-  }, [scanned]);
-
   const handleBarCodeScanned = ({ type, data }) => {
     axios
       .get(
-        `https://tonen.vsiam.com/api/resource/Item?fields=["*"]&filters=[["Item Barcode","barcode", "=", ${data}]]`,
+        `https://tonen.vsiam.com/api/resource/Item?fields=["*"]&filters=[["Item Barcode","barcode","=","${data}"]]`,
         {
           headers: {
             Authorization: config.API_TOKEN,
@@ -85,9 +80,24 @@ function QRScannerAutofill({ navigation }) {
       )
       .then((response) => response.data)
       .then((res) => {
-        res.data && alert(`Item exist!:`);
-        console.log(res.data);
-        setQrCodeData(String(data));
+        if (res.data.length > 0) {
+          res.data && alert(`Item exist!:`);
+
+          // console.log(res.data[0].item_code);
+          const duplicated = state.items.find((item) => item.item_code === res.data[0].item_code);
+          if (duplicated === undefined) {
+            setState((pre) => ({
+              ...pre,
+              items: [...state.items, { item_code: res.data[0].item_code, qty: 1, rate: 0 }],
+            }));
+            setItemCode(res.data[0].item_code);
+          } else {
+            alert(`Item is duplicated!`);
+          }
+        } else {
+          alert(`Item not exist!`);
+          setQrCodeData('');
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -98,6 +108,47 @@ function QRScannerAutofill({ navigation }) {
     // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     setScanned(false);
   };
+  useEffect(() => {
+    getBarCodeScannerPermissions();
+    axios
+      .get(urlGetItemsQuotation, {
+        headers: {
+          Authorization: config.API_TOKEN,
+        },
+      })
+      .then((response) => {
+        // console.log(response.data.message.data);
+        setItems(response.data.message.data);
+        setState((pre) => ({ ...pre, items: response.data.message.data }));
+        setItemLength(response.data.message.data.length);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    // console.log(hasPermission);
+    if (!hasPermission && scanned) {
+      getBarCodeScannerPermissions();
+    }
+    // console.log(permission !== null && permission.granted);
+  }, [scanned]);
+
+  useEffect(() => {
+    // console.log(state);
+    // console.log(state.items);
+    if (state.items !== undefined) {
+      // get last item before scanning
+      const testGetLastItemBf = state.items.filter((item, index) => index === itemsLength - 1);
+      // get last item after scanning
+      const testGetLastItemAft = state.items.filter((item, index) => index === itemsLength);
+      console.log('Last item before', testGetLastItemBf);
+      console.log('Last item after', testGetLastItemAft);
+    }
+  }, [state]);
+
+  // https://tonen.vsiam.com/api/method/frappe.quotation.oneitem?quotation_name=SAL-QTN-2023-00001
 
   // useEffect(() => {
   //   console.log(hasPermission);
@@ -117,8 +168,7 @@ function QRScannerAutofill({ navigation }) {
           <FormControl.Label>{props.label}</FormControl.Label>
           <Input
             {...props}
-            name={props.name}
-            value={props.value}
+            value={props.value || ''}
             bg={'blueGray.100'}
             borderWidth={2}
             borderColor={'gray.200'}
@@ -220,13 +270,54 @@ function QRScannerAutofill({ navigation }) {
         <HStack>
           <StyledTextField
             caretHidden
-            value={qrCodeData}
+            value={itemCode}
             label={'Read data from QR Code'}
             // name={'default_currency'}
             showSoftInputOnFocus={false}
           />
+          <View
+            mx={1}
+            my={10}
+          >
+            <CloseIcon color={'blueGray.200'} />
+          </View>
         </HStack>
+        <HStack>
+          <StyledTextField
+            caretHidden
+            // value={state.items?.item_code[0] !== undefined ? state.items[itemsLength].item_code : ''}
+            // name={'default_currency'}
+            showSoftInputOnFocus={false}
+          />
+          <View
+            mx={1}
+            my={10}
+          >
+            <CloseIcon color={'blueGray.200'} />
+          </View>
+        </HStack>
+        <Button>Insert Item</Button>
       </VStack>
+      <Center>
+        <Text>Quotation SAL-QTN-2023-00002 </Text>
+        <FlatList
+          data={items}
+          renderItem={({ item }) => (
+            <HStack
+              space={2}
+              w={300}
+              justifyContent={'space-between'}
+            >
+              <Text>{item.item_code}</Text>
+              <HStack space={2}>
+                <Text>Quantity {item.qty}</Text>
+                <Text>Rate {item.rate}</Text>
+              </HStack>
+            </HStack>
+          )}
+          keyExtractor={(item) => item.item_code}
+        />
+      </Center>
     </View>
   );
 }

@@ -19,9 +19,10 @@ import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
 import { handleChange } from '../../../../hooks/useValidation';
-import { config, url } from '../../../../config';
+import { config } from '../../../../config';
 import { Pressable } from 'react-native';
 import useSubmit from '../../../../hooks/useSubmit';
+import useConfig from '../../../../config/path';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -107,14 +108,26 @@ function AddNewCustomer({ navigation }) {
   // for handle dynamic url selection
   const [urlSelected, setUrlSelected] = useState('');
   // url path for fetching selection data
-  const urlCtmGroup = url.CUSTOMER_GROUPS;
-  const urlTerritory = url.TERRITORY;
-  const urlMarketSegment = url.MARKET_SEGMENT;
-  const urlIndustry = url.INDUSTRY;
-  const urlCurrency = url.CURRENCY;
-  const urlPriceList = url.PRICE_LIST;
-  const urlSalePartner = url.SALE_PARTNER;
-  const urlPaymentTerm = url.PAYMENT_TERM;
+  const {
+    baseURL,
+    CUSTOMER,
+    CUSTOMER_GROUPS,
+    TERRITORY,
+    MARKET_SEGMENT,
+    INDUSTRY,
+    CURRENCY,
+    PRICE_LIST,
+    SALE_PARTNER,
+    PAYMENT_TERM,
+  } = useConfig(true);
+  const urlCtmGroup = baseURL + CUSTOMER_GROUPS;
+  const urlTerritory = baseURL + TERRITORY;
+  const urlMarketSegment = baseURL + MARKET_SEGMENT;
+  const urlIndustry = baseURL + INDUSTRY;
+  const urlCurrency = baseURL + CURRENCY;
+  const urlPriceList = baseURL + PRICE_LIST;
+  const urlSalePartner = baseURL + SALE_PARTNER;
+  const urlPaymentTerm = baseURL + PAYMENT_TERM;
 
   // handle dynamic property for multi selection in page
   const [propertySelected, setPropertySelected] = useState('');
@@ -129,7 +142,7 @@ function AddNewCustomer({ navigation }) {
           Authorization: config.API_TOKEN,
         },
       },
-      url.CUSTOMERS,
+      baseURL + CUSTOMERS,
       state,
       () => void 0,
       () => void 0

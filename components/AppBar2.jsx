@@ -1,17 +1,35 @@
-import { Avatar, Box, Center, ChevronRightIcon, HStack, Hidden, Link, Text } from 'native-base';
+import { Avatar, Box, Button, Center, ChevronRightIcon, HStack, Hidden, Link, Text } from 'native-base';
 import { COLORS, SHADOWS, SPACING } from '../constants/theme';
 // import { SearchInput } from './Inputs';
 // import { useContext } from 'react';
 // import { Context } from '../reducer';
 import FrappeLogo from './FrappeLogo';
 import TextStyled from './TextStyled';
+import { useNavigation } from '@react-navigation/native';
+import { getData } from '../utils/async-storage';
+import { useEffect, useState } from 'react';
 
-export default function AppBar(props) {
+export default function AppBar() {
   // const [state] = useContext(Context);
+  const navigation = useNavigation();
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    getData('NAME').then((value) => {
+      setUserName(value);
+    });
+  }, []);
+
+  const handleLogOut = () => {
+    clearAsyncStorage = async () => {
+      AsyncStorage.clear();
+    };
+    navigation.replace('LoginERPNext');
+  };
   return (
     <Box
       safeAreaTop
-      height={'32'}
+      height={140}
       pt={{ base: 12, lg: 10 }}
       bg={COLORS.primary}
       shadow={SHADOWS.medium}
@@ -30,7 +48,7 @@ export default function AppBar(props) {
               fontWeight='bold'
               color={COLORS.tertiary}
             >
-              Lorem Ipsum
+              {userName}
             </TextStyled>
             <TextStyled
               fontSize={{ base: 12, lg: 20 }}
@@ -52,15 +70,19 @@ export default function AppBar(props) {
             </Hidden>
           </HStack> */}
         </HStack>
-        <Box
-          my={6}
+        <Button
+          variant={'unstyled'}
+          _pressed={{ bg: COLORS.secondary }}
+          onPress={handleLogOut}
+          h={'12'}
+          my={2}
           mr={8}
         >
           <TextStyled
             color={'white'}
             fontWeight='bold'
           >
-            . . .
+            Logout
           </TextStyled>
           {/* <HStack space={{ base: 0, lg: SPACING.small }}>
             <SearchInput />
@@ -76,7 +98,7 @@ export default function AppBar(props) {
               </Avatar>
             </HStack>
           </HStack> */}
-        </Box>
+        </Button>
       </HStack>
     </Box>
   );

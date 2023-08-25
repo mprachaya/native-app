@@ -3,8 +3,8 @@ import { Box, FlatList, HStack, Image, Pressable, Spinner, Text, VStack, View } 
 import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components';
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
-import { url } from '../../../../config';
 import GetScreenSize from '../../../../hooks/GetScreenSize';
+import useConfig from '../../../../config/path';
 
 export function CustomerList({ data, token, reload, setReload, returnDataIndex, handleClickDetails }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -12,6 +12,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
   const length = 20;
   const [loadMore, setLoadMore] = useState(false);
   const [tempIndex, setTempIndex] = useState(0);
+  const { baseURL } = useConfig(true);
 
   const Item = React.memo(({ name, image, title, type, group }) => (
     <Pressable
@@ -40,7 +41,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
               rounded={6}
               alt={'customer image'}
               source={{
-                uri: url.BASE_URL + image,
+                uri: baseURL + image,
                 method: 'GET',
                 headers: {
                   Authorization: token,

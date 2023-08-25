@@ -1,3 +1,18 @@
+// import { useState } from 'react';
+// import { getData } from '../utils/async-storage';
+
+// const handleGetURL = () => {
+//   getData('URL').then((value) => {
+//     return value;
+//   });
+// };
+
+// const [baseURL, setBaseURL] = useState('');
+
+// getData('URL').then((value) => {
+//   setBaseURL(value);
+// });
+
 export const config = {
   API_TOKEN: 'token 5891d01ccc2961e:0e446b332dc22aa',
 };

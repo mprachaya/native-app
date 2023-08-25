@@ -16,6 +16,7 @@ import UpdateCustomer from './src/HomePage/SellingPage/CustomerPage/UpdateCustom
 import AddNewCustomer from './src/HomePage/SellingPage/CustomerPage/AddNewCustomer';
 import FilterCustomer from './src/HomePage/SellingPage/CustomerPage/FilterCustomer';
 import QRScannerAutofill from './_test/QRScannerAutofill';
+import LoginFrappeURL from './_test/LoginFrappeURL';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,11 +32,20 @@ export default function App() {
         <Store>
           <Stack.Navigator>
             <Stack.Screen
+              // name='TestQRScanner'
+              // component={QRScannerAutofill}
+              name='LoginERPNext'
+              component={LoginFrappeURL}
+              options={{
+                header: () => '',
+              }}
+            />
+            <Stack.Screen
               name='TestQRScanner'
               component={QRScannerAutofill}
-              // options={{
-              //   header: () => <AppBar />,
-              // }}
+              options={{
+                header: () => '',
+              }}
             />
             <Stack.Screen
               name='Home'

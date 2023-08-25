@@ -16,11 +16,12 @@ import {
 import React, { useEffect } from 'react';
 import { COLORS } from '../../../../constants/theme';
 import { Edit } from '../../../../constants/icons';
-import { config, url } from '../../../../config';
+import { config } from '../../../../config';
 import { Loading } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
 import WebView from 'react-native-webview';
 import useUpdate from '../../../../hooks/useUpdate';
+import useConfig from '../../../../config/path';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -38,9 +39,9 @@ const ContainerStyled = (props) => {
 function DetailsPage({ route, navigation }) {
   const title = 'Customer Details';
   const { name } = route.params;
-
+  const { baseURL, CUSTOMER } = useConfig(true);
   // data fetching with custom hook useFetch
-  const { data, setData, setRefetch, loading, error } = useFetch(url.CUSTOMER + name, {
+  const { data, setData, setRefetch, loading, error } = useFetch(baseURL + CUSTOMER + name, {
     headers: {
       Authorization: config.API_TOKEN,
     },
@@ -56,7 +57,7 @@ function DetailsPage({ route, navigation }) {
           Authorization: config.API_TOKEN,
         },
       },
-      url.CUSTOMER + name,
+      baseURL + CUSTOMER + name,
       tempState,
       () => void 0,
       () => setRefetch(1)

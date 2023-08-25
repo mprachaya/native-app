@@ -3,12 +3,13 @@ import { Box, Center, HStack, Text, VStack, View } from 'native-base';
 import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { CustomerList } from './CustomerList';
-import { config, url } from '../../../../config';
+import { config } from '../../../../config';
 import { useNavigation } from '@react-navigation/native';
 import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
 import useFetch from '../../../../hooks/useFetch';
+import useConfig from '../../../../config/path';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -26,6 +27,7 @@ const ContainerStyled = (props) => {
 };
 
 function CustomerPage({ route }) {
+  const { baseURL, CUSTOMERS } = useConfig(true);
   const { filterData, toggleFilter } = route.params;
   // for hot reload
   const [reloadState, setReloadState] = useState(true);
@@ -67,12 +69,11 @@ function CustomerPage({ route }) {
     setRefetch: refetchData,
     loading,
     error,
-  } = useFetch(url.CUSTOMERS, {
+  } = useFetch(baseURL + CUSTOMERS, {
     headers: {
       Authorization: config.API_TOKEN,
     },
   });
-
   var countType = customerData.filter((cus) => {
     return cus.customer_type === 'Company';
   }).length;
