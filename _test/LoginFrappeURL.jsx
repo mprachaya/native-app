@@ -31,7 +31,7 @@ function LoginFrappeURL({ navigation }) {
     setState((pre) => ({ ...pre, [name]: value }));
   };
 
-  const authenticate = (url, usr, pwd) => {
+  const authenticate = (url, usr, pwd, naviagateTo) => {
     axios
       .post(`https://${url}/api/method/login`, { usr: usr, pwd: pwd })
       .then((response) => {
@@ -39,6 +39,7 @@ function LoginFrappeURL({ navigation }) {
           storeData('URL', state.url);
           storeData('NAME', response.data.full_name);
           setLoginSuccess(true);
+          naviagateTo();
         }
       })
       .catch((error) => {
@@ -46,20 +47,20 @@ function LoginFrappeURL({ navigation }) {
       });
   };
 
-  useEffect(() => {
-    // if (loginSuccess) {
-    //   getData('URL').then((value) => console.log(value));
-    // }
-    // const { BASE_URL } = useConfig();
-    // if (loginSuccess) console.log(baseURL);
-    if (loginSuccess) {
-      alert(`Login Sucessfully`);
-      setTimeout(() => {
-        // navigation.replace('Home');
-        navigation.replace('TestQRScanner');
-      }, 1500);
-    }
-  }, [loginSuccess]);
+  // useEffect(() => {
+  //   // if (loginSuccess) {
+  //   //   getData('URL').then((value) => console.log(value));
+  //   // }
+  //   // const { BASE_URL } = useConfig();
+  //   // if (loginSuccess) console.log(baseURL);
+  //   if (loginSuccess) {
+  //     alert(`Login Sucessfully`);
+  //     setTimeout(() => {
+  //       // navigation.replace('Home');
+  //       navigation.replace('TestQRScanner');
+  //     }, 1500);
+  //   }
+  // }, [loginSuccess]);
 
   // useEffect(() => {
   //   console.log(url);
@@ -92,30 +93,44 @@ function LoginFrappeURL({ navigation }) {
         <FormControl w={{ base: 300, lg: 400 }}>
           <FormControl.Label>URL</FormControl.Label>
           <InputStyled
+            value={state.url}
             autoCapitalize='none'
             onChangeText={(value) => handleTyping('url', value)}
           />
           <FormControl.Label>Username</FormControl.Label>
           <InputStyled
+            value={state.usr}
             autoCapitalize='none'
             onChangeText={(value) => handleTyping('usr', value)}
           />
           <FormControl.Label>Password</FormControl.Label>
           <InputStyled
+            value={state.pwd}
             autoCapitalize='none'
             type={'password'}
             onChangeText={(value) => handleTyping('pwd', value)}
           />
           <Button
             rounded={20}
-            my={6}
+            mt={6}
+            mb={2.5}
             px={6}
             bg={COLORS.primary}
             _text={{ fontSize: 'lg', fontWeight: 'bold', letterSpacing: 0.5 }}
             _pressed={{ bg: COLORS.secondary }}
-            onPress={() => authenticate(state.url, state.usr, state.pwd)}
+            onPress={() => authenticate(state.url, state.usr, state.pwd, () => navigation.replace('Home'))}
           >
-            Login
+            {'Login -> main app'}
+          </Button>
+          <Button
+            rounded={20}
+            px={6}
+            bg={COLORS.primary}
+            _text={{ fontSize: 'lg', fontWeight: 'bold', letterSpacing: 0.5 }}
+            _pressed={{ bg: COLORS.secondary }}
+            onPress={() => authenticate(state.url, state.usr, state.pwd, () => navigation.replace('TestQRScanner'))}
+          >
+            {'Login -> scan add item'}
           </Button>
         </FormControl>
       </VStack>

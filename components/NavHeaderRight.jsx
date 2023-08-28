@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Text } from 'native-base';
+import { Box, Button, ChevronLeftIcon, HStack, Text, View } from 'native-base';
 import React from 'react';
 import { AddNew, Filter, Sort } from '../constants/icons';
 import { COLORS } from '../constants/theme';

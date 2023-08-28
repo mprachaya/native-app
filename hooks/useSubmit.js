@@ -10,8 +10,8 @@ export default function useSubmit(header, url, state, closemodal, refetch) {
         // console.log(res.data);
       })
       .catch((err) => {
-        // console.log('An error occurred. Awkward.. : ', err);
-        alert('Status Error: ' + err);
+        console.log('An error occurred. Awkward.. : ', err);
+        // alert('Status Error: ' + err);
       })
       .finally(() => {
         closemodal();

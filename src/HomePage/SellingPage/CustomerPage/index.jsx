@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Box, Center, HStack, Text, VStack, View } from 'native-base';
+import { Box, Button, Center, ChevronLeftIcon, HStack, Text, VStack, View } from 'native-base';
 import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { CustomerList } from './CustomerList';
@@ -196,7 +196,16 @@ function CustomerPage({ route }) {
               {/* {lengthSearch === 0 && <Text mt={24}>Empty</Text>} */}
             </Box>
           )}
-
+          <Button
+            m={{ base: 0, lg: 1 }}
+            rounded={12}
+            variant={'unstyled'}
+            position={'absolute'}
+            onPress={() => navigation.goBack()}
+            _pressed={{ bg: 'blueGray.200' }}
+          >
+            <ChevronLeftIcon />
+          </Button>
           <HStack
             // mb={2}
             justifyContent={{ base: 'flex-end', lg: 'flex-end' }}
