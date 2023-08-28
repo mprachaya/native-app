@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { WebView } from 'react-native-webview';
 
 function QuotationExportPDF() {
+  const [pdfUri, setPdfUri] = useState(null);
+
   async function printQuotation() {
     try {
       const docType = 'Quotation';
@@ -28,6 +30,7 @@ function QuotationExportPDF() {
         reader.readAsDataURL(pdfBlob);
         reader.onloadend = () => {
           const pdfDataUrl = reader.result;
+          setPdfUri(pdfDataUrl);
           console.log(pdfDataUrl);
         };
       } else {
@@ -82,6 +85,7 @@ function QuotationExportPDF() {
           )}
         </View>
       </Center> */}
+      <Pdf source={pdfUri} />
     </View>
   );
 }

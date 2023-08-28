@@ -40,7 +40,9 @@
     "react-navigation": "^4.4.4",
     "redux": "^4.2.1",
     "styled-components": "^6.0.4",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "@config-plugins/react-native-blob-util": "^5.0.0",
+    "@config-plugins/react-native-pdf": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
