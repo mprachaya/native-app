@@ -17,6 +17,7 @@ import AddNewCustomer from './src/HomePage/SellingPage/CustomerPage/AddNewCustom
 import FilterCustomer from './src/HomePage/SellingPage/CustomerPage/FilterCustomer';
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
+import QuotationExportPDF from './_test/QuotationExportPDF';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,15 @@ export default function App() {
       <NavigationContainer>
         <Store>
           <Stack.Navigator>
+            <Stack.Screen
+              // name='TestQRScanner'
+              // component={QRScannerAutofill}
+              name='QuotationExportPDF'
+              component={QuotationExportPDF}
+              options={{
+                header: () => '',
+              }}
+            />
             <Stack.Screen
               // name='TestQRScanner'
               // component={QRScannerAutofill}
