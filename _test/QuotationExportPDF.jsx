@@ -6,6 +6,7 @@ import PdfReader from 'rn-pdf-reader-js';
 import * as Permissions from 'expo-permissions';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import * as DocumentPicker from 'expo-document-picker';
 import axios from 'axios';
 
 function QuotationExportPDF() {
@@ -52,15 +53,28 @@ function QuotationExportPDF() {
 
       if (response.status === 200) {
         const pdfBlob = await response.blob();
-        const pdfUri = `${FileSystem.cacheDirectory}${name}.pdf`;
 
-        await FileSystem.writeAsync(pdfUri, pdfBlob, { encoding: FileSystem.EncodingType.UTF8 });
+        // Open the document picker to save the PDF
+        const { type, uri } = await DocumentPicker.getDocumentAsync({
+          type: 'application/pdf',
+        });
+        console.log(type, uri);
 
-        const shared = await Sharing.shareAsync(pdfUri);
-        if (shared.action === Sharing.sharedAction) {
-          // PDF shared successfully
+        if (type === 'success') {
+          await FileSystem.writeAsStringAsync(uri, pdfBlob, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+
+          // Share the downloaded PDF using Expo Sharing
+          const shared = await Sharing.shareAsync(uri);
+          if (shared.action === Sharing.sharedAction) {
+            // PDF shared successfully
+          } else {
+            // Handle sharing error or cancellation
+          }
         } else {
-          // Handle sharing error or cancellation
+          // Handle document picker error or cancellation
+          console.error('Document picker canceled or encountered an error.');
         }
       } else {
         // Handle download error
