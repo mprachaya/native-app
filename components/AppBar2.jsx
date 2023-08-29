@@ -8,6 +8,7 @@ import TextStyled from './TextStyled';
 import { useNavigation } from '@react-navigation/native';
 import { getData } from '../utils/async-storage';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function AppBar() {
   // const [state] = useContext(Context);
@@ -24,7 +25,16 @@ export default function AppBar() {
     clearAsyncStorage = async () => {
       AsyncStorage.clear();
     };
-    navigation.replace('LoginERPNext');
+    axios
+      .get(`https://tonen.vsiam.com/api/method/logout`)
+      .then((response) => {
+        if (response.status === 200) {
+          navigation.replace('LoginERPNext');
+        }
+      })
+      .catch((error) => {
+        // alert(`Invalid Authentication`);
+      });
   };
   return (
     <Box

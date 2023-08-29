@@ -35,8 +35,8 @@ export default function App() {
             <Stack.Screen
               // name='TestQRScanner'
               // component={QRScannerAutofill}
-              name='QuotationExportPDF'
-              component={QuotationExportPDF}
+              name='LoginERPNext'
+              component={LoginFrappeURL}
               options={{
                 header: () => '',
               }}
@@ -44,8 +44,8 @@ export default function App() {
             <Stack.Screen
               // name='TestQRScanner'
               // component={QRScannerAutofill}
-              name='LoginERPNext'
-              component={LoginFrappeURL}
+              name='QuotationExportPDF'
+              component={QuotationExportPDF}
               options={{
                 header: () => '',
               }}

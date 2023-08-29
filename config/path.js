@@ -5,7 +5,7 @@ export default function useConfig(trigger) {
   const [baseURL, setBaseURL] = useState('');
   const CUSTOMERS =
     '/api/resource/Customer?limit=500&fields=["name","creation","modified","customer_name","customer_type","customer_group","territory","image"]&order_by=creation desc';
-  const CUSTOMER = '/api/resource/Customer/';
+  const CUSTOMER = '/api/resource/Customer';
   const CUSTOMER_GROUPS = '/api/resource/Customer Group/';
   const COMPANY = '/api/resource/Company/';
   const TERRITORY = '/api/resource/Territory/';

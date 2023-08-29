@@ -1,9 +1,12 @@
-import { Button, View } from 'native-base';
+import { Button, Spinner, View } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import Pdf from 'rn-pdf-reader-js';
+import useConfig from '../config/path';
+import axios from 'axios';
 
 function QuotationExportPDF() {
   const [pdfDataUri, setPdfDataUri] = useState('');
+  const { baseURL } = useConfig(true);
 
   async function printQuotation() {
     try {
@@ -12,12 +15,28 @@ function QuotationExportPDF() {
       const format = 'test-qt';
 
       // Construct the URL for the print request
-      const apiUrl = `https://tonen.vsiam.com/api/method/frappe.utils.print_format.download_pdf?doctype=${docType}&name=${name}&format=${format}`;
-
+      const apiUrl = `${baseURL}/api/method/frappe.utils.print_format.download_pdf?doctype=${docType}&name=${name}&format=${format}`;
+      // axios
+      //   .get(apiUrl)
+      //   .then((response) => {
+      //     if (response.status === 200) {
+      //       // console.log(response);
+      //         const pdfBlob = await response.data.blob();
+      //       const reader = new FileReader();
+      //       reader.readAsDataURL(pdfBlob);
+      //       reader.onloadend = () => {
+      //         let pdfBase64 = reader.result;
+      //         setPdfDataUri(pdfBase64);
+      //       };
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     alert(`Error fetching`);
+      //   });
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
-          Authorization: 'token 5891d01ccc2961e:0e446b332dc22aa',
+          // Authorization: 'token 5891d01ccc2961e:0e446b332dc22aa',
         },
       });
 
@@ -38,27 +57,42 @@ function QuotationExportPDF() {
   }
 
   useEffect(() => {
-    printQuotation();
-  }, []);
+    if (baseURL) printQuotation();
+  }, [baseURL]);
 
   return (
-    <View flex={1}>
-      {pdfDataUri !== '' && (
-        <Pdf
-          source={{ base64: pdfDataUri }} // Use the base64 property
-          onLoadComplete={(numberOfPages, filePath) => {
-            console.log(`Number of pages: ${numberOfPages}`);
-            console.log(`File path: ${filePath}`);
-          }}
-          onPageChanged={(page, numberOfPages) => {
-            console.log(`Current page: ${page}`);
-            console.log(`Number of pages: ${numberOfPages}`);
-          }}
-          onError={(error) => {
-            console.error('Error:', error);
-          }}
-        />
+    <View
+      flex={1}
+      justifyContent={'center'}
+      alignItems={'center'}
+    >
+      {/* <View width={600}> */}
+      {pdfDataUri !== '' ? (
+        <View
+          width={{ base: 'full', lg: 1200 }}
+          height={800}
+        >
+          <Pdf
+            source={{ base64: pdfDataUri }} // Use the base64 property
+            onLoadComplete={(numberOfPages, filePath) => {
+              console.log(`Number of pages: ${numberOfPages}`);
+              console.log(`File path: ${filePath}`);
+            }}
+            onPageChanged={(page, numberOfPages) => {
+              console.log(`Current page: ${page}`);
+              console.log(`Number of pages: ${numberOfPages}`);
+            }}
+            onError={(error) => {
+              console.error('Error:', error);
+            }}
+          />
+        </View>
+      ) : (
+        <View m={'25%'}>
+          <Spinner />
+        </View>
       )}
+      {/* </View> */}
     </View>
   );
 }

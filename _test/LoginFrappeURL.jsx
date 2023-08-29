@@ -31,11 +31,12 @@ function LoginFrappeURL({ navigation }) {
     setState((pre) => ({ ...pre, [name]: value }));
   };
 
-  const authenticate = (url, usr, pwd, naviagateTo) => {
+  const authenticate = async (url, usr, pwd, naviagateTo) => {
     axios
       .post(`https://${url}/api/method/login`, { usr: usr, pwd: pwd })
       .then((response) => {
         if (response.status === 200) {
+          console.log(response);
           storeData('URL', state.url);
           storeData('NAME', response.data.full_name);
           setLoginSuccess(true);
@@ -65,6 +66,25 @@ function LoginFrappeURL({ navigation }) {
   // useEffect(() => {
   //   console.log(url);
   // }, [url]);
+
+  // useEffect(() => {
+  //   if (loginSuccess) {
+  //     axios
+  //       .get(`https://tonen.vsiam.com/api/resource/Item/M42 HSS-001`)
+  //       .then((response) => {
+  //         if (response.status === 200) {
+  //           console.log(response);
+  //           //  storeData('URL', state.url);
+  //           //  storeData('NAME', response.data.full_name);
+  //           //  setLoginSuccess(true);
+  //           // naviagateTo();
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         alert(`Invalid Authentication`);
+  //       });
+  //   }
+  // }, [loginSuccess]);
   return (
     <View
       bg={'blueGray.200'}
@@ -118,7 +138,12 @@ function LoginFrappeURL({ navigation }) {
             bg={COLORS.primary}
             _text={{ fontSize: 'lg', fontWeight: 'bold', letterSpacing: 0.5 }}
             _pressed={{ bg: COLORS.secondary }}
-            onPress={() => authenticate(state.url, state.usr, state.pwd, () => navigation.replace('Home'))}
+            onPress={() =>
+              authenticate(state.url, state.usr, state.pwd, () => {
+                navigation.replace('QuotationExportPDF');
+                // navigation.replace('Home');
+              })
+            }
           >
             {'Login -> main app'}
           </Button>

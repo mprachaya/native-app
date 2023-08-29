@@ -43,7 +43,7 @@ function DetailsPage({ route, navigation }) {
   // data fetching with custom hook useFetch
   const { data, setData, setRefetch, loading, error } = useFetch(baseURL + CUSTOMER + name, {
     headers: {
-      Authorization: config.API_TOKEN,
+      // Authorization: config.API_TOKEN,
     },
   });
 
@@ -54,7 +54,7 @@ function DetailsPage({ route, navigation }) {
     useUpdate(
       {
         headers: {
-          Authorization: config.API_TOKEN,
+          // Authorization: config.API_TOKEN,
         },
       },
       baseURL + CUSTOMER + name,
@@ -193,7 +193,7 @@ function DetailsPage({ route, navigation }) {
                     uri: url.BASE_URL + data.image,
                     method: 'GET',
                     headers: {
-                      Authorization: config.API_TOKEN,
+                      // Authorization: config.API_TOKEN,
                     },
                   }}
                 />

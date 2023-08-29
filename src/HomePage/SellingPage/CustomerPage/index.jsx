@@ -71,7 +71,7 @@ function CustomerPage({ route }) {
     error,
   } = useFetch(baseURL + CUSTOMERS, {
     headers: {
-      Authorization: config.API_TOKEN,
+      Authorization: '',
     },
   });
   var countType = customerData.filter((cus) => {

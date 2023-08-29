@@ -147,7 +147,7 @@ function UpdateCustomer({ route, navigation, handleClose }) {
     useUpdate(
       {
         headers: {
-          Authorization: config.API_TOKEN,
+          // Authorization: config.API_TOKEN,
         },
       },
       baseURL + CUSTOMER + name,

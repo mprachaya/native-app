@@ -139,10 +139,10 @@ function AddNewCustomer({ navigation }) {
     useSubmit(
       {
         headers: {
-          Authorization: config.API_TOKEN,
+          Authorization: '',
         },
       },
-      baseURL + CUSTOMERS,
+      baseURL + CUSTOMER,
       state,
       () => void 0,
       () => void 0

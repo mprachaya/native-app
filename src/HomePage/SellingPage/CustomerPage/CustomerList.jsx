@@ -43,9 +43,9 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
               source={{
                 uri: baseURL + image,
                 method: 'GET',
-                headers: {
-                  Authorization: token,
-                },
+                // headers: {
+                //   Authorization: token,
+                // },
               }}
             />
           </Box>

@@ -29,9 +29,6 @@ function QRScannerAutofill({ navigation }) {
   const { height, width } = useWindowDimensions();
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  // const [itemCode, setItemCode] = useState('');
-  // const [items, setItems] = useState([]);
-  // const [itemsLength, setItemLength] = useState(0);
   const [qrCodeData, setQrCodeData] = useState('');
   const [showAlert, setShowAlert] = useState(false);
 
