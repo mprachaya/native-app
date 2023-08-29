@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Pdf from 'rn-pdf-reader-js';
 import useConfig from '../config/path';
 import * as FileSystem from 'expo-file-system';
+import axios from 'axios';
 
 function QuotationExportPDF() {
   const [pdfDataUri, setPdfDataUri] = useState('');
@@ -37,33 +38,6 @@ function QuotationExportPDF() {
       }
     } catch (error) {
       console.error('Network error:', error);
-    }
-  }
-
-  async function AndroidPdfDownloader() {
-    const docType = 'Quotation';
-    const name = 'SAL-QTN-2023-00001';
-    const format = 'test-qt';
-
-    try {
-      const apiUrl = `${baseURL}/api/method/frappe.utils.print_format.download_pdf?doctype=${docType}&name=${name}&format=${format}`;
-
-      const response = await fetch(apiUrl); // Use fetch to make the HTTP request.
-
-      if (response.status === 200) {
-        const pdfBlob = await response.blob();
-        const pdfUri = FileSystem.cacheDirectory + 'downloaded.pdf';
-
-        await FileSystem.writeAsStringAsync(pdfUri, pdfBlob, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-
-        // PDF downloaded successfully, and the file is stored at pdfUri.
-      } else {
-        // Handle download error
-      }
-    } catch (error) {
-      // Handle other errors
     }
   }
 
@@ -112,7 +86,7 @@ function QuotationExportPDF() {
             </Button>
             <Button
               w='60%'
-              onPress={AndroidPdfDownloader}
+              // onPress={AndroidPdfDownloader}
             >
               Download
             </Button>
