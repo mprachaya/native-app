@@ -2,7 +2,6 @@ import { Button, Spinner, View } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import Pdf from 'rn-pdf-reader-js';
 import useConfig from '../config/path';
-import axios from 'axios';
 
 function QuotationExportPDF() {
   const [pdfDataUri, setPdfDataUri] = useState('');
@@ -16,23 +15,7 @@ function QuotationExportPDF() {
 
       // Construct the URL for the print request
       const apiUrl = `${baseURL}/api/method/frappe.utils.print_format.download_pdf?doctype=${docType}&name=${name}&format=${format}`;
-      // axios
-      //   .get(apiUrl)
-      //   .then((response) => {
-      //     if (response.status === 200) {
-      //       // console.log(response);
-      //         const pdfBlob = await response.data.blob();
-      //       const reader = new FileReader();
-      //       reader.readAsDataURL(pdfBlob);
-      //       reader.onloadend = () => {
-      //         let pdfBase64 = reader.result;
-      //         setPdfDataUri(pdfBase64);
-      //       };
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     alert(`Error fetching`);
-      //   });
+
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
@@ -45,7 +28,7 @@ function QuotationExportPDF() {
         const reader = new FileReader();
         reader.readAsDataURL(pdfBlob);
         reader.onloadend = () => {
-          let pdfBase64 = reader.result;
+          let pdfBase64 = reader.result.replace('octet-stream', 'pdf');
           setPdfDataUri(pdfBase64);
         };
       } else {
