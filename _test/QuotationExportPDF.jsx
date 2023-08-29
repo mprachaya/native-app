@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 // import Pdf from 'rn-pdf-reader-js';
 import useConfig from '../config/path';
 import PdfReader from 'rn-pdf-reader-js';
+import * as Permissions from 'expo-permissions';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import axios from 'axios';
@@ -45,19 +46,16 @@ function QuotationExportPDF() {
     const apiUrl = `${baseURL}/api/method/frappe.utils.print_format.download_pdf?doctype=${docType}&name=${name}&format=${format}`;
 
     try {
-      const response = await axios.get(apiUrl, {
-        responseType: 'blob', // Specify that the response should be treated as a binary blob.
+      const response = await fetch(apiUrl, {
+        responseType: 'blob',
       });
 
       if (response.status === 200) {
-        const pdfBlob = response.data;
+        const pdfBlob = await response.blob();
         const pdfUri = `${FileSystem.cacheDirectory}${name}.pdf`;
 
-        await FileSystem.writeAsStringAsync(pdfUri, pdfBlob, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
+        await FileSystem.writeAsync(pdfUri, pdfBlob, { encoding: FileSystem.EncodingType.UTF8 });
 
-        // Share the downloaded PDF using Expo Sharing
         const shared = await Sharing.shareAsync(pdfUri);
         if (shared.action === Sharing.sharedAction) {
           // PDF shared successfully
