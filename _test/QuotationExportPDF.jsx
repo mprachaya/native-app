@@ -1,20 +1,21 @@
 import { Button, HStack, Spinner, View } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import Pdf from 'rn-pdf-reader-js';
+// import Pdf from 'rn-pdf-reader-js';
 import useConfig from '../config/path';
+import PdfReader from 'rn-pdf-reader-js';
 import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import axios from 'axios';
 
 function QuotationExportPDF() {
   const [pdfDataUri, setPdfDataUri] = useState('');
   const { baseURL } = useConfig(true);
+  const docType = 'Quotation';
+  const name = 'SAL-QTN-2023-00001';
+  const format = 'test-qt';
 
   async function printQuotation() {
     try {
-      const docType = 'Quotation';
-      const name = 'SAL-QTN-2023-00001';
-      const format = 'test-qt';
-
       // Construct the URL for the print request
       const apiUrl = `${baseURL}/api/method/frappe.utils.print_format.download_pdf?doctype=${docType}&name=${name}&format=${format}`;
 
@@ -40,7 +41,38 @@ function QuotationExportPDF() {
       console.error('Network error:', error);
     }
   }
+  async function downloadAndSharePdf() {
+    const apiUrl = `${baseURL}/api/method/frappe.utils.print_format.download_pdf?doctype=${docType}&name=${name}&format=${format}`;
 
+    try {
+      const response = await axios.get(apiUrl, {
+        responseType: 'blob', // Specify that the response should be treated as a binary blob.
+      });
+
+      if (response.status === 200) {
+        const pdfBlob = response.data;
+        const pdfUri = `${FileSystem.cacheDirectory}${name}.pdf`;
+
+        await FileSystem.writeAsStringAsync(pdfUri, pdfBlob, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+
+        // Share the downloaded PDF using Expo Sharing
+        const shared = await Sharing.shareAsync(pdfUri);
+        if (shared.action === Sharing.sharedAction) {
+          // PDF shared successfully
+        } else {
+          // Handle sharing error or cancellation
+        }
+      } else {
+        // Handle download error
+        console.error('Download failed with status:', response.status);
+      }
+    } catch (error) {
+      // Handle other errors
+      console.error('An error occurred:', error);
+    }
+  }
   useEffect(() => {
     if (baseURL) printQuotation();
   }, [baseURL]);
@@ -57,7 +89,7 @@ function QuotationExportPDF() {
           width={{ base: 'full', lg: 1200 }}
           height={800}
         >
-          <Pdf
+          <PdfReader
             source={{ base64: pdfDataUri }} // Use the base64 property
             onLoadComplete={(numberOfPages, filePath) => {
               console.log(`Number of pages: ${numberOfPages}`);
@@ -86,7 +118,7 @@ function QuotationExportPDF() {
             </Button>
             <Button
               w='60%'
-              // onPress={AndroidPdfDownloader}
+              onPress={downloadAndSharePdf}
             >
               Download
             </Button>
