@@ -1,5 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Box, Button, Center, ChevronLeftIcon, HStack, Text, VStack, View } from 'native-base';
+import {
+  Box,
+  Button,
+  Center,
+  ChevronLeftIcon,
+  FlatList,
+  HStack,
+  List,
+  ScrollView,
+  Text,
+  VStack,
+  View,
+} from 'native-base';
 import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { CustomerList } from './CustomerList';
@@ -26,8 +38,8 @@ const ContainerStyled = (props) => {
   );
 };
 
-function CustomerPage({ route }) {
-  const { baseURL, CUSTOMERS } = useConfig(true);
+function QuotationPage({ route }) {
+  const { baseURL, QUOTATIONS } = useConfig(true);
   const { filterData, toggleFilter } = route.params;
   // for hot reload
   const [reloadState, setReloadState] = useState(true);
@@ -44,7 +56,7 @@ function CustomerPage({ route }) {
   });
 
   // column for searching
-  const dataColumn = ['customer_group', 'territory', 'customer_name'];
+  const dataColumn = ['customer_name', 'status', 'name', 'transaction_date'];
   const initialsSortBy = {
     Creation: false,
     Modified: false,
@@ -64,26 +76,60 @@ function CustomerPage({ route }) {
   const [filterActive, setFilterActive] = useState(false);
   const [sortActive, setSortActive] = useState(false);
   const {
-    data: customerData,
-    setData: setCustomerData,
+    data: quotationData,
+    setData: setquotationData,
     setRefetch: refetchData,
     loading,
     error,
-  } = useFetch(baseURL + CUSTOMERS, {
+  } = useFetch(baseURL + QUOTATIONS, {
     headers: {
       Authorization: '',
     },
   });
-  var countType = customerData.filter((cus) => {
-    return cus.customer_type === 'Company';
+  var countDraft = quotationData.filter((qtt) => {
+    return qtt.status === 'Draft';
   }).length;
 
-  var countIndividualType = customerData.filter((cus) => {
-    return cus.customer_type === 'Individual';
+  var countOpen = quotationData.filter((qtt) => {
+    return qtt.status === 'Open';
   }).length;
+
+  var countOrdered = quotationData.filter((qtt) => {
+    return qtt.status === 'Ordered';
+  }).length;
+
+  var countCancelled = quotationData.filter((qtt) => {
+    return qtt.status === 'Cancelled';
+  }).length;
+  var countExpired = quotationData.filter((qtt) => {
+    return qtt.status === 'Expired';
+  }).length;
+
+  var countData = [
+    {
+      name: 'Draft',
+      count: countDraft,
+    },
+    {
+      name: 'Open',
+      count: countOpen,
+    },
+    {
+      name: 'Ordered',
+      count: countOrdered,
+    },
+    {
+      name: 'Cancelled',
+      count: countCancelled,
+    },
+    {
+      name: 'Expired',
+      count: countExpired,
+    },
+  ];
 
   const handleClickDetails = (name) => {
-    navigation.navigate('CustomerDetails', {
+    navigation.status('CustomerDetails', {
       name: name,
     });
   };
@@ -104,7 +150,7 @@ function CustomerPage({ route }) {
 
   const handleFilter = (active) => {
     if (active && filterData !== undefined) {
-      const dataTemp = [...customerData];
+      const dataTemp = [...quotationData];
       // create new object for re formatting filter data and get only not equal ''
       const newObjFilter = Object.fromEntries(Object.entries(filterData)?.filter(([key, value]) => value !== ''));
       // console.log('FilterState: ', Object.values(newObjFilter).length);
@@ -123,7 +169,7 @@ function CustomerPage({ route }) {
       });
       if (filterResult.length > 0) setTempData(filterResult);
       else {
-        setTempData(customerData);
+        setTempData(quotationData);
       }
       // console.log('filterResult:', filterResult);
     }
@@ -155,7 +201,7 @@ function CustomerPage({ route }) {
     checkFilter();
     checkSort();
     // console.log(filterData);
-  }, [customerData, toggleFilter]);
+  }, [quotationData, toggleFilter]);
 
   // hot loading when data still not available
   if (loading) {
@@ -198,11 +244,12 @@ function CustomerPage({ route }) {
           )}
 
           <HStack
-            // mb={2}
+            mx={6}
             justifyContent={{ base: 'flex-end', lg: 'flex-end' }}
           >
             <Button
-              m={{ base: 2, lg: 6 }}
+              m={6}
+              ml={{ base: 4, lg: 12 }}
               rounded={12}
               left={0}
               variant={'unstyled'}
@@ -221,8 +268,8 @@ function CustomerPage({ route }) {
                 openSort={() =>
                   navigation.navigate('SortAndroid', {
                     sortBy: SortBy,
-                    data: customerData,
-                    setData: setCustomerData,
+                    data: quotationData,
+                    setData: setquotationData,
                     setReload: setReloadState,
                     sortByst: sortByState,
                     sortTypest: sortTypeState,
@@ -260,7 +307,7 @@ function CustomerPage({ route }) {
               height={'16'}
             />
             <TextSearchDropdown
-              allData={customerData}
+              allData={quotationData}
               dataColumn={dataColumn}
               returnData={setShowBackgroundSearch}
               returnLength={setLengthSearch}
@@ -269,52 +316,53 @@ function CustomerPage({ route }) {
             />
           </HStack>
           {!showBackgroundSearch && (
-            <HStack
-              mt={6}
-              mr={2}
-              justifyContent={'space-evenly'}
-            >
-              <VStack
-                w={'1/4'}
+            <Center>
+              <View
+                mt={6}
+                mx={12}
+                w={{ base: 'full', lg: 1000 }}
                 alignItems={'center'}
               >
-                <Text color={COLORS.secondary}>Total</Text>
-                <Text
-                  color={COLORS.primary}
-                  fontWeight={'bold'}
-                  fontSize={'lg'}
-                >
-                  {customerData.length}
-                </Text>
-              </VStack>
-              <VStack
-                w={'1/4'}
-                alignItems={'center'}
-              >
-                <Text color={COLORS.secondary}>Company</Text>
-                <Text
-                  color={COLORS.primary}
-                  fontWeight={'bold'}
-                  fontSize={'lg'}
-                >
-                  {/* {companyData.length} */}
-                  {countType}
-                </Text>
-              </VStack>
-              <VStack
-                w={'1/4'}
-                alignItems={'center'}
-              >
-                <Text color={COLORS.secondary}>Individual</Text>
-                <Text
-                  color={COLORS.primary}
-                  fontWeight={'bold'}
-                  fontSize={'lg'}
-                >
-                  {countIndividualType}
-                </Text>
-              </VStack>
-            </HStack>
+                <FlatList
+                  horizontal
+                  mx={12}
+                  removeClippedSubviews={true}
+                  data={countData}
+                  renderItem={({ item }) => (
+                    <List
+                      rounded={12}
+                      mx={{ base: 2, lg: 12 }}
+                      minW={'24'}
+                      borderWidth={0}
+                      alignItems={'center'}
+                      bg={
+                        item.name === 'Draft'
+                          ? 'error.100'
+                          : item.name === 'Open'
+                          ? 'warning.100'
+                          : item.name === 'Ordered'
+                          ? 'success.100'
+                          : item.name === 'Cancelled'
+                          ? 'error.100'
+                          : item.name === 'Expired'
+                          ? 'error.100'
+                          : null
+                      }
+                    >
+                      <Text color={COLORS.secondary}>{item.name}</Text>
+                      <Text
+                        color={COLORS.primary}
+                        fontWeight={'bold'}
+                        fontSize={'lg'}
+                      >
+                        {/* {companyData.length} */}
+                        {item.count}
+                      </Text>
+                    </List>
+                  )}
+                />
+              </View>
+            </Center>
           )}
         </VStack>
         <VStack
@@ -329,14 +377,14 @@ function CustomerPage({ route }) {
             mr={{ base: 8, lg: 6 }}
           >
             <Text>
-              {dataShowLength} to {tempData?.length || customerData?.length}
+              {dataShowLength} to {tempData?.length || quotationData?.length}
             </Text>
           </HStack>
           {!showBackgroundSearch && (
             <CustomerList
               reload={reloadState}
               setReload={setReloadState}
-              data={tempData || customerData}
+              data={tempData || quotationData}
               token={config.API_TOKEN}
               returnDataIndex={setDataShowLength}
               handleClickDetails={handleClickDetails}
@@ -350,8 +398,8 @@ function CustomerPage({ route }) {
         open={openState.sort}
         setOpen={setOpenState}
         setReload={setReloadState}
-        data={customerData}
-        setData={setCustomerData}
+        data={quotationData}
+        setData={setquotationData}
         sortBy={SortBy}
       />
 
@@ -361,4 +409,4 @@ function CustomerPage({ route }) {
   );
 }
 
-export default CustomerPage;
+export default QuotationPage;

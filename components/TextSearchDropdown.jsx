@@ -37,18 +37,6 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
   const [onFocus, setOnFocus] = useState(false);
   const [SearchText, setSearchText] = useState('');
   const [data, setData] = useState();
-  // const {
-  //   data: allData,
-  //   setData: setAllData,
-  //   loading,
-  //   error,
-  // } = useFetch(url, {
-  //   headers: {
-  //     Authorization: token,
-  //   },
-  // });
-  // 1: first badge 2: second badge 3: main data
-  // const dataColumn = ['customer_group', 'territory', 'name'];
 
   const handleSearch = (dataList, searchText, key) => {
     // console.log(key);

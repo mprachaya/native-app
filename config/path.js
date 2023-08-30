@@ -16,6 +16,8 @@ export default function useConfig(trigger) {
   const SALE_PARTNER = '/api/resource/Sales Partner/';
   const PAYMENT_TERM = '/api/resource/Payment Term/';
 
+  const QUOTATIONS = '/api/resource/Quotation?fields=["*"]';
+
   const getBaseURL = () => {
     getData('URL').then((value) => setBaseURL('https://' + value));
   };
@@ -39,5 +41,6 @@ export default function useConfig(trigger) {
     PRICE_LIST,
     SALE_PARTNER,
     PAYMENT_TERM,
+    QUOTATIONS,
   };
 }

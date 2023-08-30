@@ -21,7 +21,7 @@ function NavHeaderRight({ sortActive, filterActive, openAdd, openSort, openFilte
 
   return (
     <HStack
-      // mr={2}
+      m={6}
       _android={{ mr: 0, space: { base: 2, lg: 10 } }}
       _ios={{ mr: 0, space: { base: 2, lg: 12 } }}
     >

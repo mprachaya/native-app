@@ -3,11 +3,8 @@ import React, { useEffect, useState } from 'react';
 // import Pdf from 'rn-pdf-reader-js';
 import useConfig from '../config/path';
 import PdfReader from 'rn-pdf-reader-js';
-import * as Permissions from 'expo-permissions';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import * as DocumentPicker from 'expo-document-picker';
-import axios from 'axios';
 
 function QuotationExportPDF() {
   const [pdfDataUri, setPdfDataUri] = useState('');
@@ -43,48 +40,19 @@ function QuotationExportPDF() {
       console.error('Network error:', error);
     }
   }
-  async function downloadAndSharePdf() {
-    const apiUrl = `${baseURL}/api/method/frappe.utils.print_format.download_pdf?doctype=${docType}&name=${name}&format=${format}`;
 
-    try {
-      const response = await fetch(apiUrl, {
-        responseType: 'blob',
-      });
+  const downloadPDF = async () => {
+    const fileName = FileSystem.documentDirectory + 'testPdf.pdf';
+    const downloadRef = await FileSystem.downloadAsync(
+      `${baseURL}/api/method/frappe.utils.print_format.download_pdf?doctype=${docType}&name=${name}&format=${format}`,
+      fileName
+    );
+    save(downloadRef.uri);
+  };
 
-      if (response.status === 200) {
-        const pdfBlob = await response.blob();
-
-        // Open the document picker to save the PDF
-        const { type, uri } = await DocumentPicker.getDocumentAsync({
-          type: 'application/pdf',
-        });
-        console.log(type, uri);
-
-        if (type === 'success') {
-          await FileSystem.writeAsStringAsync(uri, pdfBlob, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-
-          // Share the downloaded PDF using Expo Sharing
-          const shared = await Sharing.shareAsync(uri);
-          if (shared.action === Sharing.sharedAction) {
-            // PDF shared successfully
-          } else {
-            // Handle sharing error or cancellation
-          }
-        } else {
-          // Handle document picker error or cancellation
-          console.error('Document picker canceled or encountered an error.');
-        }
-      } else {
-        // Handle download error
-        console.error('Download failed with status:', response.status);
-      }
-    } catch (error) {
-      // Handle other errors
-      console.error('An error occurred:', error);
-    }
-  }
+  const save = (uri) => {
+    Sharing.shareAsync(uri);
+  };
   useEffect(() => {
     if (baseURL) printQuotation();
   }, [baseURL]);
@@ -130,7 +98,7 @@ function QuotationExportPDF() {
             </Button>
             <Button
               w='60%'
-              onPress={downloadAndSharePdf}
+              onPress={downloadPDF}
             >
               Download
             </Button>

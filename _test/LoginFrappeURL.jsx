@@ -48,43 +48,6 @@ function LoginFrappeURL({ navigation }) {
       });
   };
 
-  // useEffect(() => {
-  //   // if (loginSuccess) {
-  //   //   getData('URL').then((value) => console.log(value));
-  //   // }
-  //   // const { BASE_URL } = useConfig();
-  //   // if (loginSuccess) console.log(baseURL);
-  //   if (loginSuccess) {
-  //     alert(`Login Sucessfully`);
-  //     setTimeout(() => {
-  //       // navigation.replace('Home');
-  //       navigation.replace('TestQRScanner');
-  //     }, 1500);
-  //   }
-  // }, [loginSuccess]);
-
-  // useEffect(() => {
-  //   console.log(url);
-  // }, [url]);
-
-  // useEffect(() => {
-  //   if (loginSuccess) {
-  //     axios
-  //       .get(`https://tonen.vsiam.com/api/resource/Item/M42 HSS-001`)
-  //       .then((response) => {
-  //         if (response.status === 200) {
-  //           console.log(response);
-  //           //  storeData('URL', state.url);
-  //           //  storeData('NAME', response.data.full_name);
-  //           //  setLoginSuccess(true);
-  //           // naviagateTo();
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         alert(`Invalid Authentication`);
-  //       });
-  //   }
-  // }, [loginSuccess]);
   return (
     <View
       bg={'blueGray.200'}
@@ -140,7 +103,7 @@ function LoginFrappeURL({ navigation }) {
             _pressed={{ bg: COLORS.secondary }}
             onPress={() =>
               authenticate(state.url, state.usr, state.pwd, () => {
-                navigation.replace('QuotationExportPDF');
+                navigation.replace('Home');
                 // navigation.replace('Home');
               })
             }

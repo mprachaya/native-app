@@ -18,6 +18,7 @@ import FilterCustomer from './src/HomePage/SellingPage/CustomerPage/FilterCustom
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
 import QuotationExportPDF from './_test/QuotationExportPDF';
+import QuotationPage from './src/HomePage/SellingPage/QuotationPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,7 +42,7 @@ export default function App() {
                 header: () => '',
               }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               // name='TestQRScanner'
               // component={QRScannerAutofill}
               name='QuotationExportPDF'
@@ -49,10 +50,17 @@ export default function App() {
               options={{
                 header: () => '',
               }}
-            />
+            /> */}
             <Stack.Screen
               name='TestQRScanner'
               component={QRScannerAutofill}
+              options={{
+                header: () => '',
+              }}
+            />
+            <Stack.Screen
+              name='QuotationPage'
+              component={QuotationPage}
               options={{
                 header: () => '',
               }}

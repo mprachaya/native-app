@@ -46,7 +46,6 @@ function DetailsPage({ route, navigation }) {
       // Authorization: config.API_TOKEN,
     },
   });
-
   const handleDisable = () => {
     const tempState = { ...data };
     tempState.disabled = !tempState.disabled;

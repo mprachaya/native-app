@@ -117,6 +117,7 @@ function SellingPage({ navigation }) {
               justifyContent={{ base: 'center', lg: 'space-around' }}
             >
               <MenuIcon
+                onPress={() => navigation.navigate('QuotationPage', { filterData: [] })}
                 menuLabel={'Quotation'}
                 Icon={
                   <Quotation
