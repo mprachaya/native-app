@@ -71,6 +71,9 @@ function QuotationPage({ route }) {
   const [sortByState, setSortByState] = useState(initialsSortBy);
   const [sortTypeState, setSortTypeState] = useState(initialsSortType);
 
+  const FilterName = 'FilterQuotation';
+  const SortName = 'SortAndroidQuotation';
+
   const [tempData, setTempData] = useState(null); // for store filtered Data
   // data fetching with custom hook useFetch
   const [filterActive, setFilterActive] = useState(false);
@@ -211,9 +214,7 @@ function QuotationPage({ route }) {
   if (error) {
     return (
       <ContainerStyled>
-        <HStack justifyContent='center'>
-          <Text>ERROR</Text>
-        </HStack>
+        <HStack justifyContent='center'></HStack>
       </ContainerStyled>
     );
   }
@@ -222,9 +223,9 @@ function QuotationPage({ route }) {
     <ContainerStyled>
       <Center
         mt={2}
-        mx={{ base: 4, lg: 40 }}
+        mx={{ base: 0, lg: 0 }}
       >
-        <VStack m={6}>
+        <VStack>
           {Platform.OS === 'ios' && showBackgroundSearch && (
             <Box
               w={'100%'}
@@ -244,16 +245,18 @@ function QuotationPage({ route }) {
           )}
 
           <HStack
-            mx={6}
-            justifyContent={{ base: 'flex-end', lg: 'flex-end' }}
+            m={0}
+            pr={0}
+            pl={{ base: 12, lg: 6 }}
+            w={{ base: 'full', lg: 1100 }}
+            justifyContent={'space-between'}
+            alignSelf={'center'}
           >
             <Button
-              m={6}
-              ml={{ base: 4, lg: 12 }}
+              m={{ base: 2, lg: 4 }}
+              ml={{ base: 6, lg: 0 }}
               rounded={12}
-              left={0}
               variant={'unstyled'}
-              position={'absolute'}
               onPress={() => navigation.goBack()}
               _pressed={{ bg: 'blueGray.200' }}
             >
@@ -266,7 +269,7 @@ function QuotationPage({ route }) {
                 openAdd={() => navigation.navigate('AddNewCustomer')}
                 // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                 openSort={() =>
-                  navigation.navigate('SortAndroid', {
+                  navigation.navigate(SortName, {
                     sortBy: SortBy,
                     data: quotationData,
                     setData: setquotationData,
@@ -278,7 +281,7 @@ function QuotationPage({ route }) {
                   })
                 }
                 openFilter={() => {
-                  navigation.navigate('FilterCustomer', { toggleFilter: false, storeFilter: filterData });
+                  navigation.navigate(FilterName, { toggleFilter: false, storeFilter: filterData });
                 }}
               />
             )}
@@ -289,9 +292,7 @@ function QuotationPage({ route }) {
                 openAdd={() => navigation.navigate('AddNewCustomer')}
                 // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                 openSort={() => setOpenState((pre) => ({ ...pre, sort: true }))}
-                openFilter={() =>
-                  navigation.navigate('FilterCustomer', { toggleFilter: false, storeFilter: filterData })
-                }
+                openFilter={() => navigation.navigate(FilterName, { toggleFilter: false, storeFilter: filterData })}
               />
             )}
           </HStack>
@@ -319,7 +320,7 @@ function QuotationPage({ route }) {
             <Center>
               <View
                 mt={6}
-                mx={12}
+                px={6}
                 w={{ base: 'full', lg: 1000 }}
                 alignItems={'center'}
               >

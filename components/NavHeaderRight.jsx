@@ -8,6 +8,7 @@ function NavHeaderRight({ sortActive, filterActive, openAdd, openSort, openFilte
 
   const OptionContainer = ({ filterName, handleOpen, children, active }) => (
     <Button
+      ml={1}
       rounded={12}
       variant={'unstyled'}
       justifyContent={'center'}
@@ -21,9 +22,11 @@ function NavHeaderRight({ sortActive, filterActive, openAdd, openSort, openFilte
 
   return (
     <HStack
-      m={6}
-      _android={{ mr: 0, space: { base: 2, lg: 10 } }}
-      _ios={{ mr: 0, space: { base: 2, lg: 12 } }}
+      // m={6}
+      // _android={{ mr: 0, space: { base: 2, lg: 10 } }}
+      h={12}
+      _ios={{ mr: 0, space: { base: 2, lg: 6 } }}
+      justifyContent={'flex-end'}
     >
       <OptionContainer handleOpen={() => openAdd(true)}>
         <AddNew color={iconColor} />

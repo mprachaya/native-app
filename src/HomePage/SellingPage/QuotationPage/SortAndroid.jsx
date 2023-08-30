@@ -287,7 +287,7 @@ function SortAndroid({ route, navigation }) {
                 dispatch({ type: 'SET_CTM_SORT_TYPE', payload: '' });
                 sortBy(data, setData, 'Creation', 'ASC');
                 navigation.pop();
-                navigation.replace('Customer', { filterData: [] });
+                navigation.replace('Quotation', { filterData: [] });
               }}
             >
               Reset All

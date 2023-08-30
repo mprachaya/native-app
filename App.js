@@ -1,24 +1,35 @@
-import { NativeBaseProvider } from 'native-base';
+import React, { useState } from 'react';
 import Store from './reducer';
+import { Platform } from 'react-native';
+import { NativeBaseProvider } from 'native-base';
+import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomePage from './src/HomePage';
+// app component
 import AppBar from './components/AppBar2';
-import SellingPage from './src/HomePage/SellingPage';
-import CustomerPage from './src/HomePage/SellingPage/CustomerPage';
 import NavHeader from './components/NavHeader';
-import { Platform } from 'react-native';
-import React, { useState } from 'react';
+// page
+import HomePage from './src/HomePage';
+
+import SellingPage from './src/HomePage/SellingPage';
+
+// customer
+import CustomerPage from './src/HomePage/SellingPage/CustomerPage';
 import SortAndroid from './src/HomePage/SellingPage/CustomerPage/SortAndroid';
-import { LogBox } from 'react-native';
 import CustomerDetails from './src/HomePage/SellingPage/CustomerPage/CustomerDetails';
 import UpdateCustomer from './src/HomePage/SellingPage/CustomerPage/UpdateCustomer';
 import AddNewCustomer from './src/HomePage/SellingPage/CustomerPage/AddNewCustomer';
 import FilterCustomer from './src/HomePage/SellingPage/CustomerPage/FilterCustomer';
+
+// quotation
+import QuotationPage from './src/HomePage/SellingPage/QuotationPage';
+import SortAndroidQuotation from './src/HomePage/SellingPage/QuotationPage/SortAndroid';
+import FilterQuotation from './src/HomePage/SellingPage/QuotationPage/FilterQuotation';
+// etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
-import QuotationExportPDF from './_test/QuotationExportPDF';
-import QuotationPage from './src/HomePage/SellingPage/QuotationPage';
+
+// import QuotationExportPDF from './_test/QuotationExportPDF';
 
 const Stack = createNativeStackNavigator();
 
@@ -58,13 +69,7 @@ export default function App() {
                 header: () => '',
               }}
             />
-            <Stack.Screen
-              name='QuotationPage'
-              component={QuotationPage}
-              options={{
-                header: () => '',
-              }}
-            />
+
             <Stack.Screen
               name='Home'
               component={HomePage}
@@ -182,6 +187,50 @@ export default function App() {
                   header: () => (
                     <NavHeader
                       pageName={'Filter Customer'}
+                      noHeader={true}
+                    />
+                  ),
+                }}
+              />
+            </Stack.Group>
+            {/* Quotation Page */}
+            <Stack.Group>
+              <Stack.Screen
+                name='Quotation'
+                component={QuotationPage}
+                options={{
+                  header: () => (
+                    <NavHeader
+                      pageName={'Quotation'}
+                      pageBackName={'Selling'}
+                      noHeader={true}
+                    />
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name='SortAndroidQuotation'
+                component={SortAndroidQuotation}
+                options={{
+                  title: '',
+                  headerShadowVisible: true,
+                  header: () => (
+                    <NavHeader
+                      pageName={'Sort'}
+                      noHeader={true}
+                    />
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name='FilterQuotation'
+                component={FilterQuotation}
+                options={{
+                  title: '',
+                  headerShadowVisible: true,
+                  header: () => (
+                    <NavHeader
+                      pageName={'Filter Quotation'}
                       noHeader={true}
                     />
                   ),

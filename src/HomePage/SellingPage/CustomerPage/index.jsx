@@ -165,9 +165,7 @@ function CustomerPage({ route }) {
   if (error) {
     return (
       <ContainerStyled>
-        <HStack justifyContent='center'>
-          <Text>ERROR</Text>
-        </HStack>
+        <HStack justifyContent='center'></HStack>
       </ContainerStyled>
     );
   }
@@ -176,9 +174,9 @@ function CustomerPage({ route }) {
     <ContainerStyled>
       <Center
         mt={2}
-        mx={{ base: 4, lg: 40 }}
+        mx={{ base: 0, lg: 0 }}
       >
-        <VStack m={6}>
+        <VStack>
           {Platform.OS === 'ios' && showBackgroundSearch && (
             <Box
               w={'100%'}
@@ -198,15 +196,18 @@ function CustomerPage({ route }) {
           )}
 
           <HStack
-            // mb={2}
-            justifyContent={{ base: 'flex-end', lg: 'flex-end' }}
+            m={0}
+            pr={0}
+            pl={{ base: 12, lg: 6 }}
+            w={{ base: 'full', lg: 1100 }}
+            justifyContent={'space-between'}
+            alignSelf={'center'}
           >
             <Button
-              m={{ base: 2, lg: 6 }}
+              m={{ base: 2, lg: 4 }}
+              ml={{ base: 6, lg: 0 }}
               rounded={12}
-              left={0}
               variant={'unstyled'}
-              position={'absolute'}
               onPress={() => navigation.goBack()}
               _pressed={{ bg: 'blueGray.200' }}
             >
@@ -271,6 +272,7 @@ function CustomerPage({ route }) {
           {!showBackgroundSearch && (
             <HStack
               mt={6}
+              px={{ base: 6, lg: 32 }}
               mr={2}
               justifyContent={'space-evenly'}
             >
