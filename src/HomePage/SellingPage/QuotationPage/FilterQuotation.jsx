@@ -1,8 +1,9 @@
-import { Button, Center, CheckIcon, FormControl, HStack, Pressable, Select, VStack, View } from 'native-base';
-import React, { useState, useMemo } from 'react';
+import { Button, Center, CheckIcon, FormControl, HStack, Input, Pressable, Select, VStack, View } from 'native-base';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useWindowDimensions } from 'react-native';
-// import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
-import { COLORS } from '../../../../constants/theme';
+import { Platform } from 'react-native';
+import { COLORS, SIZES } from '../../../../constants/theme';
+import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 // import useConfig from '../../../../config/path';
 
 const ContainerStyled = (props) => {
@@ -30,13 +31,98 @@ function FilterQuotation({ route, navigation }) {
     valid_till: '',
   };
 
-  const [filterState, setFilterState] = useState({
-    status: '',
-    quotation_to: '',
-    order_type: '',
-    transaction_date: '',
-    valid_till: '',
-  });
+  const [filterState, setFilterState] = useState(initialsFilterState);
+
+  // date now for android
+  const [dateAndroidNow] = useState(new Date());
+  const [dateAndroidNextMount, setAndroidNextMount] = useState(new Date()); // add 1 mount
+  const onChangeAndroidFrom = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    const yyyy = currentDate.getFullYear();
+    let mm = currentDate.getMonth(); // Months start at 0!
+    let dd = currentDate.getDate();
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+    const formattedToday = dd + '-' + mm + '-' + yyyy;
+    if (event?.type === 'dismissed') {
+      setFilterState((pre) => ({ ...pre, transaction_date: formattedToday }));
+      return;
+    }
+    setFilterState((pre) => ({ ...pre, transaction_date: formattedToday }));
+  };
+  const onChangeAndroidTo = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    const yyyy = currentDate.getFullYear();
+    let mm = currentDate.getMonth(); // Months start at 0!
+    let dd = currentDate.getDate();
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+    const formattedToday = dd + '-' + mm + '-' + yyyy;
+    if (event?.type === 'dismissed') {
+      setFilterState((pre) => ({ ...pre, valid_till: formattedToday }));
+      return;
+    }
+    setFilterState((pre) => ({ ...pre, valid_till: formattedToday }));
+  };
+
+  const showAndoirdDatepickerFrom = () => {
+    DateTimePickerAndroid.open({
+      value: dateAndroidNow,
+      onChange: (event, date) => onChangeAndroidFrom(event, date),
+      mode: 'date',
+      is24Hour: true,
+    });
+  };
+
+  const showAndoirdDatepickerTo = () => {
+    DateTimePickerAndroid.open({
+      value: dateAndroidNextMount,
+      onChange: (event, date) => onChangeAndroidTo(event, date),
+      mode: 'date',
+      is24Hour: true,
+    });
+  };
+  // date now for ios
+  const [dateIOS] = useState(new Date());
+  const [dateIOSNextMonth, setDateIOSNextMonth] = useState(new Date());
+  // const [show, setShow] = useState(false);
+  const onChangeIOSfrom = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    const yyyy = currentDate.getFullYear();
+    let mm = currentDate.getMonth(); // Months start at 0!
+    let dd = currentDate.getDate();
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+    const formattedToday = dd + '-' + mm + '-' + yyyy;
+    if (event?.type === 'dismissed') {
+      setFilterState((pre) => ({ ...pre, transaction_date: formattedToday }));
+      return;
+    }
+    setFilterState((pre) => ({ ...pre, transaction_date: formattedToday }));
+  };
+  const onChangeIOSto = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    const yyyy = currentDate.getFullYear();
+    let mm = currentDate.getMonth(); // Months start at 0!
+    let dd = currentDate.getDate();
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+    const formattedToday = dd + '-' + mm + '-' + yyyy;
+    if (event?.type === 'dismissed') {
+      setFilterState((pre) => ({ ...pre, valid_till: formattedToday }));
+      return;
+    }
+    setFilterState((pre) => ({ ...pre, valid_till: formattedToday }));
+  };
+
+  // set Default value of to Date Object (+ 1 month)
+  useMemo(() => {
+    const now = new Date();
+    now.setMonth(now.getMonth() + 1);
+    setAndroidNextMount(() => now);
+
+    setDateIOSNextMonth(() => now);
+  }, []);
 
   useMemo(() => {
     // if filtered set state with storeFilter
@@ -45,84 +131,48 @@ function FilterQuotation({ route, navigation }) {
     }
   }, [storeFilter]);
 
-  // for handle selection title (dynamic)
-  // const [titleSelection, setTitleSelection] = useState('');
-  // for handle dynamic url selection
-  // const [urlSelected, setUrlSelected] = useState('');
-  // url path for fetching selection data
-  // const urlCtmGroup = baseURL + quotation_toS;
-  // const urlTerritory = baseURL + TERRITORY;
-
-  // handle dynamic property for multi selection in page
-  // const [propertySelected, setPropertySelected] = useState('');
-
-  // const [openSelection, setOpenSelection] = useState(false);
-
-  // const [openCustomerType, setOpenCustomerType] = useState(false);
-
-  // const customerTypes = [{ name: 'Company' }, { name: 'Individual' }];
-
-  // const getValueFromSelection = (name) => {
-  //   setPropertySelected(name);
-  // };
-  // handle change details of selection
-  // const handleChangeURL = (title, name, url) => {
-  //   setTitleSelection(title);
-  //   getValueFromSelection(name);
-  //   setUrlSelected(url);
-  //   setOpenSelection(true);
-  // };
-  // const handleOpenDynamicSelection = (title, name, url) => {
-  //   handleChangeURL(title, name, url);
-  // };
-
-  // const handleOpenStaticSelection = () => {
-  //   setOpenCustomerType(true);
-  // };
+  useEffect(() => {
+    console.log(filterState);
+  }, [filterState]);
 
   const handleSetFilter = () => {
     navigation.pop();
     navigation.replace('Customer', { filterData: filterState, toggleFilter: true });
   };
+  const StyledTextField = (props) => {
+    return (
+      <VStack mx={6}>
+        <FormControl isInvalid={props.isRequired || false}>
+          <FormControl.Label>{props.label}</FormControl.Label>
+          <Input
+            {...props}
+            name={props.name}
+            value={props.value}
+            bg={'blueGray.100'}
+            borderWidth={2}
+            borderColor={'gray.200'}
+            variant={'filled'}
+            rounded={6}
+            placeholder={props.placeholder}
+            fontSize={{ base: SIZES.medium || props.baseSize, lg: SIZES.large || props.lgSize }}
+            minW={{ base: 'full', lg: 400 }}
+            w={{ base: 'full' || props.baseSize, lg: 400 || props.lgSize }}
+            _focus={{
+              borderColor: 'blueGray.300',
+              backgroundColor: 'blueGray.100',
+            }}
+            onChangeAndroidFromText={props.handleChange}
+          />
+        </FormControl>
+      </VStack>
+    );
+  };
 
-  // const StyledTextField = (props) => {
-  //   return (
-  //     <VStack mx={6}>
-  //       <FormControl isInvalid={props.isRequired || false}>
-  //         <FormControl.Label>{props.label}</FormControl.Label>
-  //         <Input
-  //           {...props}
-  //           name={props.name}
-  //           value={props.value}
-  //           bg={'blueGray.100'}
-  //           borderWidth={2}
-  //           borderColor={'gray.200'}
-  //           variant={'filled'}
-  //           rounded={6}
-  //           placeholder={props.placeholder}
-  //           fontSize={{ base: SIZES.medium || props.baseSize, lg: SIZES.large || props.lgSize }}
-  //           minW={{ base: 'full', lg: 400 }}
-  //           w={{ base: 'full' || props.baseSize, lg: 400 || props.lgSize }}
-  //           _focus={{
-  //             borderColor: 'blueGray.300',
-  //             backgroundColor: 'blueGray.100',
-  //           }}
-  //           onChangeText={props.handleChange}
-  //         />
-  //       </FormControl>
-  //     </VStack>
-  //   );
-  // };
-
-  // const OnPressContainer = ({ children, onPress }) => (
-  //   <Pressable onPress={() => onPress()}>
-  //     <View pointerEvents='none'>{children}</View>
-  //   </Pressable>
-  // );
-
-  // useEffect(() => {
-  //   console.log(filterState);
-  // }, [filterState]);
+  const OnPressContainer = ({ children, onPress }) => (
+    <Pressable onPress={() => onPress()}>
+      <View pointerEvents='none'>{children}</View>
+    </Pressable>
+  );
 
   return (
     <ContainerStyled>
@@ -245,52 +295,72 @@ function FilterQuotation({ route, navigation }) {
               />
             </Select>
           </View>
-          {/* <OnPressContainer onPress={() => handleOpenDynamicSelection('Customer Group', 'quotation_to', urlCtmGroup)}>
-              <StyledTextField
-                caretHidden
-                // isRequired={nullState.status}
-                label={'Customer Group'}
-                name={'quotation_to'}
-                placeholder={'Select Customer Group'}
-                value={filterState.quotation_to}
-                showSoftInputOnFocus={false} // disable toggle keyboard
-              />
-            </OnPressContainer>
-            <OnPressContainer onPress={() => handleOpenDynamicSelection('Territory', 'order_type', urlTerritory)}>
-              <StyledTextField
-                caretHidden
-                // isRequired={nullState.status}
-                label={'Territory'}
-                name={'order_type'}
-                placeholder={'Select Territory'}
-                value={filterState.order_type}
-                showSoftInputOnFocus={false} // disable toggle keyboard
-              />
-            </OnPressContainer> */}
+          {/* for Android */}
+          {Platform.OS === 'android' && (
+            <VStack space={4}>
+              <View w={'container'}>
+                <OnPressContainer onPress={() => showAndoirdDatepickerFrom()}>
+                  <StyledTextField
+                    caretHidden
+                    label={'From Date'}
+                    placeholder={'Select Transaction Date'}
+                    value={filterState.transaction_date}
+                    showSoftInputOnFocus={false} // disable toggle keyboard
+                  />
+                </OnPressContainer>
+              </View>
+              <View w={'container'}>
+                <OnPressContainer onPress={() => showAndoirdDatepickerTo()}>
+                  <StyledTextField
+                    caretHidden
+                    label={'To Date'}
+                    placeholder={'Select Valid Date'}
+                    value={filterState.valid_till}
+                    showSoftInputOnFocus={false} // disable toggle keyboard
+                  />
+                </OnPressContainer>
+              </View>
+            </VStack>
+          )}
+          {/* for IOS */}
+          {Platform.OS === 'ios' && (
+            <HStack>
+              <View w={'container'}>
+                <FormControl justifyContent={'center'}>
+                  <FormControl.Label mx={6}>From Date</FormControl.Label>
+                </FormControl>
+                <View
+                  mx={3}
+                  alignItems={'start'}
+                >
+                  <RNDateTimePicker
+                    is24Hour={true}
+                    mode='date'
+                    value={dateIOS}
+                    onChange={onChangeIOSfrom}
+                  />
+                </View>
+              </View>
+              <View w={'container'}>
+                <FormControl justifyContent={'center'}>
+                  <FormControl.Label mx={6}>To Date</FormControl.Label>
+                </FormControl>
+                <View
+                  mx={3}
+                  alignItems={'start'}
+                >
+                  <RNDateTimePicker
+                    is24Hour={true}
+                    mode='date'
+                    value={dateIOSNextMonth}
+                    onChange={onChangeIOSto}
+                  />
+                </View>
+              </View>
+            </HStack>
+          )}
         </VStack>
-        {/* )} */}
-        {/* <View m={6}>
-          {openSelection && (
-            <DynamicSelectPage
-              title={titleSelection} // for change dynamic title
-              url={urlSelected} // for change dynamic data in selection
-              open={openSelection} // state for show/hide selection
-              setOpen={setOpenSelection} // for control show/hide
-              setState={setFilterState} // for send data to outside selection and set it in main state by property
-              property={propertySelected} // name of property for send data to outside
-            />
-          )}
-          {openCustomerType && (
-            <StaticSelectPage
-              title={'Customer Type'} // name of statice selection
-              data={customerTypes} // data of statice selection
-              open={openCustomerType} // state for show/hide selection
-              setOpen={setOpenCustomerType} // for control show/hide
-              setState={setFilterState} // for send data to outside selection and set it in main state by property
-              property={'status'} // name of property for send data to outside
-            />
-          )}
-        </View> */}
+
         <HStack space={2.5}>
           <Button
             px={6}

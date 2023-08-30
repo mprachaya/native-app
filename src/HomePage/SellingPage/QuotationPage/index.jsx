@@ -1,17 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import {
-  Box,
-  Button,
-  Center,
-  ChevronLeftIcon,
-  FlatList,
-  HStack,
-  List,
-  ScrollView,
-  Text,
-  VStack,
-  View,
-} from 'native-base';
+import { Box, Button, Center, ChevronLeftIcon, FlatList, HStack, List, Text, VStack, View } from 'native-base';
 import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { CustomerList } from './CustomerList';
