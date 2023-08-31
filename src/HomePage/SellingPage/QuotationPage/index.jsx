@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Box, Button, Center, ChevronLeftIcon, FlatList, HStack, List, Text, VStack, View } from 'native-base';
+import { Box, Button, Center, ChevronLeftIcon, FlatList, HStack, List, Text, Toast, VStack, View } from 'native-base';
 import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
-import { CustomerList } from './CustomerList';
+import { QuotationList } from './QuotationList';
 import { config } from '../../../../config';
 import { useNavigation } from '@react-navigation/native';
 import { Platform } from 'react-native';
@@ -68,7 +68,7 @@ function QuotationPage({ route }) {
   const [sortActive, setSortActive] = useState(false);
   const {
     data: quotationData,
-    setData: setquotationData,
+    setData: setQuotationData,
     setRefetch: refetchData,
     loading,
     error,
@@ -146,11 +146,14 @@ function QuotationPage({ route }) {
       const newObjFilter = Object.fromEntries(Object.entries(filterData)?.filter(([key, value]) => value !== ''));
       // console.log('FilterState: ', Object.values(newObjFilter).length);
       // filtering
-      // console.log(newObjFilter[0]);
+      console.log('newObjFilter', newObjFilter);
       const filterResult = dataTemp.filter((item) => {
         if (Object.keys(newObjFilter).length > 0) {
           for (let key in newObjFilter) {
-            if (item[key] === '' || !newObjFilter[key].includes(item[key])) {
+            if (
+              item[key] === '' ||
+              (!newObjFilter[key].includes(item[key]) && key !== 'transaction_date' && key !== 'valid_till')
+            ) {
               return false;
               // console.log(filterData[key]);
             }
@@ -158,9 +161,26 @@ function QuotationPage({ route }) {
         }
         return true;
       });
-      if (filterResult.length > 0) setTempData(filterResult);
+      // console.log('filterResult', filterResult);
+      if (newObjFilter.transaction_date !== undefined || newObjFilter.valid_till !== undefined) {
+        const filterFromDate = Object.values(filterResult)?.filter((item) => {
+          const itemDate = item.transaction_date;
+          // console.log('raw', itemDate);
+          // console.log('-----------');
+          // console.log('filter', newObjFilter.transaction_date);
+          if (newObjFilter.transaction_date !== undefined && newObjFilter.valid_till !== undefined) {
+            return itemDate >= newObjFilter.transaction_date && itemDate <= newObjFilter.valid_till;
+          } else if (newObjFilter.transaction_date !== undefined && newObjFilter.valid_till === undefined) {
+            return itemDate === newObjFilter.transaction_date;
+          } else if (newObjFilter.transaction_date === undefined && newObjFilter.valid_till !== undefined) {
+            return itemDate === newObjFilter.transaction_date;
+          }
+        });
+        console.log('filterFromDate', filterFromDate);
+        setTempData(filterFromDate);
+      } else if (filterResult.length > 0) setTempData(filterResult);
       else {
-        setTempData(quotationData);
+        setTempData(null);
       }
       // console.log('filterResult:', filterResult);
     }
@@ -177,6 +197,12 @@ function QuotationPage({ route }) {
   }, [navigation]);
 
   useMemo(() => {
+    if (quotationData) {
+      setTempData(quotationData);
+    }
+  }, [quotationData]);
+
+  useMemo(() => {
     console.log('filterActive ', filterActive);
   }, [filterActive]);
 
@@ -191,6 +217,8 @@ function QuotationPage({ route }) {
     }
     checkFilter();
     checkSort();
+
+    // console.log(filterData);
     // console.log(filterData);
   }, [quotationData, toggleFilter]);
 
@@ -260,7 +288,7 @@ function QuotationPage({ route }) {
                   navigation.navigate(SortName, {
                     sortBy: SortBy,
                     data: quotationData,
-                    setData: setquotationData,
+                    setData: setQuotationData,
                     setReload: setReloadState,
                     sortByst: sortByState,
                     sortTypest: sortTypeState,
@@ -365,15 +393,17 @@ function QuotationPage({ route }) {
             mt={6}
             mr={{ base: 8, lg: 6 }}
           >
-            <Text>
-              {dataShowLength} to {tempData?.length || quotationData?.length}
-            </Text>
+            {dataShowLength !== 0 && (
+              <Text>
+                {dataShowLength} to {tempData?.length || quotationData?.length}
+              </Text>
+            )}
           </HStack>
           {!showBackgroundSearch && (
-            <CustomerList
+            <QuotationList
               reload={reloadState}
               setReload={setReloadState}
-              data={tempData || quotationData}
+              data={tempData}
               token={config.API_TOKEN}
               returnDataIndex={setDataShowLength}
               handleClickDetails={handleClickDetails}
@@ -388,7 +418,7 @@ function QuotationPage({ route }) {
         setOpen={setOpenState}
         setReload={setReloadState}
         data={quotationData}
-        setData={setquotationData}
+        setData={setQuotationData}
         sortBy={SortBy}
       />
 

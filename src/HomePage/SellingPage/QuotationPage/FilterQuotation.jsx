@@ -1,4 +1,16 @@
-import { Button, Center, CheckIcon, FormControl, HStack, Input, Pressable, Select, VStack, View } from 'native-base';
+import {
+  Button,
+  Center,
+  CheckIcon,
+  Checkbox,
+  FormControl,
+  HStack,
+  Input,
+  Pressable,
+  Select,
+  VStack,
+  View,
+} from 'native-base';
 import React, { useState, useMemo, useEffect } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { Platform } from 'react-native';
@@ -31,6 +43,8 @@ function FilterQuotation({ route, navigation }) {
     valid_till: '',
   };
 
+  const RouteName = 'Quotation';
+
   const [filterState, setFilterState] = useState(initialsFilterState);
 
   // date now for android
@@ -39,11 +53,11 @@ function FilterQuotation({ route, navigation }) {
   const onChangeAndroidFrom = (event, selectedDate) => {
     const currentDate = selectedDate;
     const yyyy = currentDate.getFullYear();
-    let mm = currentDate.getMonth(); // Months start at 0!
+    let mm = currentDate.getMonth() + 1; // Months start at 0!
     let dd = currentDate.getDate();
     if (dd < 10) dd = '0' + dd;
     if (mm < 10) mm = '0' + mm;
-    const formattedToday = dd + '-' + mm + '-' + yyyy;
+    const formattedToday = yyyy + '-' + mm + '-' + dd;
     if (event?.type === 'dismissed') {
       setFilterState((pre) => ({ ...pre, transaction_date: formattedToday }));
       return;
@@ -53,11 +67,11 @@ function FilterQuotation({ route, navigation }) {
   const onChangeAndroidTo = (event, selectedDate) => {
     const currentDate = selectedDate;
     const yyyy = currentDate.getFullYear();
-    let mm = currentDate.getMonth(); // Months start at 0!
+    let mm = currentDate.getMonth() + 1; // Months start at 0!
     let dd = currentDate.getDate();
     if (dd < 10) dd = '0' + dd;
     if (mm < 10) mm = '0' + mm;
-    const formattedToday = dd + '-' + mm + '-' + yyyy;
+    const formattedToday = yyyy + '-' + mm + '-' + dd;
     if (event?.type === 'dismissed') {
       setFilterState((pre) => ({ ...pre, valid_till: formattedToday }));
       return;
@@ -83,45 +97,52 @@ function FilterQuotation({ route, navigation }) {
     });
   };
   // date now for ios
-  const [dateIOS] = useState(new Date());
+  const [dateIOS, setDateIOS] = useState(new Date());
   const [dateIOSNextMonth, setDateIOSNextMonth] = useState(new Date());
+  const [checkState, setCheckState] = useState(false);
   // const [show, setShow] = useState(false);
   const onChangeIOSfrom = (event, selectedDate) => {
     const currentDate = selectedDate;
     const yyyy = currentDate.getFullYear();
-    let mm = currentDate.getMonth(); // Months start at 0!
+    let mm = currentDate.getMonth() + 1; // Months start at 0!
     let dd = currentDate.getDate();
     if (dd < 10) dd = '0' + dd;
     if (mm < 10) mm = '0' + mm;
-    const formattedToday = dd + '-' + mm + '-' + yyyy;
+    // const formattedToday = dd + '-' + mm + '-' + yyyy;
+    const formattedToday = yyyy + '-' + mm + '-' + dd;
     if (event?.type === 'dismissed') {
       setFilterState((pre) => ({ ...pre, transaction_date: formattedToday }));
       return;
+    } else {
+      setFilterState((pre) => ({ ...pre, transaction_date: formattedToday }));
     }
-    setFilterState((pre) => ({ ...pre, transaction_date: formattedToday }));
   };
   const onChangeIOSto = (event, selectedDate) => {
     const currentDate = selectedDate;
     const yyyy = currentDate.getFullYear();
-    let mm = currentDate.getMonth(); // Months start at 0!
+    let mm = currentDate.getMonth() + 1; // Months start at 0!
     let dd = currentDate.getDate();
     if (dd < 10) dd = '0' + dd;
     if (mm < 10) mm = '0' + mm;
-    const formattedToday = dd + '-' + mm + '-' + yyyy;
+    const formattedToday = yyyy + '-' + mm + '-' + dd;
     if (event?.type === 'dismissed') {
       setFilterState((pre) => ({ ...pre, valid_till: formattedToday }));
       return;
+    } else {
+      setFilterState((pre) => ({ ...pre, valid_till: formattedToday }));
     }
-    setFilterState((pre) => ({ ...pre, valid_till: formattedToday }));
   };
 
   // set Default value of to Date Object (+ 1 month)
   useMemo(() => {
-    const now = new Date();
-    now.setMonth(now.getMonth() + 1);
-    setAndroidNextMount(() => now);
+    const plusMonth = new Date();
+    plusMonth.setMonth(plusMonth.getMonth() + 1);
+    setAndroidNextMount(() => plusMonth);
+    setDateIOSNextMonth(() => plusMonth);
 
-    setDateIOSNextMonth(() => now);
+    // const dateNow = new Date();
+    // dateNow.setMonth(dateNow.getMonth());
+    // setDateIOS(dateNow);
   }, []);
 
   useMemo(() => {
@@ -137,7 +158,7 @@ function FilterQuotation({ route, navigation }) {
 
   const handleSetFilter = () => {
     navigation.pop();
-    navigation.replace('Customer', { filterData: filterState, toggleFilter: true });
+    navigation.replace(RouteName, { filterData: filterState, toggleFilter: true });
   };
   const StyledTextField = (props) => {
     return (
@@ -324,40 +345,56 @@ function FilterQuotation({ route, navigation }) {
           )}
           {/* for IOS */}
           {Platform.OS === 'ios' && (
-            <HStack>
-              <View w={'container'}>
-                <FormControl justifyContent={'center'}>
-                  <FormControl.Label mx={6}>From Date</FormControl.Label>
-                </FormControl>
-                <View
-                  mx={3}
-                  alignItems={'start'}
-                >
-                  <RNDateTimePicker
-                    is24Hour={true}
-                    mode='date'
-                    value={dateIOS}
-                    onChange={onChangeIOSfrom}
-                  />
+            <React.Fragment>
+              <HStack
+                justifyContent={'center'}
+                mt={2}
+              >
+                <View w={'container'}>
+                  <FormControl>
+                    <HStack space={2}>
+                      <Checkbox
+                        aria-label='dateState'
+                        onChange={setCheckState}
+                      />
+                      <FormControl.Label>From Date</FormControl.Label>
+                    </HStack>
+                  </FormControl>
+                  <View alignItems={'start'}>
+                    <HStack>
+                      <RNDateTimePicker
+                        display='inline'
+                        disabled={!checkState}
+                        is24Hour={true}
+                        mode='date'
+                        value={dateIOS}
+                        onChange={onChangeIOSfrom}
+                      />
+                    </HStack>
+                  </View>
                 </View>
-              </View>
-              <View w={'container'}>
-                <FormControl justifyContent={'center'}>
-                  <FormControl.Label mx={6}>To Date</FormControl.Label>
-                </FormControl>
-                <View
-                  mx={3}
-                  alignItems={'start'}
-                >
-                  <RNDateTimePicker
-                    is24Hour={true}
-                    mode='date'
-                    value={dateIOSNextMonth}
-                    onChange={onChangeIOSto}
-                  />
+              </HStack>
+              <HStack justifyContent={'center'}>
+                <View w={'container'}>
+                  <FormControl justifyContent={'center'}>
+                    <FormControl.Label mx={7}>To Date</FormControl.Label>
+                  </FormControl>
+                  <View
+                    mx={12}
+                    alignItems={'start'}
+                  >
+                    <RNDateTimePicker
+                      display='inline'
+                      disabled={!checkState}
+                      is24Hour={true}
+                      mode='date'
+                      value={dateIOSNextMonth}
+                      onChange={onChangeIOSto}
+                    />
+                  </View>
                 </View>
-              </View>
-            </HStack>
+              </HStack>
+            </React.Fragment>
           )}
         </VStack>
 
@@ -388,7 +425,7 @@ function FilterQuotation({ route, navigation }) {
             _pressed={{ bg: 'blueGray.200' }}
             onPress={() => {
               navigation.pop();
-              navigation.replace('Customer', { filterData: initialsFilterState, toggleFilter: true });
+              navigation.replace(RouteName, { filterData: initialsFilterState, toggleFilter: true });
             }}
           >
             CLEAR

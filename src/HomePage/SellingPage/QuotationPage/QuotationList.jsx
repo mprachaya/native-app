@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Box, FlatList, HStack, Image, Pressable, Spinner, Text, VStack, View } from 'native-base';
+import { Box, Center, FlatList, HStack, Image, Pressable, Spinner, Text, VStack, View } from 'native-base';
 import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components';
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
 import GetScreenSize from '../../../../hooks/GetScreenSize';
 import useConfig from '../../../../config/path';
 
-export function CustomerList({ data, token, reload, setReload, returnDataIndex, handleClickDetails }) {
+export function QuotationList({ data, token, reload, setReload, returnDataIndex, handleClickDetails }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
   const [dataIndex, setDataIndex] = useState(20);
   const length = 20;
@@ -128,9 +128,11 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
   }, [loadMore]);
 
   useEffect(() => {
-    if (Object.values(data).length - dataIndex < 0) returnDataIndex(Object.values(data).length);
-    else {
-      returnDataIndex(dataIndex);
+    if (data !== undefined && data !== null) {
+      if (Object.values(data)?.length - dataIndex < 0) returnDataIndex(Object.values(data).length);
+      else {
+        returnDataIndex(dataIndex);
+      }
     }
   }, [data]);
 
@@ -159,6 +161,14 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
     );
   }
 
+  if (data === null || Object.values(data)?.length === 0) {
+    return (
+      <Center m={10}>
+        <Text>No Data Available</Text>
+      </Center>
+    );
+  }
+
   return (
     <View
       my={4}
@@ -170,20 +180,20 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
         to={'lg'}
       >
         <FlatList
-          data={data.slice(0, dataIndex)}
+          data={data?.slice(0, dataIndex)}
           // numColumns={2}
           // columnWrapperStyle={{ justifyContent: 'space-between' }}
           keyExtractor={(item) => item.name}
           onEndReached={() =>
-            dataIndex < data.length && dataIndex + length < data.length
+            dataIndex < data?.length && dataIndex + length < data?.length
               ? handleScrollEnd(post + length)
-              : handleScrollEnd(data.length)
+              : handleScrollEnd(data?.length)
           }
           removeClippedSubviews={true}
           maxToRenderPerBatch={3}
           initialNumToRender={2}
           ListFooterComponent={() =>
-            loadMore && dataIndex !== data.length ? (
+            loadMore && dataIndex !== data?.length ? (
               <View>
                 <Spinner />
               </View>
@@ -207,7 +217,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
         to={'md'}
       >
         <FlatList
-          data={data.slice(0, dataIndex)}
+          data={data?.slice(0, dataIndex)}
           keyExtractor={(item) => item.name}
           renderItem={({ item }) => (
             <Item
@@ -224,12 +234,12 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
           maxToRenderPerBatch={3}
           initialNumToRender={2}
           onEndReached={() =>
-            dataIndex < data.length && dataIndex + length < data.length
+            dataIndex < data?.length && dataIndex + length < data?.length
               ? handleScrollEnd(post + length)
-              : handleScrollEnd(data.length)
+              : handleScrollEnd(data?.length)
           }
           ListFooterComponent={() =>
-            loadMore && dataIndex !== data.length ? (
+            loadMore && dataIndex !== data?.length ? (
               <View>
                 <Spinner />
               </View>
