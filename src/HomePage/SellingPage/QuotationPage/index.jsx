@@ -61,6 +61,7 @@ function QuotationPage({ route }) {
 
   const FilterName = 'FilterQuotation';
   const SortName = 'SortAndroidQuotation';
+  const DetailsName = 'QuotationDetails';
 
   const [tempData, setTempData] = useState(null); // for store filtered Data
   // data fetching with custom hook useFetch
@@ -120,7 +121,7 @@ function QuotationPage({ route }) {
   ];
 
   const handleClickDetails = (name) => {
-    navigation.status('CustomerDetails', {
+    navigation.navigate(DetailsName, {
       name: name,
     });
   };

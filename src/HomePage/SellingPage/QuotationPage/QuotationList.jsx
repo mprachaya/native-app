@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Center, FlatList, HStack, Image, Pressable, Spinner, Text, VStack, View } from 'native-base';
+import { Center, FlatList, HStack, Pressable, Spinner, Text, VStack, View } from 'native-base';
 import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components';
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
 import GetScreenSize from '../../../../hooks/GetScreenSize';
 import useConfig from '../../../../config/path';
 
-export function QuotationList({ data, token, reload, setReload, returnDataIndex, handleClickDetails }) {
+export function QuotationList({ data, reload, setReload, returnDataIndex, handleClickDetails }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
   const [dataIndex, setDataIndex] = useState(20);
   const length = 20;
   const [loadMore, setLoadMore] = useState(false);
   const [tempIndex, setTempIndex] = useState(0);
-  const { baseURL } = useConfig(true);
 
   const Item = React.memo(({ name, title, total, date, status }) => (
     <Pressable

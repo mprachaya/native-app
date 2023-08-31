@@ -254,7 +254,7 @@ function DetailsPage({ route, navigation }) {
                   alignItems={'flex-end'}
                 >
                   <VStack
-                    alignItems={'center'}
+                    // alignItems={'center'}
                     minHeight={16}
                   >
                     <DisplayTextLeft>0.0</DisplayTextLeft>
