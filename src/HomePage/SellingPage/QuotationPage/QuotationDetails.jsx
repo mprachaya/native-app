@@ -20,6 +20,8 @@ import { Loading } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
 import useUpdate from '../../../../hooks/useUpdate';
 import useConfig from '../../../../config/path';
+import { Pressable } from 'react-native';
+import Animated from 'react-native-reanimated';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -151,6 +153,93 @@ function DetailsPage({ route, navigation }) {
       {children}
     </Text>
   );
+  // tabs details
+  const FirstRoute = () => (
+    <Center
+      flex={1}
+      my='4'
+    >
+      This is Tab 1
+    </Center>
+  );
+
+  const SecondRoute = () => (
+    <Center
+      flex={1}
+      my='4'
+    >
+      This is Tab 2
+    </Center>
+  );
+
+  const ThirdRoute = () => (
+    <Center
+      flex={1}
+      my='4'
+    >
+      This is Tab 3
+    </Center>
+  );
+
+  const FourthRoute = () => (
+    <Center
+      flex={1}
+      my='4'
+    >
+      This is Tab 4{' '}
+    </Center>
+  );
+
+  const renderScene = SceneMap({
+    first: FirstRoute,
+    second: SecondRoute,
+    third: ThirdRoute,
+    fourth: FourthRoute,
+  });
+
+  const [tabIndex, setTabIndex] = useState(0);
+
+  const renderTabBar = (props) => {
+    const inputRange = props.navigationState.routes.map((x, i) => i);
+    return (
+      <Box flexDirection='row'>
+        {props.navigationState.routes.map((route, i) => {
+          const opacity = props.position.interpolate({
+            inputRange,
+            outputRange: inputRange.map((inputIndex) => (inputIndex === i ? 1 : 0.5)),
+          });
+          const color = index === i ? useColorModeValue('#000', '#e5e5e5') : useColorModeValue('#1f2937', '#a1a1aa');
+          const borderColor = index === i ? 'cyan.500' : useColorModeValue('coolGray.200', 'gray.400');
+          return (
+            <Box
+              borderBottomWidth='3'
+              borderColor={borderColor}
+              flex={1}
+              alignItems='center'
+              p='3'
+              cursor='pointer'
+            >
+              <Pressable
+                onPress={() => {
+                  console.log(i);
+                  setIndex(i);
+                }}
+              >
+                <Animated.Text
+                  style={{
+                    color,
+                  }}
+                >
+                  {route.title}
+                </Animated.Text>
+              </Pressable>
+            </Box>
+          );
+        })}
+      </Box>
+    );
+  };
+
   if (loading) {
     return <Loading loading={loading} />;
   }
@@ -185,59 +274,6 @@ function DetailsPage({ route, navigation }) {
             alignItems={'center'}
             space={2}
           >
-            {/* {data.image ? (
-              <Box
-                m={4}
-                w={20}
-                h={20}
-                rounded={6}
-                shadow={1}
-              >
-                <Image
-                  style={{ flex: 1, resizeMode: 'cover' }}
-                  rounded={6}
-                  alt={'customer image'}
-                  source={{
-                    uri: url.BASE_URL + data.image,
-                    method: 'GET',
-                    headers: {
-                      // Authorization: config.API_TOKEN,
-                    },
-                  }}
-                />
-              </Box>
-            ) : (
-              <Box
-                m={4}
-                w={20}
-                h={20}
-                rounded={6}
-                background={'black'}
-                shadow={1}
-              >
-                <Box
-                  w={'full'}
-                  h={'full'}
-                  justifyContent={'center'}
-                  alignItems={'center'}
-                  position={'absolute'}
-                >
-                  <Text color={'white'}>No Image</Text>
-                </Box>
-
-                <Image
-                  alt={'customer image'}
-                  opacity={'0.5'}
-                  rounded={6}
-                  style={{ flex: 1, resizeMode: 'cover' }}
-                  source={{
-                    uri: 'https://images.pexels.com/photos/2887582/pexels-photo-2887582.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  }}
-                />
-              </Box>
-            )} */}
-
-            {/* <Avatar size={'xl'} /> */}
             <VStack
               // bg={'black'}
               justifyContent={'center'}
