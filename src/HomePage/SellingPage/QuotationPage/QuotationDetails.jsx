@@ -39,7 +39,7 @@ function DetailsPage({ route, navigation }) {
   const title = 'Quotation';
   const { name } = route.params;
   const { baseURL, QUOTATION } = useConfig(true);
-  const heightScrollView = 2000;
+  // const heightScrollView = 2000;
   // data fetching with custom hook useFetch
   const { data, setData, setRefetch, loading, error } = useFetch(baseURL + QUOTATION + '/' + name, {
     headers: {
@@ -153,91 +153,11 @@ function DetailsPage({ route, navigation }) {
       {children}
     </Text>
   );
-  // tabs details
-  const FirstRoute = () => (
-    <Center
-      flex={1}
-      my='4'
-    >
-      This is Tab 1
-    </Center>
-  );
 
-  const SecondRoute = () => (
-    <Center
-      flex={1}
-      my='4'
-    >
-      This is Tab 2
-    </Center>
-  );
-
-  const ThirdRoute = () => (
-    <Center
-      flex={1}
-      my='4'
-    >
-      This is Tab 3
-    </Center>
-  );
-
-  const FourthRoute = () => (
-    <Center
-      flex={1}
-      my='4'
-    >
-      This is Tab 4{' '}
-    </Center>
-  );
-
-  const renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute,
-    third: ThirdRoute,
-    fourth: FourthRoute,
-  });
-
-  const [tabIndex, setTabIndex] = useState(0);
-
-  const renderTabBar = (props) => {
-    const inputRange = props.navigationState.routes.map((x, i) => i);
-    return (
-      <Box flexDirection='row'>
-        {props.navigationState.routes.map((route, i) => {
-          const opacity = props.position.interpolate({
-            inputRange,
-            outputRange: inputRange.map((inputIndex) => (inputIndex === i ? 1 : 0.5)),
-          });
-          const color = index === i ? useColorModeValue('#000', '#e5e5e5') : useColorModeValue('#1f2937', '#a1a1aa');
-          const borderColor = index === i ? 'cyan.500' : useColorModeValue('coolGray.200', 'gray.400');
-          return (
-            <Box
-              borderBottomWidth='3'
-              borderColor={borderColor}
-              flex={1}
-              alignItems='center'
-              p='3'
-              cursor='pointer'
-            >
-              <Pressable
-                onPress={() => {
-                  console.log(i);
-                  setIndex(i);
-                }}
-              >
-                <Animated.Text
-                  style={{
-                    color,
-                  }}
-                >
-                  {route.title}
-                </Animated.Text>
-              </Pressable>
-            </Box>
-          );
-        })}
-      </Box>
-    );
+  const handleShowItemDetails = (data) => {
+    navigation.navigate('QuotationItemsDetails', {
+      data: data,
+    });
   };
 
   if (loading) {
@@ -270,7 +190,9 @@ function DetailsPage({ route, navigation }) {
         <ScrollView w={'full'}>
           <VStack
             m={2}
-            h={heightScrollView}
+            mb={24}
+            // h={heightScrollView}
+
             alignItems={'center'}
             space={2}
           >
@@ -704,6 +626,100 @@ function DetailsPage({ route, navigation }) {
                   {data.in_words ? data.in_words : '-'}
                 </Text>
               </HStack>
+              <Divider
+                w={'300'}
+                mt={2}
+              />
+              <VStack
+                my={6}
+                space={2}
+              >
+                <Text> Items list</Text>
+                {data.items?.map((item, index) => (
+                  <Button
+                    p={0}
+                    key={item.item_name}
+                    variant={'unstyled'}
+                    onPress={() => handleShowItemDetails(item)}
+                  >
+                    <HStack
+                      p={2}
+                      shadow={1}
+                      rounded={6}
+                      bg={'white'}
+                      justifyContent={'space-between'}
+                      w={300}
+                    >
+                      {item.image !== '' ? (
+                        <Box
+                          w={20}
+                          h={20}
+                          rounded={6}
+                          shadow={1}
+                        >
+                          <Image
+                            style={{ flex: 1, resizeMode: 'cover' }}
+                            rounded={6}
+                            alt={'customer image'}
+                            source={{
+                              uri: item.image,
+                              method: 'GET',
+                              // headers: {
+                              //   Authorization: token,
+                              // },
+                            }}
+                          />
+                        </Box>
+                      ) : (
+                        <Box
+                          w={20}
+                          h={20}
+                          rounded={6}
+                          background={'black'}
+                          shadow={1}
+                        >
+                          <Box
+                            w={'full'}
+                            h={'full'}
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                            position={'absolute'}
+                          >
+                            <Text color={'white'}>No Image</Text>
+                          </Box>
+
+                          <Image
+                            alt={'customer image'}
+                            opacity={'0.5'}
+                            rounded={6}
+                            style={{ flex: 1, resizeMode: 'cover' }}
+                            source={{
+                              uri: 'https://images.pexels.com/photos/56030/pyrite-pyrites-mineral-sulfide-56030.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                            }}
+                          />
+                        </Box>
+                      )}
+                      <VStack
+                        mt={1}
+                        mr={12}
+                      >
+                        <Text fontSize={'xs'}>#{index + 1}.</Text>
+                        <Text fontSize={'xs'}>
+                          {item.item_name + ' '}({item.item_group})
+                        </Text>
+                        <Text fontSize={'xs'}>OUM: {' ' + item.uom + ' '}</Text>
+                        <Text fontSize={'xs'}>
+                          Quantity: {' ' + item.qty + ' '} Rate:{' '}
+                          {' ' + parseFloat(item.price_list_rate).toFixed(2) + ' '}
+                        </Text>
+                        <Text fontSize={'xs'}>
+                          Amount: {' ' + parseFloat(item.amount).toFixed(2) + ' ' + data.price_list_currency}
+                        </Text>
+                      </VStack>
+                    </HStack>
+                  </Button>
+                ))}
+              </VStack>
             </VStack>
           </VStack>
         </ScrollView>

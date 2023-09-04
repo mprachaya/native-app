@@ -26,6 +26,7 @@ import QuotationPage from './src/HomePage/SellingPage/QuotationPage';
 import SortAndroidQuotation from './src/HomePage/SellingPage/QuotationPage/SortAndroid';
 import FilterQuotation from './src/HomePage/SellingPage/QuotationPage/FilterQuotation';
 import QuotationDetails from './src/HomePage/SellingPage/QuotationPage/QuotationDetails';
+import QuotationItemDetails from './src/HomePage/SellingPage/QuotationPage/ItemDetails';
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
@@ -246,6 +247,20 @@ export default function App() {
                   header: () => (
                     <NavHeader
                       pageName={'Quotation Details'}
+                      noHeader={true}
+                    />
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name='QuotationItemsDetails'
+                component={QuotationItemDetails}
+                options={{
+                  title: '',
+                  headerShadowVisible: true,
+                  header: () => (
+                    <NavHeader
+                      pageName={'Item Details'}
                       noHeader={true}
                     />
                   ),
