@@ -8,6 +8,7 @@ import {
   HStack,
   Input,
   ScrollView,
+  Select,
   Text,
   TextArea,
   VStack,
@@ -67,7 +68,7 @@ const StyledTextField = (props) => {
   );
 };
 // main component
-function AddNewCustomer({ navigation }) {
+function AddNewQuotation({ navigation }) {
   // page name display
   const title = 'Add New Customer';
   // navigate step state
@@ -80,25 +81,42 @@ function AddNewCustomer({ navigation }) {
   // state for show / hide selection (static)
   const [openCustomerType, setOpenCustomerType] = useState(false);
 
+  // // initial state
+  // const initialState = {
+  //   customer_name: '',
+  //   customer_type: '',
+  //   customer_group: '',
+  //   territory: '',
+  //   market_segment: '',
+  //   industry: '',
+  //   mobile_no: '',
+  //   email_id: '',
+  //   tax_id: '',
+  //   primary_address: '',
+  //   website: '',
+  //   print_language: 'English',
+  //   customer_details: '',
+  //   default_currency: 'THB',
+  //   default_price_list: '',
+  //   default_sales_partner: '',
+  //   payment_terms: '',
+  // };
+
   // initial state
   const initialState = {
-    customer_name: '',
-    customer_type: '',
+    doctype: 'Quotation',
+    quotation_to: 'Customer',
+    customer: '',
     customer_group: '',
     territory: '',
-    market_segment: '',
-    industry: '',
-    mobile_no: '',
-    email_id: '',
-    tax_id: '',
-    primary_address: '',
-    website: '',
-    print_language: 'English',
-    customer_details: '',
-    default_currency: 'THB',
-    default_price_list: '',
-    default_sales_partner: '',
-    payment_terms: '',
+    delivery_address: '',
+    contact_person: '',
+    company: '',
+    transaction_date: '',
+    valid_till: '',
+    currency: 'THB',
+    selling_price_list: 'Standard Selling',
+    items: null,
   };
 
   // main state
@@ -310,26 +328,41 @@ function AddNewCustomer({ navigation }) {
         >
           <ScrollView>
             <HStack
+              w={'container'}
               space={2}
               direction={{ base: 'column', lg: 'row' }}
             >
-              <StyledTextField
-                isRequired={nullState.customer_name}
-                label={'Customer Name*'}
-                value={ctmState.customer_name}
-                handleChange={(val) => handleChange('customer_name', val, setCtmState)}
-              />
+              {/* quotation to  */}
+              <View>
+                <FormControl justifyContent={'center'}>
+                  <FormControl.Label>Quotation To</FormControl.Label>
+                </FormControl>
+                <Select
+                  dropdownIcon={true}
+                  selectedValue={ctmState.quotation_to}
+                  w={{ base: 'full', lg: 400 }}
+                  fontSize={18}
+                  borderWidth={2}
+                  borderColor={'gray.200'}
+                  accessibilityLabel='Quotation To'
+                  placeholder='Choose Quotation To'
+                  _selectedItem={{
+                    bg: 'blueGray.200',
+                    endIcon: <CheckIcon color={'blueGray.400'} />,
+                  }}
+                  onValueChange={(itemValue) => setCtmState((pre) => ({ ...pre, quotation_to: itemValue }))}
+                >
+                  <Select.Item
+                    label='Lead'
+                    value='Lead'
+                  />
 
-              <OnPressContainer onPress={() => handleOpenStaticSelection()}>
-                <StyledTextField
-                  caretHidden
-                  isRequired={nullState.customer_type}
-                  label={'Customer Type*'}
-                  name={'customer_type'}
-                  value={ctmState.customer_type}
-                  showSoftInputOnFocus={false} // disable toggle keyboard
-                />
-              </OnPressContainer>
+                  <Select.Item
+                    label='Customer'
+                    value='Customer'
+                  />
+                </Select>
+              </View>
             </HStack>
             <HStack
               space={2}
@@ -772,14 +805,14 @@ function AddNewCustomer({ navigation }) {
             />
           )}
           {/* display when step = 2 and do not have any selection displayed */}
-          {stepState === 2 && !openSelection && !openCustomerType && (
+          {/* {stepState === 2 && !openSelection && !openCustomerType && (
             <SecondStep
               state={state}
               setState={setState}
             />
           )}
-          {stepState === 3 && !openSelection && !openCustomerType && <SuccessMessage setState={setState} />}
-          {openSelection && (
+          {stepState === 3 && !openSelection && !openCustomerType && <SuccessMessage setState={setState} />} */}
+          {/* {openSelection && (
             <DynamicSelectPage
               title={titleSelection} // for change dynamic title
               url={urlSelected} // for change dynamic data in selection
@@ -798,11 +831,11 @@ function AddNewCustomer({ navigation }) {
               setState={setState} // for send data to outside selection and set it in main state by property
               property={'customer_type'} // name of property for send data to outside
             />
-          )}
+          )} */}
         </Center>
       </FadeTransition>
     </ContainerStyled>
   );
 }
 
-export default AddNewCustomer;
+export default AddNewQuotation;

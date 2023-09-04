@@ -62,6 +62,7 @@ function QuotationPage({ route }) {
   const FilterName = 'FilterQuotation';
   const SortName = 'SortAndroidQuotation';
   const DetailsName = 'QuotationDetails';
+  const AddNewName = 'AddNewQuotation';
 
   const [tempData, setTempData] = useState(null); // for store filtered Data
   // data fetching with custom hook useFetch
@@ -78,6 +79,7 @@ function QuotationPage({ route }) {
       Authorization: '',
     },
   });
+
   var countDraft = quotationData.filter((qtt) => {
     return qtt.status === 'Draft';
   }).length;
@@ -283,7 +285,7 @@ function QuotationPage({ route }) {
               <NavHeaderRight
                 filterActive={filterActive ? 'filter' : null} // for active option bg color
                 sortActive={sortActive ? 'sort' : null}
-                openAdd={() => navigation.navigate('AddNewCustomer')}
+                openAdd={() => navigation.navigate(AddNewName)}
                 // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                 openSort={() =>
                   navigation.navigate(SortName, {
@@ -306,7 +308,7 @@ function QuotationPage({ route }) {
               <NavHeaderRight
                 filterActive={filterActive ? 'filter' : null} // for active option bg color
                 sortActive={sortActive ? 'sort' : null}
-                openAdd={() => navigation.navigate('AddNewCustomer')}
+                openAdd={() => navigation.navigate(AddNewName)}
                 // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
                 openSort={() => setOpenState((pre) => ({ ...pre, sort: true }))}
                 openFilter={() => navigation.navigate(FilterName, { toggleFilter: false, storeFilter: filterData })}

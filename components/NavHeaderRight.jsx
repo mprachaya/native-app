@@ -19,6 +19,18 @@ function NavHeaderRight({ sortActive, filterActive, openAdd, openSort, openFilte
       {children}
     </Button>
   );
+  const OptionContainerAdd = ({ filterName, handleOpen, children, active }) => (
+    <Button
+      ml={1}
+      rounded={12}
+      variant={'unstyled'}
+      justifyContent={'center'}
+      onPress={handleOpen}
+      _pressed={{ bg: 'blueGray.200' }}
+    >
+      {children}
+    </Button>
+  );
 
   return (
     <HStack
@@ -28,9 +40,9 @@ function NavHeaderRight({ sortActive, filterActive, openAdd, openSort, openFilte
       _ios={{ mr: 0, space: { base: 2, lg: 6 } }}
       justifyContent={'flex-end'}
     >
-      <OptionContainer handleOpen={() => openAdd(true)}>
+      <OptionContainerAdd handleOpen={() => openAdd(true)}>
         <AddNew color={iconColor} />
-      </OptionContainer>
+      </OptionContainerAdd>
       <OptionContainer
         filterName={'sort'}
         handleOpen={() => openSort(true)}
