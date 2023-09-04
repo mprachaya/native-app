@@ -247,7 +247,7 @@ export default function App() {
                   headerShadowVisible: true,
                   header: () => (
                     <NavHeader
-                      pageName={'Quotation Details'}
+                      pageName={'Add New Quotation'}
                       noHeader={true}
                     />
                   ),

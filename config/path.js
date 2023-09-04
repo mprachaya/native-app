@@ -15,7 +15,7 @@ export default function useConfig(trigger) {
   const PRICE_LIST = '/api/resource/Price List/';
   const SALE_PARTNER = '/api/resource/Sales Partner/';
   const PAYMENT_TERM = '/api/resource/Payment Term/';
-
+  const ADDRESS = '/api/resource/Address';
   const QUOTATIONS = '/api/resource/Quotation?fields=["*"]';
   const QUOTATION = '/api/resource/Quotation';
 
@@ -44,5 +44,6 @@ export default function useConfig(trigger) {
     PAYMENT_TERM,
     QUOTATIONS,
     QUOTATION,
+    ADDRESS,
   };
 }

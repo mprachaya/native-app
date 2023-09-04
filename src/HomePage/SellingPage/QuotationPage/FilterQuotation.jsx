@@ -7,6 +7,7 @@ import {
   HStack,
   Input,
   Pressable,
+  ScrollView,
   Select,
   VStack,
   View,
@@ -22,7 +23,7 @@ const ContainerStyled = (props) => {
   const { height } = useWindowDimensions();
   return (
     <View
-      height={height}
+      _android={{ height: height }}
       bg={'blueGray.100'}
       {...props}
     >
@@ -199,7 +200,7 @@ function FilterQuotation({ route, navigation }) {
     <ContainerStyled>
       <Center>
         {/* {!openSelection && !openCustomerType && ( */}
-        <VStack
+        <ScrollView
           mt={6}
           space={4}
           w={{ base: 'full', lg: 500 }}
@@ -396,7 +397,7 @@ function FilterQuotation({ route, navigation }) {
               </HStack>
             </React.Fragment>
           )}
-        </VStack>
+        </ScrollView>
 
         <HStack space={2.5}>
           <Button

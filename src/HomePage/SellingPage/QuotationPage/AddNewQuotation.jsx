@@ -15,15 +15,17 @@ import {
   View,
   WarningOutlineIcon,
 } from 'native-base';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
 import { handleChange } from '../../../../hooks/useValidation';
 import { config } from '../../../../config';
-import { Pressable } from 'react-native';
+import { Platform, Pressable } from 'react-native';
 import useSubmit from '../../../../hooks/useSubmit';
 import useConfig from '../../../../config/path';
+import axios from 'axios';
+import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -70,7 +72,7 @@ const StyledTextField = (props) => {
 // main component
 function AddNewQuotation({ navigation }) {
   // page name display
-  const title = 'Add New Customer';
+  const title = 'Add New Quotation';
   // navigate step state
   const [stepState, setStepState] = useState(1);
   // max of steps
@@ -81,37 +83,13 @@ function AddNewQuotation({ navigation }) {
   // state for show / hide selection (static)
   const [openCustomerType, setOpenCustomerType] = useState(false);
 
-  // // initial state
-  // const initialState = {
-  //   customer_name: '',
-  //   customer_type: '',
-  //   customer_group: '',
-  //   territory: '',
-  //   market_segment: '',
-  //   industry: '',
-  //   mobile_no: '',
-  //   email_id: '',
-  //   tax_id: '',
-  //   primary_address: '',
-  //   website: '',
-  //   print_language: 'English',
-  //   customer_details: '',
-  //   default_currency: 'THB',
-  //   default_price_list: '',
-  //   default_sales_partner: '',
-  //   payment_terms: '',
-  // };
-
   // initial state
   const initialState = {
     doctype: 'Quotation',
     quotation_to: 'Customer',
-    customer: '',
-    customer_group: '',
-    territory: '',
-    delivery_address: '',
+    party_name: '',
+    customer_address: '',
     contact_person: '',
-    company: '',
     transaction_date: '',
     valid_till: '',
     currency: 'THB',
@@ -126,27 +104,14 @@ function AddNewQuotation({ navigation }) {
   // for handle dynamic url selection
   const [urlSelected, setUrlSelected] = useState('');
   // url path for fetching selection data
-  const {
-    baseURL,
-    CUSTOMER,
-    CUSTOMER_GROUPS,
-    TERRITORY,
-    MARKET_SEGMENT,
-    INDUSTRY,
-    CURRENCY,
-    PRICE_LIST,
-    SALE_PARTNER,
-    PAYMENT_TERM,
-  } = useConfig(true);
-  const urlCtmGroup = baseURL + CUSTOMER_GROUPS;
-  const urlTerritory = baseURL + TERRITORY;
-  const urlMarketSegment = baseURL + MARKET_SEGMENT;
-  const urlIndustry = baseURL + INDUSTRY;
+  const { baseURL, CUSTOMER, ADDRESS, CURRENCY, PRICE_LIST, SALE_PARTNER, PAYMENT_TERM } = useConfig(true);
   const urlCurrency = baseURL + CURRENCY;
   const urlPriceList = baseURL + PRICE_LIST;
   const urlSalePartner = baseURL + SALE_PARTNER;
   const urlPaymentTerm = baseURL + PAYMENT_TERM;
 
+  const urlCustomer = baseURL + CUSTOMER;
+  const urlAddress = baseURL + ADDRESS;
   // handle dynamic property for multi selection in page
   const [propertySelected, setPropertySelected] = useState('');
 
@@ -182,6 +147,9 @@ function AddNewQuotation({ navigation }) {
   const FirstStep = ({ state, setState }) => {
     // sub state
     const [ctmState, setCtmState] = useState(state);
+    const [customer, setCustomer] = useState(null);
+    // filter address
+    var filterAddress = `?filters=[["address_title","=","${customer?.name}"]]&fields=["*"]`;
     // start for required validation
     const [requiredState] = useState(['customer_name', 'customer_type', 'customer_group', 'territory']);
     const [nullState, setNullState] = useState({
@@ -190,6 +158,91 @@ function AddNewQuotation({ navigation }) {
       customer_group: false,
       territory: false,
     });
+
+    // date now for android
+    const [dateAndroidNow] = useState(new Date());
+    const [dateAndroidNextMount, setAndroidNextMount] = useState(new Date()); // add 1 mount
+    const onChangeAndroidFrom = (event, selectedDate) => {
+      const currentDate = selectedDate;
+      const yyyy = currentDate.getFullYear();
+      let mm = currentDate.getMonth() + 1; // Months start at 0!
+      let dd = currentDate.getDate();
+      if (dd < 10) dd = '0' + dd;
+      if (mm < 10) mm = '0' + mm;
+      const formattedToday = yyyy + '-' + mm + '-' + dd;
+      if (event?.type === 'dismissed') {
+        setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+        return;
+      }
+      setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+    };
+    const onChangeAndroidTo = (event, selectedDate) => {
+      const currentDate = selectedDate;
+      const yyyy = currentDate.getFullYear();
+      let mm = currentDate.getMonth() + 1; // Months start at 0!
+      let dd = currentDate.getDate();
+      if (dd < 10) dd = '0' + dd;
+      if (mm < 10) mm = '0' + mm;
+      const formattedToday = yyyy + '-' + mm + '-' + dd;
+      if (event?.type === 'dismissed') {
+        setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+        return;
+      }
+      setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+    };
+
+    const showAndoirdDatepickerFrom = () => {
+      DateTimePickerAndroid.open({
+        value: dateAndroidNow,
+        onChange: (event, date) => onChangeAndroidFrom(event, date),
+        mode: 'date',
+        is24Hour: true,
+      });
+    };
+
+    const showAndoirdDatepickerTo = () => {
+      DateTimePickerAndroid.open({
+        value: dateAndroidNextMount,
+        onChange: (event, date) => onChangeAndroidTo(event, date),
+        mode: 'date',
+        is24Hour: true,
+      });
+    };
+    // date now for ios
+    const [dateIOS, setDateIOS] = useState(new Date());
+    const [dateIOSNextMonth, setDateIOSNextMonth] = useState(new Date());
+    // const [show, setShow] = useState(false);
+    const onChangeIOSfrom = (event, selectedDate) => {
+      const currentDate = selectedDate;
+      const yyyy = currentDate.getFullYear();
+      let mm = currentDate.getMonth() + 1; // Months start at 0!
+      let dd = currentDate.getDate();
+      if (dd < 10) dd = '0' + dd;
+      if (mm < 10) mm = '0' + mm;
+      // const formattedToday = dd + '-' + mm + '-' + yyyy;
+      const formattedToday = yyyy + '-' + mm + '-' + dd;
+      if (event?.type === 'dismissed') {
+        setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+        return;
+      } else {
+        setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+      }
+    };
+    const onChangeIOSto = (event, selectedDate) => {
+      const currentDate = selectedDate;
+      const yyyy = currentDate.getFullYear();
+      let mm = currentDate.getMonth() + 1; // Months start at 0!
+      let dd = currentDate.getDate();
+      if (dd < 10) dd = '0' + dd;
+      if (mm < 10) mm = '0' + mm;
+      const formattedToday = yyyy + '-' + mm + '-' + dd;
+      if (event?.type === 'dismissed') {
+        setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+        return;
+      } else {
+        setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+      }
+    };
 
     const handleCheckRequired = () => {
       requiredState.forEach((st_name) => {
@@ -303,6 +356,62 @@ function AddNewQuotation({ navigation }) {
       </Pressable>
     );
 
+    useMemo(() => {
+      if (ctmState.party_name !== undefined && ctmState.party_name !== '') {
+        axios
+          .get(urlCustomer + '/' + ctmState.party_name)
+          .then((response) => response.data)
+          .then((res) => {
+            // console.log(res.data);
+
+            //checking for multiple responses for more flexibility
+            //with the url we send in.
+            // alert(res.data.territory);
+            setCustomer(res.data);
+            // console.log('Fetching successful!');
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }, [ctmState]);
+    // set Default value of to Date Object (+ 1 month)
+    useMemo(() => {
+      const plusMonth = new Date();
+      plusMonth.setMonth(plusMonth.getMonth() + 1);
+      setAndroidNextMount(() => plusMonth);
+      setDateIOSNextMonth(() => plusMonth);
+
+      const dateNow = new Date();
+      dateNow.setMonth(dateNow.getMonth());
+      setDateIOS(dateNow);
+
+      const currentDate = dateNow;
+
+      const yyyy = currentDate.getFullYear();
+      let mm = currentDate.getMonth() + 1; // Months start at 0!
+      let dd = currentDate.getDate();
+      if (dd < 10) dd = '0' + dd;
+      if (mm < 10) mm = '0' + mm;
+      const formattedToday = yyyy + '-' + mm + '-' + dd;
+
+      const nextDate = plusMonth;
+      const yyyy2 = plusMonth.getFullYear();
+      let mm2 = nextDate.getMonth() + 1; // Months start at 0!
+      let dd2 = nextDate.getDate();
+      if (dd2 < 10) dd = '0' + dd2;
+      if (mm2 < 10) mm = '0' + mm2;
+      const formattedNextMonth = yyyy2 + '-' + mm2 + '-' + dd2;
+
+      setCtmState((pre) => ({ ...pre, transaction_date: formattedToday, valid_till: formattedNextMonth }));
+    }, []);
+
+    // useMemo(() => {
+    //   // console.log(ctmState);
+    //   if (customer) {
+    //     setCtmState((pre) => ({ ...pre, party_name: customer.name }));
+    //   }
+    // }, [customer]);
     return (
       <React.Fragment>
         <HStack
@@ -368,30 +477,118 @@ function AddNewQuotation({ navigation }) {
               space={2}
               direction={{ base: 'column', lg: 'row' }}
             >
-              <OnPressContainer
-                onPress={() => handleOpenDynamicSelection('Customer Groups', 'customer_group', urlCtmGroup)}
-              >
+              <OnPressContainer onPress={() => handleOpenDynamicSelection('Customer', 'party_name', urlCustomer)}>
                 <StyledTextField
                   caretHidden
-                  isRequired={nullState.customer_group}
-                  label={'Customer Group*'}
-                  name={'customer_group'}
-                  value={ctmState.customer_group}
+                  // isRequired={nullState.customer_group}
+                  label={'Customer*'}
+                  name={'customer'}
+                  value={ctmState.party_name}
                   showSoftInputOnFocus={false} // disable toggle keyboard
                 />
               </OnPressContainer>
-              <OnPressContainer onPress={() => handleOpenDynamicSelection('Territory', 'territory', urlTerritory)}>
-                <StyledTextField
-                  caretHidden
-                  isRequired={nullState.territory}
-                  label={'Territory*'}
-                  name={'territory'}
-                  value={ctmState.territory}
-                  showSoftInputOnFocus={false} // disable toggle keyboard
-                />
-              </OnPressContainer>
+              {/* <OnPressContainer onPress={() => handleOpenDynamicSelection('Territory', 'territory', urlTerritory)}> */}
+              <StyledTextField
+                caretHidden
+                isDisabled
+                label={'Customer Group'}
+                name={'territory'}
+                value={customer?.customer_group}
+                showSoftInputOnFocus={false} // disable toggle keyboard
+              />
+              <StyledTextField
+                caretHidden
+                isDisabled
+                label={'Territory'}
+                name={'territory'}
+                value={customer?.territory}
+                showSoftInputOnFocus={false} // disable toggle keyboard
+              />
+              {/* </OnPressContainer> */}
             </HStack>
-            <HStack
+            {/* for Android */}
+            {Platform.OS === 'android' && (
+              <VStack space={4}>
+                <View w={'container'}>
+                  <OnPressContainer onPress={() => showAndoirdDatepickerFrom()}>
+                    <StyledTextField
+                      caretHidden
+                      label={'From Date'}
+                      // placeholder={'Select Transaction Date'}
+                      value={ctmState.transaction_date}
+                      showSoftInputOnFocus={false} // disable toggle keyboard
+                    />
+                  </OnPressContainer>
+                </View>
+                <View w={'container'}>
+                  <OnPressContainer onPress={() => showAndoirdDatepickerTo()}>
+                    <StyledTextField
+                      caretHidden
+                      label={'To Date'}
+                      placeholder={'Select Valid Date'}
+                      value={ctmState.valid_till}
+                      showSoftInputOnFocus={false} // disable toggle keyboard
+                    />
+                  </OnPressContainer>
+                </View>
+              </VStack>
+            )}
+            {/* for IOS */}
+            {Platform.OS === 'ios' && (
+              <React.Fragment>
+                <HStack
+                  justifyContent={'center'}
+                  mt={2}
+                >
+                  <View w={'container'}>
+                    <View alignItems={'start'}>
+                      <HStack>
+                        <RNDateTimePicker
+                          display='inline'
+                          // disabled={!checkState}
+                          is24Hour={true}
+                          mode='date'
+                          value={dateIOS}
+                          onChange={onChangeIOSfrom}
+                        />
+                      </HStack>
+                    </View>
+                  </View>
+                </HStack>
+                <HStack justifyContent={'center'}>
+                  <View w={'container'}>
+                    <FormControl justifyContent={'center'}>
+                      <FormControl.Label mx={7}>To Date</FormControl.Label>
+                    </FormControl>
+                    <View
+                      mx={12}
+                      alignItems={'start'}
+                    >
+                      <RNDateTimePicker
+                        display='inline'
+                        is24Hour={true}
+                        mode='date'
+                        value={dateIOSNextMonth}
+                        onChange={onChangeIOSto}
+                      />
+                    </View>
+                  </View>
+                </HStack>
+              </React.Fragment>
+            )}
+            <OnPressContainer
+              onPress={() => handleOpenDynamicSelection('Address', 'customer_address', urlAddress + filterAddress)}
+            >
+              <StyledTextField
+                caretHidden
+                label={'Address'}
+                name={'customer_address'}
+                value={ctmState.customer_address}
+                showSoftInputOnFocus={false} // disable toggle keyboard
+              />
+            </OnPressContainer>
+
+            {/* <HStack
               space={2}
               direction={{ base: 'column', lg: 'row' }}
             >
@@ -483,7 +680,7 @@ function AddNewQuotation({ navigation }) {
                   }}
                 />
               </VStack>
-            </HStack>
+            </HStack> */}
           </ScrollView>
         </VStack>
       </React.Fragment>
@@ -812,7 +1009,7 @@ function AddNewQuotation({ navigation }) {
             />
           )}
           {stepState === 3 && !openSelection && !openCustomerType && <SuccessMessage setState={setState} />} */}
-          {/* {openSelection && (
+          {openSelection && (
             <DynamicSelectPage
               title={titleSelection} // for change dynamic title
               url={urlSelected} // for change dynamic data in selection
@@ -831,7 +1028,7 @@ function AddNewQuotation({ navigation }) {
               setState={setState} // for send data to outside selection and set it in main state by property
               property={'customer_type'} // name of property for send data to outside
             />
-          )} */}
+          )}
         </Center>
       </FadeTransition>
     </ContainerStyled>
