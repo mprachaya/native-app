@@ -6,8 +6,8 @@ import TextStyled from './TextStyled';
 function MenuIcon({ Icon, menuLabel, onPress }) {
   return (
     <View
-      w={'1/8'}
-      h={'1/8'}
+      width={'24'}
+      height={'24'}
     >
       <Button
         variant={'unstyled'}

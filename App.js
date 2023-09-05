@@ -41,7 +41,7 @@ export default function App() {
   LogBox.ignoreLogs(['Non-serializable values were found in the navigation state']);
   // ignore SSR Warning
   LogBox.ignoreLogs(['In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.']);
-
+  LogBox.ignoreLogs(['Warning: Each', 'Warning: Failed']);
   return (
     <NativeBaseProvider>
       <NavigationContainer>
@@ -161,7 +161,7 @@ export default function App() {
                   headerShadowVisible: true,
                   header: () => (
                     <NavHeader
-                      pageName={'Add New Customer'}
+                      // pageName={'Add New Customer'}
                       noHeader={true}
                     />
                   ),

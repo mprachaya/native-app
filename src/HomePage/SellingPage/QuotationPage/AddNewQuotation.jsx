@@ -3,10 +3,16 @@ import {
   Button,
   Center,
   CheckIcon,
+  ChevronLeftIcon,
   Container,
+  DeleteIcon,
+  Divider,
+  FlatList,
   FormControl,
   HStack,
+  Image,
   Input,
+  Modal,
   ScrollView,
   Select,
   Text,
@@ -16,13 +22,15 @@ import {
 } from 'native-base';
 import React, { useState, useMemo } from 'react';
 import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
-import { Platform, Pressable } from 'react-native';
+import { Platform, Pressable, StyleSheet } from 'react-native';
 import useSubmit from '../../../../hooks/useSubmit';
 import useConfig from '../../../../config/path';
 import axios from 'axios';
 import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -89,8 +97,11 @@ function AddNewQuotation({ navigation }) {
     contact_person: '',
     transaction_date: '',
     valid_till: '',
+    order_type: 'Sales',
     currency: 'THB',
     selling_price_list: 'Standard Selling',
+    payment_terms_template: null,
+    tc_name: null,
     items: null,
   };
 
@@ -101,12 +112,21 @@ function AddNewQuotation({ navigation }) {
   // for handle dynamic url selection
   const [urlSelected, setUrlSelected] = useState('');
   // url path for fetching selection data
-  const { baseURL, CUSTOMER, LEAD, ADDRESS, CONTACT, CURRENCY, PRICE_LIST, SALE_PARTNER, PAYMENT_TERM } =
-    useConfig(true);
+  const {
+    baseURL,
+    CUSTOMER,
+    LEAD,
+    ADDRESS,
+    CONTACT,
+    CURRENCY,
+    PRICE_LIST,
+    PAYMENT_TERMS_TEMPLATES,
+    TERMS_AND_CONDITIONS,
+  } = useConfig(true);
   const urlCurrency = baseURL + CURRENCY;
   const urlPriceList = baseURL + PRICE_LIST;
-  const urlSalePartner = baseURL + SALE_PARTNER;
-  const urlPaymentTerm = baseURL + PAYMENT_TERM;
+  const urlPaymentTermTemplate = baseURL + PAYMENT_TERMS_TEMPLATES;
+  const urlTermAndConditions = baseURL + TERMS_AND_CONDITIONS;
 
   const urlCustomer = baseURL + CUSTOMER;
   const urlLead = baseURL + LEAD;
@@ -285,12 +305,6 @@ function AddNewQuotation({ navigation }) {
       setState(ctmState);
     };
 
-    // const handleOpenStaticSelection = () => {
-    //   setOpenCustomerType(true);
-    //   // set main state with sub state
-    //   setState(ctmState);
-    // };
-
     const BackButton = () => (
       <Button
         m={2}
@@ -322,7 +336,10 @@ function AddNewQuotation({ navigation }) {
     );
 
     const DisplayStep = () => (
-      <HStack mt={{ base: 20, lg: 24 }}>
+      <HStack
+        mt={{ base: 6, lg: 12 }}
+        mb={6}
+      >
         <Text
           color={COLORS.tertiary}
           fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
@@ -410,12 +427,6 @@ function AddNewQuotation({ navigation }) {
       setCtmState((pre) => ({ ...pre, transaction_date: formattedToday, valid_till: formattedNextMonth }));
     }, []);
 
-    // useMemo(() => {
-    //   // console.log(ctmState);
-    //   if (customer) {
-    //     setCtmState((pre) => ({ ...pre, party_name: customer.name }));
-    //   }
-    // }, [customer]);
     return (
       <React.Fragment>
         <HStack
@@ -437,7 +448,7 @@ function AddNewQuotation({ navigation }) {
           mt={2}
           m={6}
           space={SPACING.small}
-          h={{ base: 500, lg: 1200 }}
+          h={{ base: 700, lg: 1200 }}
         >
           <ScrollView>
             <HStack
@@ -643,99 +654,6 @@ function AddNewQuotation({ navigation }) {
                 </OnPressContainer>
               </React.Fragment>
             )}
-            {/* <HStack
-              space={2}
-              direction={{ base: 'column', lg: 'row' }}
-            >
-              <OnPressContainer
-                onPress={() => handleOpenDynamicSelection('Market Segment', 'market_segment', urlMarketSegment)}
-              >
-                <StyledTextField
-                  caretHidden
-                  label={'Market Segment'}
-                  name={'market_segment'}
-                  value={ctmState.market_segment}
-                  showSoftInputOnFocus={false} // disable toggle keyboard
-                />
-              </OnPressContainer>
-              <OnPressContainer onPress={() => handleOpenDynamicSelection('Industry', 'industry', urlIndustry)}>
-                <StyledTextField
-                  caretHidden
-                  label={'Industry'}
-                  name={'industry'}
-                  value={ctmState.industry}
-                />
-              </OnPressContainer>
-            </HStack>
-            <HStack
-              space={2}
-              direction={{ base: 'column', lg: 'row' }}
-            >
-              <StyledTextField
-                value={ctmState.mobile_no}
-                keyboardType='number-pad'
-                maxLength={10}
-                handleChange={(val) => handleChange('mobile_no', val, setCtmState)}
-                label={'Mobile Number'}
-                name={'mobile_no'}
-              />
-              <StyledTextField
-                value={ctmState.email_id}
-                handleChange={(val) => handleChange('email_id', val, setCtmState)}
-                label={'Email Address'}
-                name={'email_id'}
-              />
-            </HStack>
-            <HStack
-              space={2}
-              direction={{ base: 'column', lg: 'row' }}
-            >
-              <StyledTextField
-                value={ctmState.tax_id}
-                handleChange={(val) => handleChange('tax_id', val, setCtmState)}
-                label={'Tax ID'}
-                name={'email_id'}
-              />
-              <StyledTextField
-                value={ctmState.primary_address}
-                handleChange={(val) => handleChange('primary_address', val, setCtmState)}
-                label={'Address'}
-                name={'primary_address'}
-              />
-            </HStack>
-            <HStack
-              space={2}
-              direction={{ base: 'column', lg: 'row' }}
-            >
-              <StyledTextField
-                value={ctmState.website}
-                handleChange={(val) => handleChange('website', val, setCtmState)}
-                label={'Website'}
-                name={'website'}
-              />
-            </HStack>
-            <HStack>
-              <VStack m={1}>
-                <FormControl.Label>Customer Details</FormControl.Label>
-                <TextArea
-                  h={20}
-                  value={ctmState.customer_details}
-                  onChangeText={(val) => handleChange('customer_details', val, setCtmState)}
-                  name={'customer_details'}
-                  minW={{ base: 'full', lg: 800 }}
-                  bg={'blueGray.100'}
-                  borderWidth={2}
-                  borderColor={'gray.200'}
-                  variant={'filled'}
-                  rounded={6}
-                  fontSize={{ base: SIZES.medium || props.baseSize, lg: SIZES.large || props.lgSize }}
-                  _focus={{
-                    borderColor: 'blueGray.300',
-                    backgroundColor: 'blueGray.100',
-                  }}
-                />
-              </VStack>
-            </HStack> */}
           </ScrollView>
         </VStack>
       </React.Fragment>
@@ -827,7 +745,10 @@ function AddNewQuotation({ navigation }) {
     );
 
     const DisplayStep = () => (
-      <HStack mt={{ base: 20, lg: 24 }}>
+      <HStack
+        mt={{ base: 6, lg: 12 }}
+        mb={6}
+      >
         <Text
           color={COLORS.tertiary}
           fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
@@ -859,7 +780,7 @@ function AddNewQuotation({ navigation }) {
       </Pressable>
     );
 
-    // useEffect(() => {
+    // useMemo(() => {
     //   console.log(stepState);
     // }, [stepState]);
 
@@ -884,67 +805,644 @@ function AddNewQuotation({ navigation }) {
           mt={2}
           m={6}
           space={SPACING.small}
-          h={{ base: 500, lg: 1200 }}
+          h={{ base: 700, lg: 1200 }}
         >
           <ScrollView>
             <HStack
               space={2}
               direction={{ base: 'column', lg: 'row' }}
             >
-              <OnPressContainer onPress={() => handleOpenDynamicSelection('Currency', 'default_currency', urlCurrency)}>
+              <View>
+                <FormControl justifyContent={'center'}>
+                  <FormControl.Label>Order Type</FormControl.Label>
+                </FormControl>
+                <Select
+                  dropdownIcon={true}
+                  selectedValue={ctmState2.order_type}
+                  w={{ base: 'full', lg: 400 }}
+                  fontSize={18}
+                  borderWidth={2}
+                  borderColor={'gray.200'}
+                  accessibilityLabel='Order To'
+                  placeholder='Choose Order Type'
+                  _selectedItem={{
+                    bg: 'blueGray.200',
+                    endIcon: <CheckIcon color={'blueGray.400'} />,
+                  }}
+                  onValueChange={(itemValue) => {
+                    setCtmState2((pre) => ({
+                      ...pre,
+                      order_type: itemValue,
+                    }));
+                  }}
+                >
+                  <Select.Item
+                    label='Sales'
+                    value='Sales'
+                  />
+
+                  <Select.Item
+                    label='Maintenance'
+                    value='Maintenance'
+                  />
+                  <Select.Item
+                    label='Shopping Cart'
+                    value='Shopping Cart'
+                  />
+                </Select>
+              </View>
+              <OnPressContainer onPress={() => handleOpenDynamicSelection('Currency', 'currency', urlCurrency)}>
                 <StyledTextField
+                  // isRequired
                   caretHidden
-                  value={ctmState2.default_currency}
+                  value={ctmState2.currency}
                   label={'Currency'}
-                  name={'default_currency'}
+                  name={'currency'}
                   showSoftInputOnFocus={false}
                 />
               </OnPressContainer>
+              {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
+              {/* tc_name: null,
+              <OnPressContainer
+                onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
+              > */}
+
+              {/* </OnPressContainer> */}
               <OnPressContainer
                 onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
               >
                 <StyledTextField
+                  // isRequired
                   caretHidden
-                  value={ctmState2.default_price_list}
+                  value={ctmState2.selling_price_list}
                   label={'Price List'}
                   name={'default_price_list'}
                   showSoftInputOnFocus={false}
                 />
               </OnPressContainer>
-            </HStack>
-            <HStack
-              space={2}
-              direction={{ base: 'column', lg: 'row' }}
-            >
               <OnPressContainer
-                onPress={() => handleOpenDynamicSelection('Sales Partner', 'default_sales_partner', urlSalePartner)}
+                onPress={() =>
+                  handleOpenDynamicSelection('Price List', 'payment_terms_template', urlPaymentTermTemplate)
+                }
               >
                 <StyledTextField
+                  // isRequired
                   caretHidden
-                  value={ctmState2.default_sales_partner}
-                  label={'Sale Partner'}
-                  name={'default_sales_partner'}
+                  value={ctmState2.payment_terms_template}
+                  label={'Price Payment Terms Template'}
+                  // name={'default_price_list'}
                   showSoftInputOnFocus={false}
                 />
               </OnPressContainer>
               <OnPressContainer
-                onPress={() => handleOpenDynamicSelection('Payment Terms', 'payment_terms', urlPaymentTerm)}
+                onPress={() => handleOpenDynamicSelection('Terms & Conditions', 'tc_name', urlTermAndConditions)}
               >
                 <StyledTextField
+                  // isRequired
                   caretHidden
-                  value={ctmState2.payment_terms}
-                  label={'Payment Terms Template'}
-                  name={'payment_terms'}
+                  value={ctmState2.tc_name}
+                  label={'Terms & Conditions'}
+                  // name={'default_price_list'}
                   showSoftInputOnFocus={false}
                 />
               </OnPressContainer>
             </HStack>
-            <StyledTextField
-              isDisabled
-              label={'Credit Limit'}
-              placeholder={'Credit Limit'}
-            />
           </ScrollView>
+        </VStack>
+      </React.Fragment>
+    );
+  };
+
+  const ThirdStep = ({ setState }) => {
+    const [items, setItems] = useState({ items: null });
+    const [hasPermission, setHasPermission] = useState(null);
+    const [scanned, setScanned] = useState(false);
+    const [qrCodeData, setQrCodeData] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
+
+    const handleForward = () => {
+      // // before go to next step check all required state
+      // // check then make input error style
+      // handleCheckRequired();
+      // // if column required is not filled push property name into check array
+      // let check = [];
+      // requiredState.forEach((st_name) => {
+      //   if (!ctmState2[st_name]) {
+      //     check.push(st_name);
+      //   }
+      // });
+      // // if have any length of check mean required state is still not filled yet
+      // if (check.length !== 0) {
+      // } else {
+      //   // if filled go to next step
+      //   handleSubmit(ctmState2);
+      //   setStepState((post) => post + 1);
+      //   // setState(ctmState2);
+      // }
+    };
+
+    const handleBack = () => {
+      navigation.goBack();
+      setState(initialState);
+    };
+
+    const BackButton = () => (
+      <Button
+        m={2}
+        w={'20'}
+        rounded={'lg'}
+        variant={'unstyled'}
+        background={COLORS.lightWhite}
+        _pressed={{ background: COLORS.white }}
+        _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
+        onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
+      >
+        Back
+      </Button>
+    );
+
+    const ForwardButton = () => (
+      <Button
+        m={2}
+        w={'20'}
+        rounded={'lg'}
+        variant={'unstyled'}
+        background={COLORS.tertiary}
+        _pressed={{ background: COLORS.tertiary2 }}
+        _text={{ fontSize: 'sm', fontWeight: 'extrabold', color: COLORS.lightWhite }}
+        onPress={() => stepState <= maxStep && handleForward()}
+      >
+        {stepState !== maxStep ? 'Next' : 'Submit'}
+      </Button>
+    );
+
+    const DisplayStep = () => (
+      <HStack
+        mt={{ base: 6, lg: 12 }}
+        mb={6}
+      >
+        <Text
+          color={COLORS.tertiary}
+          fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+          fontWeight={'bold'}
+          letterSpacing={2}
+        >
+          {stepState}
+        </Text>
+        <Text
+          fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+          fontWeight={'bold'}
+          letterSpacing={2}
+        >
+          /{maxStep}
+        </Text>
+        <Text
+          ml={2}
+          fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
+          fontWeight={'bold'}
+        >
+          STEP
+        </Text>
+      </HStack>
+    );
+
+    const OnPressContainer = ({ children, onPress }) => (
+      <Pressable onPress={() => onPress()}>
+        <View pointerEvents='none'>{children}</View>
+      </Pressable>
+    );
+
+    // useMemo(() => {
+    //   console.log(stepState);
+    // }, [stepState]);
+    const [stateWithAmount, setStateWithAmount] = useState(null);
+
+    const urlGetItemsQuotation =
+      'https://tonen.vsiam.com/api/method/frappe.quotation.oneitem?quotation_name=SAL-QTN-2023-00002';
+
+    const urlPutItems = 'https://tonen.vsiam.com/api/resource/Quotation/SAL-QTN-2023-00002';
+
+    // const handleSubmit = () => {
+    //   // prepare object delete amount of items
+    //   const cloneState = { ...items };
+    //   Object.values(cloneState.items)?.map((element) => {
+    //     delete element.amount;
+    //   });
+    //   if (cloneState.items.length === 0 && state.items.length === 0) {
+    //     alert('At least one Item must be selected.');
+    //     // () => navigation.replace('TestQRScanner');
+    //   } else {
+    //     useUpdate(
+    //       {
+    //         headers: {
+    //           Authorization: '',
+    //         },
+    //       },
+    //       urlPutItems,
+    //       cloneState,
+    //       () => navigation.replace('TestQRScanner'),
+    //       () => void 0
+    //     );
+    //   }
+    // };
+
+    const AskCameraPermission = () =>
+      Alert.alert('Ask for Permission', '"ERP Next" Would Like to Access the Camera', [
+        {
+          text: `Don't Allow`,
+          onPress: () => {
+            setShowAlert(false);
+            setScanned(false);
+          },
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            Linking.openSettings();
+            setShowAlert(false);
+          },
+        },
+      ]);
+    const getBarCodeScannerPermissions = async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      if (status !== 'granted') {
+        setShowAlert(true);
+      } else {
+        setHasPermission(true);
+      }
+    };
+    const handleBarCodeScanned = ({ type, data }) => {
+      axios
+        .get(
+          `https://tonen.vsiam.com/api/resource/Item?fields=["*"]&filters=[["Item Barcode","barcode","=","${data}"]]`,
+          {
+            headers: {
+              Authorization: '',
+            },
+          }
+        )
+        .then((response) => response.data)
+        .then((res) => {
+          if (res.data.length > 0) {
+            // res.data && alert(`Item exist!:`);
+            if (items.items !== undefined) {
+              const duplicated = items.items.find((item) => item.item_code === res.data[0].item_code);
+              if (duplicated === undefined) {
+                setItems((pre) => ({
+                  ...pre,
+                  items: [...items.items, { item_code: res.data[0].item_code, qty: 1, rate: 0 }],
+                }));
+                setQrCodeData(res.data[0].item_code);
+                // setItemCode(res.data[0].item_code);
+              } else {
+                alert(`Item is duplicated!`);
+              }
+            } else {
+              setItems((pre) => ({
+                ...pre,
+                items: [{ item_code: res.data[0].item_code, qty: 1, rate: 0 }],
+              }));
+              setQrCodeData(res.data[0].item_code);
+              // setItemCode(res.data[0].item_code);
+            }
+          } else {
+            alert(`Item not exist!`);
+            setQrCodeData('');
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          alert(`Item not exist!`);
+          setQrCodeData('');
+        });
+
+      setScanned(false);
+    };
+    useMemo(() => {
+      getBarCodeScannerPermissions();
+      // axios
+      //   .get(urlGetItemsQuotation, {
+      //     headers: {
+      //       Authorization: '',
+      //     },
+      //   })
+      //   .then((response) => {
+      //     // console.log(response.data.message.data);
+      //     // setItems(response.data.message.data);
+      //     setItems((pre) => ({ ...pre, items: response.data.message.data }));
+      //     // setItemLength(response.data.message.data.length);
+      //   })
+      //   .catch((error) => {
+      //     alert(error);
+      //   });
+    }, []);
+
+    useMemo(() => {
+      // console.log(hasPermission);
+      if (!hasPermission && scanned) {
+        getBarCodeScannerPermissions();
+      }
+      // console.log(permission !== null && permission.granted);
+    }, [scanned]);
+
+    useMemo(() => {
+      console.log(items);
+      if (items.items !== null) {
+        const updateState = Object.values(items.items).map((data, index) => {
+          const temp = [...items.items];
+          temp[index].amount = (parseFloat(temp[index].qty) * parseFloat(temp[index].rate)).toFixed(2);
+          return temp;
+        });
+        // console.log('Add Amount', ...updateState);
+        setStateWithAmount(...updateState);
+
+        // Object.values(state.items)?.map((element) => {
+        //   delete element.amount;
+        // });
+      } else {
+        setStateWithAmount(items);
+      }
+    }, [items]);
+
+    useMemo(() => {
+      console.log('State With Amount', stateWithAmount);
+    }, [stateWithAmount]);
+
+    return (
+      <React.Fragment>
+        <HStack
+          position={'absolute'}
+          left={2}
+          top={2}
+        >
+          <BackButton />
+        </HStack>
+        <HStack
+          position={'absolute'}
+          right={2}
+          top={2}
+        >
+          <ForwardButton />
+        </HStack>
+        <DisplayStep />
+        <VStack
+          mt={2}
+          m={2}
+          space={SPACING.small}
+          alignItems={'center'}
+        >
+          <Text>Item List</Text>
+          <View h={500}>
+            {scanned && hasPermission && (
+              <Modal
+                isOpen={scanned}
+                // w={useWindowDimensions.width}
+                avoidKeyboard
+                justifyContent='flex-end'
+              >
+                <BarCodeScanner
+                  onBarCodeScanned={!scanned ? undefined : handleBarCodeScanned}
+                  style={StyleSheet.absoluteFillObject}
+                />
+                <Button
+                  pr={4}
+                  rounded={20}
+                  position={'absolute'}
+                  bottom={20}
+                  bg={COLORS.primary}
+                  leftIcon={<ChevronLeftIcon />}
+                  onPress={() => setScanned(false)}
+                >
+                  Back to Page
+                </Button>
+              </Modal>
+            )}
+            {showAlert && <AskCameraPermission />}
+            <ScrollView>
+              <View>
+                {stateWithAmount !== null &&
+                  Object.values(stateWithAmount)?.map((data, index) => (
+                    <VStack
+                      bg={COLORS.white}
+                      rounded={20}
+                      space={2}
+                      // w={{ base: width - 60, lg: 600 }}
+                      m={2}
+                      px={4}
+                    >
+                      <HStack
+                        space={2}
+                        alignContent={'center'}
+                        justifyContent={'space-between'}
+                      >
+                        <HStack
+                          my={4}
+                          mx={2}
+                        >
+                          <Text
+                            color={COLORS.primary}
+                            fontSize={'xs'}
+                            fontWeight={'bold'}
+                          >
+                            {index + 1 + '. '}
+                          </Text>
+                          <Text
+                            color={COLORS.primary}
+                            fontSize={'xs'}
+                            fontWeight={'medium'}
+                          >
+                            {data?.item_code}
+                          </Text>
+                        </HStack>
+
+                        {/* <Divider mt={2} /> */}
+                        <OnPressContainer
+                          bg={'blueGray.500'}
+                          onPress={() => {
+                            if (stateWithAmount !== undefined) {
+                              const cloneState = Object.values(stateWithAmount).find(
+                                (ele) => ele.item_code !== data.item_code
+                              );
+
+                              if (cloneState !== undefined) {
+                                setStateWithAmount([cloneState]);
+                                setItems((pre) => ({ ...pre, items: Array(cloneState) }));
+                              } else {
+                                setStateWithAmount([]);
+                                setItems((pre) => ({ ...pre, items: [] }));
+                              }
+                              // console.log('find', [cloneState]);
+                              // console.log('state', stateWithAmount);
+                            }
+                          }}
+                        >
+                          <HStack
+                            rounded={6}
+                            space={0.5}
+                          >
+                            <Text
+                              color={'error.400'}
+                              fontWeight={'bold'}
+                            >
+                              {'  Delete'}
+                            </Text>
+                            <DeleteIcon color={'error.400'} />
+                          </HStack>
+                        </OnPressContainer>
+                      </HStack>
+                      <Divider
+                        mt={-3}
+                        h={0.3}
+                      />
+                      <VStack
+                        ml={2}
+                        space={2}
+                      >
+                        <HStack
+                          space={2}
+                          alignItems={'center'}
+                          justifyContent={'space-between'}
+                        >
+                          <Text fontSize={'xs'}>Quantity :</Text>
+                          <Input
+                            h={8}
+                            p={2.5}
+                            minW={12}
+                            fontSize={'2xs'}
+                            textAlign={'right'}
+                            color={'gray.400'}
+                            bg={COLORS.lightWhite}
+                            variant={'filled'}
+                            keyboardType='numeric'
+                            value={String(data?.qty)}
+                            onBlur={() => {
+                              if (data?.qty === '' || data?.qty === undefined) {
+                                const updatedItems = items.items;
+                                updatedItems[index].qty = '1';
+                                setItems((pre) => ({
+                                  ...pre,
+                                  items: updatedItems,
+                                }));
+                              }
+                            }}
+                            onChangeText={(value) => {
+                              const updatedItems = items.items;
+                              updatedItems[index].qty = value;
+                              setItems((pre) => ({
+                                ...pre,
+                                items: updatedItems,
+                              }));
+                            }}
+                          />
+                        </HStack>
+                        <HStack
+                          space={2}
+                          alignItems={'center'}
+                          justifyContent={'space-between'}
+                        >
+                          <Text fontSize={'xs'}>Rate :</Text>
+                          <Input
+                            h={8}
+                            p={2.5}
+                            minW={12}
+                            fontSize={'2xs'}
+                            textAlign={'right'}
+                            color={'gray.400'}
+                            bg={COLORS.lightWhite}
+                            variant={'filled'}
+                            keyboardType='numeric'
+                            value={String(data?.rate) === '0' ? '0.0' : String(data?.rate)}
+                            onBlur={() => {
+                              if (data?.rate === '' || data?.rate === '0') {
+                                const updatedItems = items.items;
+                                updatedItems[index].rate = 0.0;
+                                setItems((pre) => ({
+                                  ...pre,
+                                  items: updatedItems,
+                                }));
+                              } else {
+                                const updatedItems = items.items;
+                                updatedItems[index].rate = parseFloat(updatedItems[index].rate);
+                                setItems((pre) => ({
+                                  ...pre,
+                                  items: updatedItems,
+                                }));
+                              }
+                            }}
+                            onChangeText={(value) => {
+                              const updatedItems = items.items;
+                              updatedItems[index].rate = value;
+                              setItems((pre) => ({
+                                ...pre,
+                                items: updatedItems,
+                              }));
+                            }}
+                          />
+                        </HStack>
+                        <FormControl>
+                          <View
+                            alignItems={'flex-end'}
+                            mr={1}
+                          >
+                            <FormControl.Label _text={{ fontSize: 'xs', fontWeight: 'medium', color: COLORS.primary }}>
+                              Total Amount
+                            </FormControl.Label>
+                          </View>
+                          <Input
+                            h={8}
+                            p={2.5}
+                            minW={12}
+                            isDisabled
+                            fontSize={'2xs'}
+                            textAlign={'right'}
+                            bg={COLORS.lightWhite}
+                            variant={'filled'}
+                            keyboardType='numeric'
+                            value={data?.amount}
+                          />
+                        </FormControl>
+                      </VStack>
+                      {index === (items.items !== null ? items.items.length : 0) - 1 && (
+                        <Divider
+                          opacity={0.4}
+                          shadow={1}
+                          mt={2}
+                        />
+                      )}
+                    </VStack>
+                  ))}
+              </View>
+            </ScrollView>
+          </View>
+          <HStack
+            m={6}
+            space={2}
+            w={'96'}
+            justifyContent={'center'}
+          >
+            <Button
+              _text={{ fontWeight: 'bold', color: COLORS.tertiary }}
+              variant={'outline'}
+            >
+              + Add Item
+            </Button>
+            <Button
+              onPress={() => setScanned(true)}
+              bg={COLORS.primary}
+              _text={{ fontWeight: 'bold' }}
+              _pressed={{ bg: COLORS.secondary }}
+              leftIcon={
+                <Icon
+                  name='qrcode-scan'
+                  size={18}
+                  color='white'
+                />
+              }
+            >
+              QR CODE
+            </Button>
+          </HStack>
         </VStack>
       </React.Fragment>
     );
@@ -1031,7 +1529,7 @@ function AddNewQuotation({ navigation }) {
     );
   };
   // log when state having changed
-  // useEffect(() => {
+  // useMemo(() => {
   //   console.log('state: ', state);
   // }, [state]);
 
@@ -1039,7 +1537,7 @@ function AddNewQuotation({ navigation }) {
     <ContainerStyled>
       <FadeTransition animated={stepState}>
         <Center>
-          {stepState !== 3 && (
+          {/* {stepState !== 4 && (
             <Text
               position={'absolute'}
               fontWeight={'bold'}
@@ -1048,7 +1546,7 @@ function AddNewQuotation({ navigation }) {
             >
               {title}
             </Text>
-          )}
+          )} */}
           {/* display when step = 1 and do not have any selection displayed */}
           {stepState === 1 && !openSelection && !openCustomerType && (
             <FirstStep
@@ -1057,13 +1555,14 @@ function AddNewQuotation({ navigation }) {
             />
           )}
           {/* display when step = 2 and do not have any selection displayed */}
-          {/* {stepState === 2 && !openSelection && !openCustomerType && (
+          {stepState === 2 && !openSelection && !openCustomerType && (
             <SecondStep
               state={state}
               setState={setState}
             />
           )}
-          {stepState === 3 && !openSelection && !openCustomerType && <SuccessMessage setState={setState} />} */}
+          {stepState === 3 && !openSelection && !openCustomerType && <ThirdStep setState={setState} />}
+          {/* {stepState === 3 && !openSelection && !openCustomerType && <SuccessMessage setState={setState} />} */}
           {openSelection && (
             <DynamicSelectPage
               title={titleSelection} // for change dynamic title

@@ -11,7 +11,7 @@ export default function useConfig(trigger) {
   const TERRITORY = '/api/resource/Territory/';
   const MARKET_SEGMENT = '/api/resource/Market Segment/';
   const INDUSTRY = '/api/resource/Industry Type/';
-  const CURRENCY = '/api/resource/Currency/';
+  const CURRENCY = '/api/resource/Currency/?filters=[["enabled","=",1]]';
   const PRICE_LIST = '/api/resource/Price List/';
   const SALE_PARTNER = '/api/resource/Sales Partner/';
   const PAYMENT_TERM = '/api/resource/Payment Term/';
@@ -20,6 +20,8 @@ export default function useConfig(trigger) {
   const QUOTATION = '/api/resource/Quotation';
   const LEAD = '/api/resource/Lead';
   const CONTACT = '/api/resource/Contact';
+  const PAYMENT_TERMS_TEMPLATES = '/api/resource/Payment Terms Template';
+  const TERMS_AND_CONDITIONS = '/api/resource/Terms and Conditions';
 
   const getBaseURL = () => {
     getData('URL').then((value) => setBaseURL('https://' + value));
@@ -49,5 +51,7 @@ export default function useConfig(trigger) {
     ADDRESS,
     LEAD,
     CONTACT,
+    TERMS_AND_CONDITIONS,
+    PAYMENT_TERMS_TEMPLATES,
   };
 }

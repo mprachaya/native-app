@@ -253,7 +253,10 @@ function AddNewCustomer({ navigation }) {
     );
 
     const DisplayStep = () => (
-      <HStack mt={{ base: 20, lg: 24 }}>
+      <HStack
+        mt={{ base: 6, lg: 12 }}
+        mb={6}
+      >
         <Text
           color={COLORS.tertiary}
           fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
@@ -542,7 +545,10 @@ function AddNewCustomer({ navigation }) {
     );
 
     const DisplayStep = () => (
-      <HStack mt={{ base: 20, lg: 24 }}>
+      <HStack
+        mt={{ base: 6, lg: 12 }}
+        mb={6}
+      >
         <Text
           color={COLORS.tertiary}
           fontSize={{ base: 'md', md: 'lg', lg: 'xl' }}
@@ -754,7 +760,7 @@ function AddNewCustomer({ navigation }) {
     <ContainerStyled>
       <FadeTransition animated={stepState}>
         <Center>
-          {stepState !== 3 && (
+          {/* {stepState !== 3 && (
             <Text
               position={'absolute'}
               fontWeight={'bold'}
@@ -763,7 +769,7 @@ function AddNewCustomer({ navigation }) {
             >
               {title}
             </Text>
-          )}
+          )} */}
           {/* display when step = 1 and do not have any selection displayed */}
           {stepState === 1 && !openSelection && !openCustomerType && (
             <FirstStep

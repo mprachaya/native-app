@@ -1,4 +1,16 @@
-import { Button, Center, FlatList, HStack, Input, PresenceTransition, Spinner, Text, VStack, View } from 'native-base';
+import {
+  Box,
+  Button,
+  Center,
+  FlatList,
+  HStack,
+  Input,
+  PresenceTransition,
+  Spinner,
+  Text,
+  VStack,
+  View,
+} from 'native-base';
 import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -22,7 +34,7 @@ const ContainerStyled = (props) => {
   );
 };
 
-function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
+function DynamicSelectPage({ title, url, open, setOpen, setState, property, isRequired }) {
   const [list, setList] = useState([]);
   const [SearchText, setSearchText] = useState('');
 
@@ -168,18 +180,20 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
             >
               Back
             </Button>
-            <Button
-              m={2}
-              w={'20'}
-              rounded={'lg'}
-              variant={'unstyled'}
-              background={COLORS.primary}
-              _pressed={{ background: COLORS.secondary }}
-              _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.white }}
-              onPress={() => handleClear(property)}
-            >
-              Clear
-            </Button>
+            {isRequired && (
+              <Button
+                m={2}
+                w={'20'}
+                rounded={'lg'}
+                variant={'unstyled'}
+                background={COLORS.primary}
+                _pressed={{ background: COLORS.secondary }}
+                _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.white }}
+                onPress={() => handleClear(property)}
+              >
+                Clear
+              </Button>
+            )}
           </VStack>
           <HStack
             mt={{ base: '18%', lg: 20 }}
@@ -234,6 +248,7 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
             alignItems={'center'}
             space={12}
             mt={20}
+            mb={'48'}
             mx={{ base: 10, lg: 0 }}
           >
             <Text
@@ -245,7 +260,6 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
             </Text>
             {list.length > 0 ? (
               <FlatList
-                h={500}
                 data={list}
                 w={{ base: 'sm', lg: 'lg' }}
                 // showsHorizontalScrollIndicator={false}
