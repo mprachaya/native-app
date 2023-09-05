@@ -22,6 +22,7 @@ export default function useConfig(trigger) {
   const CONTACT = '/api/resource/Contact';
   const PAYMENT_TERMS_TEMPLATES = '/api/resource/Payment Terms Template';
   const TERMS_AND_CONDITIONS = '/api/resource/Terms and Conditions';
+  const ITEM_QRCODE = '/api/resource/Item';
 
   const getBaseURL = () => {
     getData('URL').then((value) => setBaseURL('https://' + value));
@@ -53,5 +54,6 @@ export default function useConfig(trigger) {
     CONTACT,
     TERMS_AND_CONDITIONS,
     PAYMENT_TERMS_TEMPLATES,
+    ITEM_QRCODE,
   };
 }

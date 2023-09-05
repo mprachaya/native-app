@@ -20,7 +20,7 @@ import {
   View,
   WarningOutlineIcon,
 } from 'native-base';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
@@ -122,11 +122,13 @@ function AddNewQuotation({ navigation }) {
     PRICE_LIST,
     PAYMENT_TERMS_TEMPLATES,
     TERMS_AND_CONDITIONS,
+    ITEM_QRCODE,
   } = useConfig(true);
   const urlCurrency = baseURL + CURRENCY;
   const urlPriceList = baseURL + PRICE_LIST;
   const urlPaymentTermTemplate = baseURL + PAYMENT_TERMS_TEMPLATES;
   const urlTermAndConditions = baseURL + TERMS_AND_CONDITIONS;
+  const urlItemQRCode = baseURL + ITEM_QRCODE;
 
   const urlCustomer = baseURL + CUSTOMER;
   const urlLead = baseURL + LEAD;
@@ -138,19 +140,20 @@ function AddNewQuotation({ navigation }) {
   //option selection with static option
   const customerTypes = [{ name: 'Company' }, { name: 'Individual' }];
 
-  const handleSubmit = (state) => {
-    useSubmit(
-      {
-        headers: {
-          Authorization: '',
-        },
-      },
-      baseURL + CUSTOMER,
-      state,
-      () => void 0,
-      () => void 0
-    );
-  };
+  // const handleSubmit = (state) => {
+  //   setState((pre) => ({ ...pre, items: state }));
+  //   // useSubmit(
+  //   //   {
+  //   //     headers: {
+  //   //       Authorization: '',
+  //   //     },
+  //   //   },
+  //   //   baseURL + CUSTOMER,
+  //   //   state,
+  //   //   () => void 0,
+  //   //   () => void 0
+  //   // );
+  // };
 
   // handle change property when open selection (dynamic)
   const getValueFromSelection = (name) => {
@@ -663,44 +666,44 @@ function AddNewQuotation({ navigation }) {
   const SecondStep = ({ state, setState }) => {
     const [ctmState2, setCtmState2] = useState(state);
 
-    const [requiredState] = useState([]);
-    const [nullState, setNullState] = useState({
-      customer_name: false,
-      customer_type: false,
-      customer_group: false,
-      territory: false,
-    });
+    // const [requiredState] = useState([]);
+    // const [nullState, setNullState] = useState({
+    //   customer_name: false,
+    //   customer_type: false,
+    //   customer_group: false,
+    //   territory: false,
+    // });
 
-    const handleCheckRequired = () => {
-      requiredState.forEach((st_name) => {
-        if (!ctmState2[st_name]) {
-          setNullState((pre) => ({ ...pre, [st_name]: true }));
-        } else {
-          setNullState((pre) => ({ ...pre, [st_name]: false }));
-        }
-      });
-      // console.log(nullState);
-    };
+    // const handleCheckRequired = () => {
+    //   requiredState.forEach((st_name) => {
+    //     if (!ctmState2[st_name]) {
+    //       setNullState((pre) => ({ ...pre, [st_name]: true }));
+    //     } else {
+    //       setNullState((pre) => ({ ...pre, [st_name]: false }));
+    //     }
+    //   });
+    //   // console.log(nullState);
+    // };
 
     const handleForward = () => {
       // before go to next step check all required state
       // check then make input error style
-      handleCheckRequired();
+      // handleCheckRequired();
       // if column required is not filled push property name into check array
-      let check = [];
-      requiredState.forEach((st_name) => {
-        if (!ctmState2[st_name]) {
-          check.push(st_name);
-        }
-      });
-      // if have any length of check mean required state is still not filled yet
-      if (check.length !== 0) {
-      } else {
-        // if filled go to next step
-        handleSubmit(ctmState2);
-        setStepState((post) => post + 1);
-        // setState(ctmState2);
-      }
+      // let check = [];
+      // requiredState.forEach((st_name) => {
+      //   if (!ctmState2[st_name]) {
+      //     check.push(st_name);
+      //   }
+      // });
+      // // if have any length of check mean required state is still not filled yet
+      // if (check.length !== 0) {
+      // } else {
+      // if filled go to next step
+      // handleSubmit(ctmState2);
+      setStepState((post) => post + 1);
+      // setState(ctmState2);
+      // }
     };
 
     const handleBack = () => {
@@ -913,37 +916,50 @@ function AddNewQuotation({ navigation }) {
     );
   };
 
-  const ThirdStep = ({ setState }) => {
-    const [items, setItems] = useState({ items: null });
+  const ThirdStep = ({ state, setState }) => {
+    const [items, setItems] = useState({ items: state.items });
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const [qrCodeData, setQrCodeData] = useState('');
     const [showAlert, setShowAlert] = useState(false);
 
     const handleForward = () => {
-      // // before go to next step check all required state
-      // // check then make input error style
+      // before go to next step check all required state
+      // check then make input error style
       // handleCheckRequired();
-      // // if column required is not filled push property name into check array
-      // let check = [];
+      // if column required is not filled push property name into check array
+      let checkNull = stateWithAmount.items === null;
       // requiredState.forEach((st_name) => {
       //   if (!ctmState2[st_name]) {
       //     check.push(st_name);
       //   }
       // });
-      // // if have any length of check mean required state is still not filled yet
-      // if (check.length !== 0) {
-      // } else {
-      //   // if filled go to next step
-      //   handleSubmit(ctmState2);
-      //   setStepState((post) => post + 1);
-      //   // setState(ctmState2);
-      // }
+      // if have any length of check mean required state is still not filled yet
+      if (checkNull) {
+        alert('Please Add Items');
+      } else {
+        // if filled go to next step
+        // handleSubmit(stateWithAmount);
+        // setState((pre) => ({ ...pre, items: stateWithAmount }));
+        console.log(state);
+        // setStepState((post) => post + 1);
+        // setState(ctmState2);
+      }
     };
 
     const handleBack = () => {
       navigation.goBack();
       setState(initialState);
+    };
+
+    const handleBackStoreItems = () => {
+      setStepState((post) => post - 1);
+      console.log('items: ', stateWithAmount);
+      if (items.items === null) {
+        setState((pre) => ({ ...pre, items: null }));
+      } else {
+        setState((pre) => ({ ...pre, items: stateWithAmount }));
+      }
     };
 
     const BackButton = () => (
@@ -955,7 +971,7 @@ function AddNewQuotation({ navigation }) {
         background={COLORS.lightWhite}
         _pressed={{ background: COLORS.white }}
         _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
-        onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
+        onPress={() => (stepState === 1 ? handleBack() : handleBackStoreItems())}
       >
         Back
       </Button>
@@ -1015,7 +1031,7 @@ function AddNewQuotation({ navigation }) {
     // useMemo(() => {
     //   console.log(stepState);
     // }, [stepState]);
-    const [stateWithAmount, setStateWithAmount] = useState(null);
+    const [stateWithAmount, setStateWithAmount] = useState({ items: null });
 
     const urlGetItemsQuotation =
       'https://tonen.vsiam.com/api/method/frappe.quotation.oneitem?quotation_name=SAL-QTN-2023-00002';
@@ -1074,24 +1090,17 @@ function AddNewQuotation({ navigation }) {
     };
     const handleBarCodeScanned = ({ type, data }) => {
       axios
-        .get(
-          `https://tonen.vsiam.com/api/resource/Item?fields=["*"]&filters=[["Item Barcode","barcode","=","${data}"]]`,
-          {
-            headers: {
-              Authorization: '',
-            },
-          }
-        )
+        .get(`${urlItemQRCode}?fields=["*"]&filters=[["Item Barcode","barcode","=","${data}"]]`)
         .then((response) => response.data)
         .then((res) => {
           if (res.data.length > 0) {
             // res.data && alert(`Item exist!:`);
-            if (items.items !== undefined) {
+            if (items.items !== null) {
               const duplicated = items.items.find((item) => item.item_code === res.data[0].item_code);
+              console.log('duplicated = ', duplicated);
               if (duplicated === undefined) {
                 setItems((pre) => ({
-                  ...pre,
-                  items: [...items.items, { item_code: res.data[0].item_code, qty: 1, rate: 0 }],
+                  items: [...items.items, { item_code: res.data[0].item_code, qty: 1, rate: 1 }],
                 }));
                 setQrCodeData(res.data[0].item_code);
                 // setItemCode(res.data[0].item_code);
@@ -1101,7 +1110,7 @@ function AddNewQuotation({ navigation }) {
             } else {
               setItems((pre) => ({
                 ...pre,
-                items: [{ item_code: res.data[0].item_code, qty: 1, rate: 0 }],
+                items: [{ item_code: res.data[0].item_code, qty: 1, rate: 1 }],
               }));
               setQrCodeData(res.data[0].item_code);
               // setItemCode(res.data[0].item_code);
@@ -1148,9 +1157,10 @@ function AddNewQuotation({ navigation }) {
 
     useMemo(() => {
       console.log(items);
-      if (items.items !== null) {
-        const updateState = Object.values(items.items).map((data, index) => {
-          const temp = [...items.items];
+      // console.log('testssss:', items.items);
+      if (items?.items !== null) {
+        const updateState = Object.values(items?.items).map((data, index) => {
+          const temp = { ...items.items };
           temp[index].amount = (parseFloat(temp[index].qty) * parseFloat(temp[index].rate)).toFixed(2);
           return temp;
         });
@@ -1165,7 +1175,7 @@ function AddNewQuotation({ navigation }) {
       }
     }, [items]);
 
-    useMemo(() => {
+    React.useEffect(() => {
       console.log('State With Amount', stateWithAmount);
     }, [stateWithAmount]);
 
@@ -1220,8 +1230,8 @@ function AddNewQuotation({ navigation }) {
             )}
             {showAlert && <AskCameraPermission />}
             <ScrollView>
-              <View>
-                {stateWithAmount !== null &&
+              <View w={'96'}>
+                {items.items !== null &&
                   Object.values(stateWithAmount)?.map((data, index) => (
                     <VStack
                       bg={COLORS.white}
@@ -1267,10 +1277,12 @@ function AddNewQuotation({ navigation }) {
 
                               if (cloneState !== undefined) {
                                 setStateWithAmount([cloneState]);
-                                setItems((pre) => ({ ...pre, items: Array(cloneState) }));
+                                setItems((pre) => ({ ...pre, items: cloneState }));
                               } else {
-                                setStateWithAmount([]);
-                                setItems((pre) => ({ ...pre, items: [] }));
+                                setState((pre) => ({ ...pre, items: null }));
+                                setStateWithAmount({ items: null });
+
+                                setItems({ items: null });
                               }
                               // console.log('find', [cloneState]);
                               // console.log('state', stateWithAmount);
@@ -1278,6 +1290,8 @@ function AddNewQuotation({ navigation }) {
                           }}
                         >
                           <HStack
+                            py={4}
+                            px={1}
                             rounded={6}
                             space={0.5}
                           >
@@ -1295,6 +1309,7 @@ function AddNewQuotation({ navigation }) {
                         mt={-3}
                         h={0.3}
                       />
+
                       <VStack
                         ml={2}
                         space={2}
@@ -1308,13 +1323,14 @@ function AddNewQuotation({ navigation }) {
                           <Input
                             h={8}
                             p={2.5}
-                            minW={12}
+                            minW={24}
                             fontSize={'2xs'}
                             textAlign={'right'}
                             color={'gray.400'}
                             bg={COLORS.lightWhite}
                             variant={'filled'}
                             keyboardType='numeric'
+                            selectTextOnFocus
                             value={String(data?.qty)}
                             onBlur={() => {
                               if (data?.qty === '' || data?.qty === undefined) {
@@ -1345,16 +1361,17 @@ function AddNewQuotation({ navigation }) {
                           <Input
                             h={8}
                             p={2.5}
-                            minW={12}
+                            minW={24}
                             fontSize={'2xs'}
                             textAlign={'right'}
                             color={'gray.400'}
                             bg={COLORS.lightWhite}
                             variant={'filled'}
                             keyboardType='numeric'
-                            value={String(data?.rate) === '0' ? '0.0' : String(data?.rate)}
+                            selectTextOnFocus
+                            value={String(data?.rate) === '0' ? '1.0' : String(data?.rate)}
                             onBlur={() => {
-                              if (data?.rate === '' || data?.rate === '0') {
+                              if (data?.rate === '' || data?.rate === '1') {
                                 const updatedItems = items.items;
                                 updatedItems[index].rate = 0.0;
                                 setItems((pre) => ({
@@ -1363,7 +1380,7 @@ function AddNewQuotation({ navigation }) {
                                 }));
                               } else {
                                 const updatedItems = items.items;
-                                updatedItems[index].rate = parseFloat(updatedItems[index].rate);
+                                updatedItems[index].rate = parseFloat(updatedItems[index].rate).toFixed(2);
                                 setItems((pre) => ({
                                   ...pre,
                                   items: updatedItems,
@@ -1390,6 +1407,7 @@ function AddNewQuotation({ navigation }) {
                             </FormControl.Label>
                           </View>
                           <Input
+                            caretHidden
                             h={8}
                             p={2.5}
                             minW={12}
@@ -1561,7 +1579,12 @@ function AddNewQuotation({ navigation }) {
               setState={setState}
             />
           )}
-          {stepState === 3 && !openSelection && !openCustomerType && <ThirdStep setState={setState} />}
+          {stepState === 3 && !openSelection && !openCustomerType && (
+            <ThirdStep
+              state={state}
+              setState={setState}
+            />
+          )}
           {/* {stepState === 3 && !openSelection && !openCustomerType && <SuccessMessage setState={setState} />} */}
           {openSelection && (
             <DynamicSelectPage
