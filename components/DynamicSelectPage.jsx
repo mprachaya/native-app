@@ -44,7 +44,6 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
     >
       <Text
         p={2}
-        w={'full'}
         color={COLORS.gray}
         fontSize={'md'}
         textAlign={'center'}
@@ -244,14 +243,17 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property }) {
             >
               {title}
             </Text>
-
-            <FlatList
-              h={500}
-              data={list}
-              w={{ base: 'sm', lg: 'lg' }}
-              // showsHorizontalScrollIndicator={false}
-              renderItem={({ item }) => <Item name={item.name} />}
-            />
+            {list.length > 0 ? (
+              <FlatList
+                h={500}
+                data={list}
+                w={{ base: 'sm', lg: 'lg' }}
+                // showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => <Item name={item.name} />}
+              />
+            ) : (
+              <Text> No data</Text>
+            )}
           </VStack>
         </Center>
       </ContainerStyled>

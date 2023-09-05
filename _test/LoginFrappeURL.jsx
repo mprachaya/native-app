@@ -36,7 +36,7 @@ function LoginFrappeURL({ navigation }) {
       .post(`https://${url}/api/method/login`, { usr: usr, pwd: pwd })
       .then((response) => {
         if (response.status === 200) {
-          console.log(response);
+          // console.log(response);
           storeData('URL', state.url);
           storeData('NAME', response.data.full_name);
           setLoginSuccess(true);

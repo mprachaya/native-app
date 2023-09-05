@@ -654,6 +654,9 @@ function DetailsPage({ route, navigation }) {
                         <Box
                           w={20}
                           h={20}
+                          my={2}
+                          mx={2}
+                          _ios={{ mr: 1 }}
                           rounded={6}
                           shadow={1}
                         >
@@ -674,6 +677,9 @@ function DetailsPage({ route, navigation }) {
                         <Box
                           w={20}
                           h={20}
+                          my={2}
+                          mx={2}
+                          _ios={{ mr: 2 }}
                           rounded={6}
                           background={'black'}
                           shadow={1}

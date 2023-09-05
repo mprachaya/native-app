@@ -10,7 +10,6 @@ import {
   ScrollView,
   Select,
   Text,
-  TextArea,
   VStack,
   View,
   WarningOutlineIcon,
@@ -19,8 +18,6 @@ import React, { useState, useMemo } from 'react';
 import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
-import { handleChange } from '../../../../hooks/useValidation';
-import { config } from '../../../../config';
 import { Platform, Pressable } from 'react-native';
 import useSubmit from '../../../../hooks/useSubmit';
 import useConfig from '../../../../config/path';
@@ -76,7 +73,7 @@ function AddNewQuotation({ navigation }) {
   // navigate step state
   const [stepState, setStepState] = useState(1);
   // max of steps
-  const maxStep = 2;
+  const maxStep = 3;
 
   // state for show / hide selection (dynamically)
   const [openSelection, setOpenSelection] = useState(false);
@@ -104,14 +101,17 @@ function AddNewQuotation({ navigation }) {
   // for handle dynamic url selection
   const [urlSelected, setUrlSelected] = useState('');
   // url path for fetching selection data
-  const { baseURL, CUSTOMER, ADDRESS, CURRENCY, PRICE_LIST, SALE_PARTNER, PAYMENT_TERM } = useConfig(true);
+  const { baseURL, CUSTOMER, LEAD, ADDRESS, CONTACT, CURRENCY, PRICE_LIST, SALE_PARTNER, PAYMENT_TERM } =
+    useConfig(true);
   const urlCurrency = baseURL + CURRENCY;
   const urlPriceList = baseURL + PRICE_LIST;
   const urlSalePartner = baseURL + SALE_PARTNER;
   const urlPaymentTerm = baseURL + PAYMENT_TERM;
 
   const urlCustomer = baseURL + CUSTOMER;
+  const urlLead = baseURL + LEAD;
   const urlAddress = baseURL + ADDRESS;
+  const urlContact = baseURL + CONTACT;
   // handle dynamic property for multi selection in page
   const [propertySelected, setPropertySelected] = useState('');
 
@@ -150,13 +150,11 @@ function AddNewQuotation({ navigation }) {
     const [customer, setCustomer] = useState(null);
     // filter address
     var filterAddress = `?filters=[["address_title","=","${customer?.name}"]]&fields=["*"]`;
+    var filterContact = `?fields=["*"]&filters=[["Dynamic Link","link_name", "=", "${customer?.name}"]]`;
     // start for required validation
-    const [requiredState] = useState(['customer_name', 'customer_type', 'customer_group', 'territory']);
+    const [requiredState] = useState(['party_name']);
     const [nullState, setNullState] = useState({
-      customer_name: false,
-      customer_type: false,
-      customer_group: false,
-      territory: false,
+      party_name: false,
     });
 
     // date now for android
@@ -287,11 +285,11 @@ function AddNewQuotation({ navigation }) {
       setState(ctmState);
     };
 
-    const handleOpenStaticSelection = () => {
-      setOpenCustomerType(true);
-      // set main state with sub state
-      setState(ctmState);
-    };
+    // const handleOpenStaticSelection = () => {
+    //   setOpenCustomerType(true);
+    //   // set main state with sub state
+    //   setState(ctmState);
+    // };
 
     const BackButton = () => (
       <Button
@@ -359,7 +357,11 @@ function AddNewQuotation({ navigation }) {
     useMemo(() => {
       if (ctmState.party_name !== undefined && ctmState.party_name !== '') {
         axios
-          .get(urlCustomer + '/' + ctmState.party_name)
+          .get(
+            ctmState.quotation_to === 'Customer'
+              ? urlCustomer + '/' + ctmState.party_name
+              : urlLead + '/' + ctmState.party_name
+          )
           .then((response) => response.data)
           .then((res) => {
             // console.log(res.data);
@@ -368,12 +370,14 @@ function AddNewQuotation({ navigation }) {
             //with the url we send in.
             // alert(res.data.territory);
             setCustomer(res.data);
+            // console.log(res.data);
             // console.log('Fetching successful!');
           })
           .catch((err) => {
-            console.log(err);
+            // console.log(err);
           });
       }
+      console.log(ctmState);
     }, [ctmState]);
     // set Default value of to Date Object (+ 1 month)
     useMemo(() => {
@@ -459,7 +463,16 @@ function AddNewQuotation({ navigation }) {
                     bg: 'blueGray.200',
                     endIcon: <CheckIcon color={'blueGray.400'} />,
                   }}
-                  onValueChange={(itemValue) => setCtmState((pre) => ({ ...pre, quotation_to: itemValue }))}
+                  onValueChange={(itemValue) => {
+                    setCtmState((pre) => ({
+                      ...pre,
+                      quotation_to: itemValue,
+                      party_name: '',
+                      customer_address: '',
+                      contact_person: '',
+                    }));
+                    setCustomer({});
+                  }}
                 >
                   <Select.Item
                     label='Lead'
@@ -477,33 +490,53 @@ function AddNewQuotation({ navigation }) {
               space={2}
               direction={{ base: 'column', lg: 'row' }}
             >
-              <OnPressContainer onPress={() => handleOpenDynamicSelection('Customer', 'party_name', urlCustomer)}>
+              <OnPressContainer
+                onPress={() =>
+                  handleOpenDynamicSelection(
+                    ctmState.quotation_to === 'Customer' ? 'Customer' : 'Lead',
+                    'party_name',
+                    ctmState.quotation_to === 'Customer' ? urlCustomer : urlLead
+                  )
+                }
+              >
                 <StyledTextField
                   caretHidden
-                  // isRequired={nullState.customer_group}
-                  label={'Customer*'}
-                  name={'customer'}
+                  isRequired={nullState.party_name}
+                  label={ctmState.quotation_to === 'Customer' ? 'Customer*' : 'Lead*'}
                   value={ctmState.party_name}
                   showSoftInputOnFocus={false} // disable toggle keyboard
                 />
               </OnPressContainer>
               {/* <OnPressContainer onPress={() => handleOpenDynamicSelection('Territory', 'territory', urlTerritory)}> */}
-              <StyledTextField
-                caretHidden
-                isDisabled
-                label={'Customer Group'}
-                name={'territory'}
-                value={customer?.customer_group}
-                showSoftInputOnFocus={false} // disable toggle keyboard
-              />
-              <StyledTextField
-                caretHidden
-                isDisabled
-                label={'Territory'}
-                name={'territory'}
-                value={customer?.territory}
-                showSoftInputOnFocus={false} // disable toggle keyboard
-              />
+              {ctmState.quotation_to === 'Customer' ? (
+                <React.Fragment>
+                  <StyledTextField
+                    caretHidden
+                    isDisabled
+                    label={'Customer Group'}
+                    name={'customer_group'}
+                    value={customer?.customer_group}
+                    showSoftInputOnFocus={false} // disable toggle keyboard
+                  />
+
+                  <StyledTextField
+                    caretHidden
+                    isDisabled
+                    label={'Territory'}
+                    name={'territory'}
+                    value={customer?.territory}
+                    showSoftInputOnFocus={false} // disable toggle keyboard
+                  />
+                </React.Fragment>
+              ) : (
+                <StyledTextField
+                  caretHidden
+                  isDisabled
+                  label={'Company'}
+                  value={customer?.company_name}
+                  showSoftInputOnFocus={false} // disable toggle keyboard
+                />
+              )}
               {/* </OnPressContainer> */}
             </HStack>
             {/* for Android */}
@@ -576,18 +609,40 @@ function AddNewQuotation({ navigation }) {
                 </HStack>
               </React.Fragment>
             )}
-            <OnPressContainer
-              onPress={() => handleOpenDynamicSelection('Address', 'customer_address', urlAddress + filterAddress)}
-            >
-              <StyledTextField
-                caretHidden
-                label={'Address'}
-                name={'customer_address'}
-                value={ctmState.customer_address}
-                showSoftInputOnFocus={false} // disable toggle keyboard
-              />
-            </OnPressContainer>
 
+            {ctmState.quotation_to === 'Customer' && (
+              <React.Fragment>
+                <OnPressContainer
+                  onPress={() => {
+                    ctmState.party_name === ''
+                      ? alert(ctmState.quotation_to === 'Customer' ? 'Please select Customer' : 'Please select Lead')
+                      : handleOpenDynamicSelection('Address', 'customer_address', urlAddress + filterAddress);
+                  }}
+                >
+                  <StyledTextField
+                    caretHidden
+                    label={'Address'}
+                    name={'customer_address'}
+                    value={ctmState.customer_address}
+                    showSoftInputOnFocus={false} // disable toggle keyboard
+                  />
+                </OnPressContainer>
+
+                <OnPressContainer
+                  onPress={() => {
+                    handleOpenDynamicSelection('Contact Person', 'contact_person', urlContact + filterContact);
+                  }}
+                >
+                  <StyledTextField
+                    caretHidden
+                    label={'Contact Person'}
+                    name={'contact_person'}
+                    value={ctmState.contact_person}
+                    showSoftInputOnFocus={false} // disable toggle keyboard
+                  />
+                </OnPressContainer>
+              </React.Fragment>
+            )}
             {/* <HStack
               space={2}
               direction={{ base: 'column', lg: 'row' }}

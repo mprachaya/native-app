@@ -18,6 +18,8 @@ export default function useConfig(trigger) {
   const ADDRESS = '/api/resource/Address';
   const QUOTATIONS = '/api/resource/Quotation?fields=["*"]';
   const QUOTATION = '/api/resource/Quotation';
+  const LEAD = '/api/resource/Lead';
+  const CONTACT = '/api/resource/Contact';
 
   const getBaseURL = () => {
     getData('URL').then((value) => setBaseURL('https://' + value));
@@ -45,5 +47,7 @@ export default function useConfig(trigger) {
     QUOTATIONS,
     QUOTATION,
     ADDRESS,
+    LEAD,
+    CONTACT,
   };
 }
