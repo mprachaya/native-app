@@ -22,6 +22,7 @@ import useUpdate from '../../../../hooks/useUpdate';
 import useConfig from '../../../../config/path';
 import { Pressable } from 'react-native';
 import Animated from 'react-native-reanimated';
+import axios from 'axios';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -87,7 +88,7 @@ function DetailsPage({ route, navigation }) {
   );
   const EditButton = () => (
     <Button
-      m={2}
+      mr={2}
       w={'16'}
       rounded={'xs'}
       variant={'unstyled'}
@@ -98,6 +99,62 @@ function DetailsPage({ route, navigation }) {
       // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
     >
       <Edit color={COLORS.primary} />
+    </Button>
+  );
+  const StatusButton = ({ status }) => (
+    <Button
+      mr={2}
+      px={3.5}
+      rounded={'xl'}
+      variant={'outline'}
+      background={COLORS.lightWhite}
+      _pressed={{ background: COLORS.white }}
+      _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
+      onPress={() => handleChangeStatus(data?.status)}
+      // onPress={() => handleOpenUpdate()}
+      // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
+    >
+      <Text
+        textAlign='left'
+        maxWidth={24}
+        fontWeight={'bold'}
+        fontSize={'sm'}
+        letterSpacing={1}
+        borderColor={
+          status === 'Draft'
+            ? 'blue.400'
+            : status === 'Open'
+            ? 'warning.300'
+            : status === 'Ordered'
+            ? 'success.300'
+            : status === 'Cancelled'
+            ? 'error.300'
+            : status === 'Expired'
+            ? 'error.300'
+            : null
+        }
+        color={
+          status === 'Draft'
+            ? 'blue.400'
+            : status === 'Open'
+            ? 'error.400'
+            : status === 'Ordered'
+            ? 'error.400'
+            : status === 'Cancelled'
+            ? 'error.400'
+            : status === 'Expired'
+            ? 'error.400'
+            : null
+        }
+      >
+        {status === 'Draft'
+          ? 'Submit'
+          : status === 'Open'
+          ? 'Cancel'
+          : status === 'Ordered'
+          ? 'Cancel'
+          : status === 'Cancelled' && 'Amend'}
+      </Text>
     </Button>
   );
   const DisplayTextLeft = ({ children }) => (
@@ -154,6 +211,65 @@ function DetailsPage({ route, navigation }) {
     </Text>
   );
 
+  const UpdateStatus = (status) => {
+    const urlUpdateStatus = baseURL + QUOTATION + '/' + data.name;
+    // console.log(urlUpdateStatus);
+    if (status === 'Draft') {
+      axios
+        .put(urlUpdateStatus, { docstatus: 1 })
+        .then((response) => response.data)
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log('An error occurred. Awkward.. : ', err);
+          alert('Status Error: ' + err);
+        })
+        .finally(() => {});
+    } else if (status === 'Open') {
+      axios
+        .put(urlUpdateStatus, { docstatus: 2 })
+        .then((response) => response.data)
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log('An error occurred. Awkward.. : ', err);
+          alert('Status Error: ' + err);
+        })
+        .finally(() => {});
+    } else if (status === 'Cancelled') {
+    } else if (status === 'Expired') {
+    } else if (status === 'Ordered') {
+    } else if (state === 'Expired') {
+    }
+  };
+
+  const handleChangeStatus = (status) => {
+    switch (status) {
+      case 'Draft':
+        console.log('status Draft =', status);
+        UpdateStatus(status);
+        break;
+      case 'Open':
+        console.log('status Open =', status);
+        UpdateStatus(status);
+        break;
+      case 'Ordered':
+        console.log('status Ordered =', status);
+        break;
+      case 'Cancelled':
+        console.log('status Cancelled =', status);
+        // do add new with old states
+        break;
+      case 'Expired':
+        console.log('status Expired =', status);
+        break;
+      // default:
+      //   // Handle other cases or set a default color
+      //   break;
+    }
+  };
   const handleShowItemDetails = (data) => {
     navigation.navigate('QuotationItemsDetails', {
       data: data,
@@ -183,7 +299,8 @@ function DetailsPage({ route, navigation }) {
           <HStack>
             <BackButton />
           </HStack>
-          <HStack>
+          <HStack h={10}>
+            <StatusButton status={data?.status} />
             <EditButton />
           </HStack>
         </HStack>
