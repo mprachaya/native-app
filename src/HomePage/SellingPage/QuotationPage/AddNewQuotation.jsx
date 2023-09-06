@@ -97,11 +97,12 @@ function AddNewQuotation({ navigation }) {
     contact_person: '',
     transaction_date: '',
     valid_till: '',
+    company: 'VSiam Co., Ltd.',
     order_type: 'Sales',
     currency: 'THB',
     selling_price_list: 'Standard Selling',
-    payment_terms_template: null,
-    tc_name: null,
+    payment_terms_template: '',
+    tc_name: '',
     items: null,
   };
 
@@ -123,12 +124,14 @@ function AddNewQuotation({ navigation }) {
     PAYMENT_TERMS_TEMPLATES,
     TERMS_AND_CONDITIONS,
     ITEM_QRCODE,
+    QUOTATION,
   } = useConfig(true);
   const urlCurrency = baseURL + CURRENCY;
   const urlPriceList = baseURL + PRICE_LIST;
   const urlPaymentTermTemplate = baseURL + PAYMENT_TERMS_TEMPLATES;
   const urlTermAndConditions = baseURL + TERMS_AND_CONDITIONS;
   const urlItemQRCode = baseURL + ITEM_QRCODE;
+  const urlSubmit = baseURL + QUOTATION;
 
   const urlCustomer = baseURL + CUSTOMER;
   const urlLead = baseURL + LEAD;
@@ -166,6 +169,7 @@ function AddNewQuotation({ navigation }) {
     setUrlSelected(url);
     setOpenSelection(true);
   };
+
   // sub component first step
   const FirstStep = ({ state, setState }) => {
     // sub state
@@ -296,9 +300,10 @@ function AddNewQuotation({ navigation }) {
       }
     };
 
-    const handleBack = () => {
+    const handleBackFirstPage = () => {
       // handleClose();
-      navigation.goBack();
+      navigation.pop();
+      navigation.replace('Quotation', { filterData: [] });
       setState(initialState);
     };
 
@@ -317,7 +322,7 @@ function AddNewQuotation({ navigation }) {
         background={COLORS.lightWhite}
         _pressed={{ bg: 'blueGray.200' }}
         _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
-        onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
+        onPress={() => (stepState === 1 ? handleBackFirstPage() : setStepState((post) => post - 1))}
       >
         Back
       </Button>
@@ -701,6 +706,7 @@ function AddNewQuotation({ navigation }) {
       // } else {
       // if filled go to next step
       // handleSubmit(ctmState2);
+
       setStepState((post) => post + 1);
       // setState(ctmState2);
       // }
@@ -941,9 +947,27 @@ function AddNewQuotation({ navigation }) {
         // if filled go to next step
         // handleSubmit(stateWithAmount);
         // setState((pre) => ({ ...pre, items: stateWithAmount }));
-        console.log(state);
-        // setStepState((post) => post + 1);
-        // setState(ctmState2);
+        // console.log('items =', items);
+        const cloneState = { ...state };
+
+        const stateNoAmount = Object.values(stateWithAmount)?.map((obj) => {
+          // Create a new object with properties other than "amount"
+          const { amount, ...newObj } = obj;
+          return newObj;
+        });
+        cloneState.items = Object.values(stateNoAmount);
+        console.log(cloneState);
+        console.log(urlSubmit);
+        axios
+          .post(urlSubmit, cloneState)
+          .then((response) => console.log('Response:', response.data))
+          .catch((err) => {
+            console.log('An error occurred. Awkward.. : ', err);
+            // alert('Status Error: ' + err);
+          })
+          .finally(() => {
+            setStepState(4);
+          });
       }
     };
 
@@ -1161,7 +1185,7 @@ function AddNewQuotation({ navigation }) {
       if (items?.items !== null) {
         const updateState = Object.values(items?.items).map((data, index) => {
           const temp = { ...items.items };
-          console.log('temp', temp);
+          // console.log('temp', temp);
           temp[index].amount = (parseFloat(temp[index]?.qty) * parseFloat(temp[index]?.rate)).toFixed(2);
           return temp;
         });
@@ -1176,9 +1200,9 @@ function AddNewQuotation({ navigation }) {
       }
     }, [items]);
 
-    React.useEffect(() => {
-      console.log('State With Amount', stateWithAmount);
-    }, [stateWithAmount]);
+    // React.useEffect(() => {
+    //   console.log('State With Amount', stateWithAmount);
+    // }, [stateWithAmount]);
 
     return (
       <React.Fragment>
@@ -1447,12 +1471,13 @@ function AddNewQuotation({ navigation }) {
             w={'96'}
             justifyContent={'center'}
           >
-            <Button
+            {/* <Button
+              onPress={() => handleOpenDynamicSelection('Items', 'currency', urlCurrency)}
               _text={{ fontWeight: 'bold', color: COLORS.tertiary }}
               variant={'outline'}
             >
               + Add Item
-            </Button>
+            </Button> */}
             <Button
               onPress={() => setScanned(true)}
               bg={COLORS.primary}
@@ -1469,6 +1494,16 @@ function AddNewQuotation({ navigation }) {
               QR CODE
             </Button>
           </HStack>
+          {/* {openItemList && (
+            <DynamicSelectPage
+              title={'Item List'} // for change dynamic title
+              url={urlItemQRCode} // for change dynamic data in selection
+              open={openItemList} // state for show/hide selection
+              setOpen={setOpenItemList} // for control show/hide
+              setState={setItems} // for send data to outside selection and set it in main state by property
+              property={propertySelected} // name of property for send data to outside
+            />
+          )} */}
         </VStack>
       </React.Fragment>
     );
@@ -1479,7 +1514,7 @@ function AddNewQuotation({ navigation }) {
       // setState(initialState);
       // refetchData();
       navigation.pop();
-      navigation.replace('Customer', { filterData: [] });
+      navigation.replace('Quotation', { filterData: [] });
     };
     const handleAddAnother = () => {
       setState(initialState);
@@ -1487,7 +1522,7 @@ function AddNewQuotation({ navigation }) {
     };
 
     return (
-      <FadeTransition animated={stepState === 3 && true}>
+      <FadeTransition animated={stepState === 4 && true}>
         <Container
           h='80%'
           w='100%'
@@ -1521,7 +1556,7 @@ function AddNewQuotation({ navigation }) {
               textWeight={'bold'}
               fontSize={24}
             >
-              {'Registration\nSuccess!'}
+              {'Add Quotation\nSuccess!'}
             </Text>
 
             <VStack
@@ -1536,7 +1571,7 @@ function AddNewQuotation({ navigation }) {
                 _pressed={{ bg: 'blueGray.200' }}
                 onPress={() => handleBack()}
               >
-                Back to Customer Page
+                Back to Quotation Page
               </Button>
               <Button
                 rounded={24}
@@ -1546,7 +1581,7 @@ function AddNewQuotation({ navigation }) {
                 _pressed={{ bg: COLORS.tertiary2 }}
                 onPress={() => handleAddAnother()}
               >
-                Add another customer
+                Add another quotation
               </Button>
             </VStack>
           </VStack>
@@ -1555,9 +1590,9 @@ function AddNewQuotation({ navigation }) {
     );
   };
   // log when state having changed
-  // useMemo(() => {
-  //   console.log('state: ', state);
-  // }, [state]);
+  useMemo(() => {
+    console.log('state: ', state);
+  }, [state]);
 
   return (
     <ContainerStyled>
@@ -1581,18 +1616,19 @@ function AddNewQuotation({ navigation }) {
             />
           )}
           {/* display when step = 2 and do not have any selection displayed */}
-          {stepState === 2 && !openSelection && !openCustomerType && (
+          {stepState === 2 && !openSelection && (
             <SecondStep
               state={state}
               setState={setState}
             />
           )}
-          {stepState === 3 && !openSelection && !openCustomerType && (
+          {stepState === 3 && !openSelection && (
             <ThirdStep
               state={state}
               setState={setState}
             />
           )}
+          {stepState === 4 && !openSelection && <SuccessMessage setState={setState} />}
           {/* {stepState === 3 && !openSelection && !openCustomerType && <SuccessMessage setState={setState} />} */}
           {openSelection && (
             <DynamicSelectPage
@@ -1604,7 +1640,7 @@ function AddNewQuotation({ navigation }) {
               property={propertySelected} // name of property for send data to outside
             />
           )}
-          {openCustomerType && (
+          {/* {openCustomerType && (
             <StaticSelectPage
               title={'Customer Type'} // name of statice selection
               data={customerTypes} // data of statice selection
@@ -1613,7 +1649,7 @@ function AddNewQuotation({ navigation }) {
               setState={setState} // for send data to outside selection and set it in main state by property
               property={'customer_type'} // name of property for send data to outside
             />
-          )}
+          )} */}
         </Center>
       </FadeTransition>
     </ContainerStyled>
