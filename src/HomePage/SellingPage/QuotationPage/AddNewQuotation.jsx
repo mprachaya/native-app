@@ -446,217 +446,217 @@ function AddNewQuotation({ navigation }) {
         >
           <ForwardButton />
         </HStack>
-        <DisplayStep />
+        <View mt={12}>
+          <DisplayStep />
+        </View>
         <VStack
           mt={2}
           m={6}
           space={SPACING.small}
-          h={{ base: 700, lg: 1200 }}
         >
           <ScrollView>
-            <HStack
-              w={'container'}
-              space={2}
-              direction={{ base: 'column', lg: 'row' }}
-            >
-              {/* quotation to  */}
-              <View>
-                <FormControl justifyContent={'center'}>
-                  <FormControl.Label>Quotation To</FormControl.Label>
-                </FormControl>
-                <Select
-                  dropdownIcon={true}
-                  selectedValue={ctmState.quotation_to}
-                  w={{ base: 'full', lg: 400 }}
-                  fontSize={18}
-                  borderWidth={2}
-                  borderColor={'gray.200'}
-                  accessibilityLabel='Quotation To'
-                  placeholder='Choose Quotation To'
-                  _selectedItem={{
-                    bg: 'blueGray.200',
-                    endIcon: <CheckIcon color={'blueGray.400'} />,
-                  }}
-                  onValueChange={(itemValue) => {
-                    setCtmState((pre) => ({
-                      ...pre,
-                      quotation_to: itemValue,
-                      party_name: '',
-                      customer_address: '',
-                      contact_person: '',
-                    }));
-                    setCustomer({});
-                  }}
-                >
-                  <Select.Item
-                    label='Lead'
-                    value='Lead'
-                  />
-
-                  <Select.Item
-                    label='Customer'
-                    value='Customer'
-                  />
-                </Select>
-              </View>
-            </HStack>
-            <HStack
-              space={2}
-              direction={{ base: 'column', lg: 'row' }}
-            >
-              <OnPressContainer
-                onPress={() =>
-                  handleOpenDynamicSelection(
-                    ctmState.quotation_to === 'Customer' ? 'Customer' : 'Lead',
-                    'party_name',
-                    ctmState.quotation_to === 'Customer' ? urlCustomer : urlLead
-                  )
-                }
+            <VStack h={{ base: 700, lg: 1400 }}>
+              <HStack
+                w={'container'}
+                space={2}
+                direction={{ base: 'column', lg: 'row' }}
               >
-                <StyledTextField
-                  caretHidden
-                  isRequired={nullState.party_name}
-                  label={ctmState.quotation_to === 'Customer' ? 'Customer*' : 'Lead*'}
-                  value={ctmState.party_name}
-                  showSoftInputOnFocus={false} // disable toggle keyboard
-                />
-              </OnPressContainer>
-              {/* <OnPressContainer onPress={() => handleOpenDynamicSelection('Territory', 'territory', urlTerritory)}> */}
-              {ctmState.quotation_to === 'Customer' ? (
-                <React.Fragment>
-                  <StyledTextField
-                    caretHidden
-                    isDisabled
-                    label={'Customer Group'}
-                    name={'customer_group'}
-                    value={customer?.customer_group}
-                    showSoftInputOnFocus={false} // disable toggle keyboard
-                  />
+                {/* quotation to  */}
+                <View>
+                  <FormControl justifyContent={'center'}>
+                    <FormControl.Label>Quotation To</FormControl.Label>
+                  </FormControl>
+                  <Select
+                    dropdownIcon={true}
+                    selectedValue={ctmState.quotation_to}
+                    w={{ base: 'full', lg: 400 }}
+                    fontSize={18}
+                    borderWidth={2}
+                    borderColor={'gray.200'}
+                    accessibilityLabel='Quotation To'
+                    placeholder='Choose Quotation To'
+                    _selectedItem={{
+                      bg: 'blueGray.200',
+                      endIcon: <CheckIcon color={'blueGray.400'} />,
+                    }}
+                    onValueChange={(itemValue) => {
+                      setCtmState((pre) => ({
+                        ...pre,
+                        quotation_to: itemValue,
+                        party_name: '',
+                        customer_address: '',
+                        contact_person: '',
+                      }));
+                      setCustomer({});
+                    }}
+                  >
+                    <Select.Item
+                      label='Lead'
+                      value='Lead'
+                    />
 
+                    <Select.Item
+                      label='Customer'
+                      value='Customer'
+                    />
+                  </Select>
+                </View>
+              </HStack>
+              <VStack space={2}>
+                <OnPressContainer
+                  onPress={() =>
+                    handleOpenDynamicSelection(
+                      ctmState.quotation_to === 'Customer' ? 'Customer' : 'Lead',
+                      'party_name',
+                      ctmState.quotation_to === 'Customer' ? urlCustomer : urlLead
+                    )
+                  }
+                >
+                  <StyledTextField
+                    caretHidden
+                    isRequired={nullState.party_name}
+                    label={ctmState.quotation_to === 'Customer' ? 'Customer*' : 'Lead*'}
+                    value={ctmState.party_name}
+                    showSoftInputOnFocus={false} // disable toggle keyboard
+                  />
+                </OnPressContainer>
+                {/* <OnPressContainer onPress={() => handleOpenDynamicSelection('Territory', 'territory', urlTerritory)}> */}
+                {ctmState.quotation_to === 'Customer' ? (
+                  <VStack>
+                    <StyledTextField
+                      caretHidden
+                      isDisabled
+                      label={'Customer Group'}
+                      name={'customer_group'}
+                      value={customer?.customer_group}
+                      showSoftInputOnFocus={false} // disable toggle keyboard
+                    />
+
+                    <StyledTextField
+                      caretHidden
+                      isDisabled
+                      label={'Territory'}
+                      name={'territory'}
+                      value={customer?.territory}
+                      showSoftInputOnFocus={false} // disable toggle keyboard
+                    />
+                  </VStack>
+                ) : (
                   <StyledTextField
                     caretHidden
                     isDisabled
-                    label={'Territory'}
-                    name={'territory'}
-                    value={customer?.territory}
+                    label={'Company'}
+                    value={customer?.company_name}
                     showSoftInputOnFocus={false} // disable toggle keyboard
                   />
-                </React.Fragment>
-              ) : (
-                <StyledTextField
-                  caretHidden
-                  isDisabled
-                  label={'Company'}
-                  value={customer?.company_name}
-                  showSoftInputOnFocus={false} // disable toggle keyboard
-                />
-              )}
-              {/* </OnPressContainer> */}
-            </HStack>
-            {/* for Android */}
-            {Platform.OS === 'android' && (
-              <VStack space={4}>
-                <View w={'container'}>
-                  <OnPressContainer onPress={() => showAndoirdDatepickerFrom()}>
-                    <StyledTextField
-                      caretHidden
-                      label={'From Date'}
-                      // placeholder={'Select Transaction Date'}
-                      value={ctmState.transaction_date}
-                      showSoftInputOnFocus={false} // disable toggle keyboard
-                    />
-                  </OnPressContainer>
-                </View>
-                <View w={'container'}>
-                  <OnPressContainer onPress={() => showAndoirdDatepickerTo()}>
-                    <StyledTextField
-                      caretHidden
-                      label={'To Date'}
-                      placeholder={'Select Valid Date'}
-                      value={ctmState.valid_till}
-                      showSoftInputOnFocus={false} // disable toggle keyboard
-                    />
-                  </OnPressContainer>
-                </View>
+                )}
+                {/* </OnPressContainer> */}
               </VStack>
-            )}
-            {/* for IOS */}
-            {Platform.OS === 'ios' && (
-              <React.Fragment>
-                <HStack
-                  justifyContent={'center'}
-                  mt={2}
-                >
+              {/* for Android */}
+              {Platform.OS === 'android' && (
+                <VStack space={4}>
                   <View w={'container'}>
-                    <View alignItems={'start'}>
-                      <HStack>
+                    <OnPressContainer onPress={() => showAndoirdDatepickerFrom()}>
+                      <StyledTextField
+                        caretHidden
+                        label={'From Date'}
+                        // placeholder={'Select Transaction Date'}
+                        value={ctmState.transaction_date}
+                        showSoftInputOnFocus={false} // disable toggle keyboard
+                      />
+                    </OnPressContainer>
+                  </View>
+                  <View w={'container'}>
+                    <OnPressContainer onPress={() => showAndoirdDatepickerTo()}>
+                      <StyledTextField
+                        caretHidden
+                        label={'To Date'}
+                        placeholder={'Select Valid Date'}
+                        value={ctmState.valid_till}
+                        showSoftInputOnFocus={false} // disable toggle keyboard
+                      />
+                    </OnPressContainer>
+                  </View>
+                </VStack>
+              )}
+              {/* for IOS */}
+              {Platform.OS === 'ios' && (
+                <React.Fragment>
+                  <HStack
+                    justifyContent={'center'}
+                    mt={2}
+                  >
+                    <View w={'container'}>
+                      <View alignItems={'start'}>
+                        <HStack>
+                          <RNDateTimePicker
+                            display='inline'
+                            // disabled={!checkState}
+                            is24Hour={true}
+                            mode='date'
+                            value={dateIOS}
+                            onChange={onChangeIOSfrom}
+                          />
+                        </HStack>
+                      </View>
+                    </View>
+                  </HStack>
+                  <HStack justifyContent={'center'}>
+                    <View w={'container'}>
+                      <FormControl justifyContent={'center'}>
+                        <FormControl.Label mx={7}>To Date</FormControl.Label>
+                      </FormControl>
+                      <View
+                        mx={12}
+                        alignItems={'start'}
+                      >
                         <RNDateTimePicker
                           display='inline'
-                          // disabled={!checkState}
                           is24Hour={true}
                           mode='date'
-                          value={dateIOS}
-                          onChange={onChangeIOSfrom}
+                          value={dateIOSNextMonth}
+                          onChange={onChangeIOSto}
                         />
-                      </HStack>
+                      </View>
                     </View>
-                  </View>
-                </HStack>
-                <HStack justifyContent={'center'}>
-                  <View w={'container'}>
-                    <FormControl justifyContent={'center'}>
-                      <FormControl.Label mx={7}>To Date</FormControl.Label>
-                    </FormControl>
-                    <View
-                      mx={12}
-                      alignItems={'start'}
-                    >
-                      <RNDateTimePicker
-                        display='inline'
-                        is24Hour={true}
-                        mode='date'
-                        value={dateIOSNextMonth}
-                        onChange={onChangeIOSto}
-                      />
-                    </View>
-                  </View>
-                </HStack>
-              </React.Fragment>
-            )}
+                  </HStack>
+                </React.Fragment>
+              )}
 
-            {ctmState.quotation_to === 'Customer' && (
-              <React.Fragment>
-                <OnPressContainer
-                  onPress={() => {
-                    ctmState.party_name === ''
-                      ? alert(ctmState.quotation_to === 'Customer' ? 'Please select Customer' : 'Please select Lead')
-                      : handleOpenDynamicSelection('Address', 'customer_address', urlAddress + filterAddress);
-                  }}
-                >
-                  <StyledTextField
-                    caretHidden
-                    label={'Address'}
-                    name={'customer_address'}
-                    value={ctmState.customer_address}
-                    showSoftInputOnFocus={false} // disable toggle keyboard
-                  />
-                </OnPressContainer>
+              {ctmState.quotation_to === 'Customer' && (
+                <React.Fragment>
+                  <OnPressContainer
+                    onPress={() => {
+                      ctmState.party_name === ''
+                        ? alert(ctmState.quotation_to === 'Customer' ? 'Please select Customer' : 'Please select Lead')
+                        : handleOpenDynamicSelection('Address', 'customer_address', urlAddress + filterAddress);
+                    }}
+                  >
+                    <StyledTextField
+                      caretHidden
+                      label={'Address'}
+                      name={'customer_address'}
+                      value={ctmState.customer_address}
+                      showSoftInputOnFocus={false} // disable toggle keyboard
+                    />
+                  </OnPressContainer>
 
-                <OnPressContainer
-                  onPress={() => {
-                    handleOpenDynamicSelection('Contact Person', 'contact_person', urlContact + filterContact);
-                  }}
-                >
-                  <StyledTextField
-                    caretHidden
-                    label={'Contact Person'}
-                    name={'contact_person'}
-                    value={ctmState.contact_person}
-                    showSoftInputOnFocus={false} // disable toggle keyboard
-                  />
-                </OnPressContainer>
-              </React.Fragment>
-            )}
+                  <OnPressContainer
+                    onPress={() => {
+                      handleOpenDynamicSelection('Contact Person', 'contact_person', urlContact + filterContact);
+                    }}
+                  >
+                    <StyledTextField
+                      caretHidden
+                      label={'Contact Person'}
+                      name={'contact_person'}
+                      value={ctmState.contact_person}
+                      showSoftInputOnFocus={false} // disable toggle keyboard
+                    />
+                  </OnPressContainer>
+                </React.Fragment>
+              )}
+            </VStack>
           </ScrollView>
         </VStack>
       </React.Fragment>
@@ -803,113 +803,113 @@ function AddNewQuotation({ navigation }) {
         >
           <ForwardButton />
         </HStack>
-        <DisplayStep />
+        <View mt={12}>
+          <DisplayStep />
+        </View>
         <VStack
           mt={2}
           m={6}
           space={SPACING.small}
-          h={{ base: 700, lg: 1200 }}
         >
           <ScrollView>
-            <HStack
-              space={2}
-              direction={{ base: 'column', lg: 'row' }}
-            >
-              <View>
-                <FormControl justifyContent={'center'}>
-                  <FormControl.Label>Order Type</FormControl.Label>
-                </FormControl>
-                <Select
-                  dropdownIcon={true}
-                  selectedValue={ctmState2.order_type}
-                  w={{ base: 'full', lg: 400 }}
-                  fontSize={18}
-                  borderWidth={2}
-                  borderColor={'gray.200'}
-                  accessibilityLabel='Order To'
-                  placeholder='Choose Order Type'
-                  _selectedItem={{
-                    bg: 'blueGray.200',
-                    endIcon: <CheckIcon color={'blueGray.400'} />,
-                  }}
-                  onValueChange={(itemValue) => {
-                    setCtmState2((pre) => ({
-                      ...pre,
-                      order_type: itemValue,
-                    }));
-                  }}
-                >
-                  <Select.Item
-                    label='Sales'
-                    value='Sales'
-                  />
+            <VStack h={{ base: 700, lg: 1400 }}>
+              <VStack space={2}>
+                <View>
+                  <FormControl justifyContent={'center'}>
+                    <FormControl.Label>Order Type</FormControl.Label>
+                  </FormControl>
+                  <Select
+                    dropdownIcon={true}
+                    selectedValue={ctmState2.order_type}
+                    w={{ base: 'full', lg: 400 }}
+                    fontSize={18}
+                    borderWidth={2}
+                    borderColor={'gray.200'}
+                    accessibilityLabel='Order To'
+                    placeholder='Choose Order Type'
+                    _selectedItem={{
+                      bg: 'blueGray.200',
+                      endIcon: <CheckIcon color={'blueGray.400'} />,
+                    }}
+                    onValueChange={(itemValue) => {
+                      setCtmState2((pre) => ({
+                        ...pre,
+                        order_type: itemValue,
+                      }));
+                    }}
+                  >
+                    <Select.Item
+                      label='Sales'
+                      value='Sales'
+                    />
 
-                  <Select.Item
-                    label='Maintenance'
-                    value='Maintenance'
+                    <Select.Item
+                      label='Maintenance'
+                      value='Maintenance'
+                    />
+                    <Select.Item
+                      label='Shopping Cart'
+                      value='Shopping Cart'
+                    />
+                  </Select>
+                </View>
+                <OnPressContainer onPress={() => handleOpenDynamicSelection('Currency', 'currency', urlCurrency)}>
+                  <StyledTextField
+                    // isRequired
+                    caretHidden
+                    value={ctmState2.currency}
+                    label={'Currency'}
+                    name={'currency'}
+                    showSoftInputOnFocus={false}
                   />
-                  <Select.Item
-                    label='Shopping Cart'
-                    value='Shopping Cart'
-                  />
-                </Select>
-              </View>
-              <OnPressContainer onPress={() => handleOpenDynamicSelection('Currency', 'currency', urlCurrency)}>
-                <StyledTextField
-                  // isRequired
-                  caretHidden
-                  value={ctmState2.currency}
-                  label={'Currency'}
-                  name={'currency'}
-                  showSoftInputOnFocus={false}
-                />
-              </OnPressContainer>
-              {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
-              {/* tc_name: null,
+                </OnPressContainer>
+                {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
+                {/* tc_name: null,
               <OnPressContainer
                 onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
               > */}
 
-              {/* </OnPressContainer> */}
-              <OnPressContainer
-                onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
-              >
-                <StyledTextField
-                  // isRequired
-                  caretHidden
-                  value={ctmState2.selling_price_list}
-                  label={'Price List'}
-                  name={'default_price_list'}
-                  showSoftInputOnFocus={false}
-                />
-              </OnPressContainer>
-              <OnPressContainer
-                onPress={() =>
-                  handleOpenDynamicSelection('Price List', 'payment_terms_template', urlPaymentTermTemplate)
-                }
-              >
-                <StyledTextField
-                  // isRequired
-                  caretHidden
-                  value={ctmState2.payment_terms_template}
-                  label={'Price Payment Terms Template'}
-                  // name={'default_price_list'}
-                  showSoftInputOnFocus={false}
-                />
-              </OnPressContainer>
-              <OnPressContainer
-                onPress={() => handleOpenDynamicSelection('Terms & Conditions', 'tc_name', urlTermAndConditions)}
-              >
-                <StyledTextField
-                  // isRequired
-                  caretHidden
-                  value={ctmState2.tc_name}
-                  label={'Terms & Conditions'}
-                  // name={'default_price_list'}
-                  showSoftInputOnFocus={false}
-                />
-              </OnPressContainer>
-            </HStack>
+                {/* </OnPressContainer> */}
+                <OnPressContainer
+                  onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
+                >
+                  <StyledTextField
+                    // isRequired
+                    caretHidden
+                    value={ctmState2.selling_price_list}
+                    label={'Price List'}
+                    name={'default_price_list'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
+                <OnPressContainer
+                  onPress={() =>
+                    handleOpenDynamicSelection('Price List', 'payment_terms_template', urlPaymentTermTemplate)
+                  }
+                >
+                  <StyledTextField
+                    // isRequired
+                    caretHidden
+                    value={ctmState2.payment_terms_template}
+                    label={'Price Payment Terms Template'}
+                    // name={'default_price_list'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
+                <OnPressContainer
+                  onPress={() => handleOpenDynamicSelection('Terms & Conditions', 'tc_name', urlTermAndConditions)}
+                >
+                  <StyledTextField
+                    // isRequired
+                    caretHidden
+                    value={ctmState2.tc_name}
+                    label={'Terms & Conditions'}
+                    // name={'default_price_list'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
+              </VStack>
+            </VStack>
           </ScrollView>
         </VStack>
       </React.Fragment>
@@ -1156,12 +1156,13 @@ function AddNewQuotation({ navigation }) {
     }, [scanned]);
 
     useMemo(() => {
-      console.log(items);
+      // console.log(items);
       // console.log('testssss:', items.items);
       if (items?.items !== null) {
         const updateState = Object.values(items?.items).map((data, index) => {
           const temp = { ...items.items };
-          temp[index].amount = (parseFloat(temp[index].qty) * parseFloat(temp[index].rate)).toFixed(2);
+          console.log('temp', temp);
+          temp[index].amount = (parseFloat(temp[index]?.qty) * parseFloat(temp[index]?.rate)).toFixed(2);
           return temp;
         });
         // console.log('Add Amount', ...updateState);
@@ -1274,18 +1275,25 @@ function AddNewQuotation({ navigation }) {
                               const cloneState = Object.values(stateWithAmount).find(
                                 (ele) => ele.item_code !== data.item_code
                               );
+                              console.log('cloneState', cloneState);
+                              // const ModiState = cloneState
+                              //   ? Object.values(cloneState).map((d, i) => {
+                              //       return { [i]: { item_code: d.item_code, qty: d.qty, rate: d.rate } };
+                              //     })
+                              //   : null;
 
-                              if (cloneState !== undefined) {
-                                setStateWithAmount([cloneState]);
-                                setItems((pre) => ({ ...pre, items: cloneState }));
+                              ModiState = Object.values([cloneState]);
+
+                              // console.log('ModiState.', { ...ModiState });
+                              // console.log('ModiState[0]', ModiState[0]);
+                              if (ModiState[0] !== undefined) {
+                                setStateWithAmount(ModiState);
+                                setItems((pre) => ({ ...pre, items: { ...ModiState } }));
                               } else {
                                 setState((pre) => ({ ...pre, items: null }));
                                 setStateWithAmount({ items: null });
-
                                 setItems({ items: null });
                               }
-                              // console.log('find', [cloneState]);
-                              // console.log('state', stateWithAmount);
                             }
                           }}
                         >
