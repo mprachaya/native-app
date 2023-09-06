@@ -837,6 +837,7 @@ function AddNewQuotation({ navigation }) {
                     <FormControl.Label>Order Type</FormControl.Label>
                   </FormControl>
                   <Select
+                    isDisabled
                     dropdownIcon={true}
                     selectedValue={ctmState2.order_type}
                     w={{ base: 'full', lg: 400 }}

@@ -88,7 +88,7 @@ function DetailsPage({ route, navigation }) {
     }
     const newData = mapProperties(data);
     // console.log('newData', newData);
-    navigation.replace('UpdateQuotation', { name: data.name, preState: newData });
+    navigation.replace('UpdateQuotation', { name: data.name, preState: newData, amend: 0 });
   };
 
   const BackButton = () => (
@@ -300,6 +300,29 @@ function DetailsPage({ route, navigation }) {
         { cancelable: false } // Prevents users from dismissing the alert by tapping outside of it
       );
     } else if (status === 'Cancelled') {
+      function mapProperties(inputObject) {
+        return {
+          doctype: inputObject.doctype,
+          quotation_to: inputObject.quotation_to,
+          party_name: inputObject.party_name,
+          customer_address: inputObject.customer_address || '',
+          order_type: inputObject.order_type,
+          contact_person: inputObject.contact_person || '',
+          company: inputObject.company,
+          transaction_date: inputObject.transaction_date,
+          valid_till: inputObject.valid_till,
+          currency: inputObject.currency,
+          selling_price_list: inputObject.selling_price_list || '',
+          payment_terms_template: inputObject.payment_terms_template || '',
+          tc_name: inputObject.tc_name || '',
+          items: Object.values(inputObject.items).map((it) => {
+            return { item_code: it.item_code, rate: it.rate, qty: it.qty };
+          }),
+        };
+        // return { doctype: inputObject.doctype };
+      }
+      const newData = mapProperties(data);
+      navigation.replace('UpdateQuotation', { name: data.name, preState: newData, amend: 1 });
     } else if (status === 'Expired') {
     } else if (status === 'Ordered') {
     } else if (state === 'Expired') {
@@ -310,11 +333,9 @@ function DetailsPage({ route, navigation }) {
     switch (status) {
       case 'Draft':
         console.log('status Draft =', status);
-        UpdateStatus(status);
         break;
       case 'Open':
         console.log('status Open =', status);
-        UpdateStatus(status);
         break;
       case 'Ordered':
         console.log('status Ordered =', status);
@@ -323,6 +344,7 @@ function DetailsPage({ route, navigation }) {
         console.log('status Cancelled =', status);
         // do add new with old states
         break;
+
       case 'Expired':
         console.log('status Expired =', status);
         break;
@@ -330,6 +352,7 @@ function DetailsPage({ route, navigation }) {
       //   // Handle other cases or set a default color
       //   break;
     }
+    UpdateStatus(status);
   };
   const handleShowItemDetails = (data) => {
     navigation.navigate('QuotationItemsDetails', {

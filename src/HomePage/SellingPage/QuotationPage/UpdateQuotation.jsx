@@ -77,7 +77,7 @@ const StyledTextField = (props) => {
 };
 // main component
 function UpdateQuotation({ route, navigation, handleClose }) {
-  const { name, preState } = route.params;
+  const { name, preState, amend } = route.params;
   // page name display
   const title = 'Add New Quotation';
   // navigate step state
@@ -798,6 +798,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                     <FormControl.Label>Order Type</FormControl.Label>
                   </FormControl>
                   <Select
+                    isDisabled
                     dropdownIcon={true}
                     selectedValue={ctmState2.order_type}
                     w={{ base: 'full', lg: 400 }}
@@ -931,16 +932,39 @@ function UpdateQuotation({ route, navigation, handleClose }) {
         cloneState.items = Object.values(stateNoAmount);
         console.log(cloneState);
         console.log(urlSubmit);
-        axios
-          .put(urlSubmit + '/' + name, cloneState)
-          .then((response) => console.log('Response:', response.data))
-          .catch((err) => {
-            console.log('An error occurred. Awkward.. : ', err.message);
-            // alert('Status Error: ' + err);
-          })
-          .finally(() => {
-            setStepState(4);
-          });
+        // when status === amend
+        if (amend === 1) {
+          axios
+            .delete(`${urlSubmit}/${name}`)
+            .then((response) => {
+              console.log('Quotation deleted successfully:', response.data);
+            })
+            .catch((error) => {
+              console.error('Error deleting quotation:', error);
+            });
+          axios
+            .post(urlSubmit, cloneState)
+            .then((response) => console.log('Insert Amend!:', response.data))
+            .catch((err) => {
+              console.log('An error occurred. Awkward.. : ', err.message);
+              // alert('Status Error: ' + err);
+            })
+            .finally(() => {
+              setStepState(4);
+            });
+        } else {
+          // normal update
+          axios
+            .put(urlSubmit + '/' + name, cloneState)
+            .then((response) => console.log('Update Normal!:', response.data))
+            .catch((err) => {
+              console.log('An error occurred. Awkward.. : ', err.message);
+              // alert('Status Error: ' + err);
+            })
+            .finally(() => {
+              setStepState(4);
+            });
+        }
       }
     };
 
