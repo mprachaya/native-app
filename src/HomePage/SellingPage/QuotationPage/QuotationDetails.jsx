@@ -65,7 +65,30 @@ function DetailsPage({ route, navigation }) {
   };
 
   const handleOpenUpdate = () => {
-    navigation.replace('UpdateCustomer', { name: data.name, preState: data });
+    function mapProperties(inputObject) {
+      return {
+        doctype: inputObject.doctype,
+        quotation_to: inputObject.quotation_to,
+        party_name: inputObject.party_name,
+        customer_address: inputObject.customer_address || '',
+        order_type: inputObject.order_type,
+        contact_person: inputObject.contact_person || '',
+        company: inputObject.company,
+        transaction_date: inputObject.transaction_date,
+        valid_till: inputObject.valid_till,
+        currency: inputObject.currency,
+        selling_price_list: inputObject.selling_price_list || '',
+        payment_terms_template: inputObject.payment_terms_template || '',
+        tc_name: inputObject.tc_name || '',
+        items: Object.values(inputObject.items).map((it) => {
+          return { item_code: it.item_code, rate: it.rate, qty: it.qty };
+        }),
+      };
+      // return { doctype: inputObject.doctype };
+    }
+    const newData = mapProperties(data);
+    // console.log('newData', newData);
+    navigation.replace('UpdateQuotation', { name: data.name, preState: newData });
   };
 
   const BackButton = () => (
@@ -339,7 +362,7 @@ function DetailsPage({ route, navigation }) {
           </HStack>
           <HStack h={10}>
             <StatusButton status={data?.status} />
-            <EditButton />
+            {data?.status === 'Draft' && <EditButton />}
           </HStack>
         </HStack>
         <ScrollView w={'full'}>

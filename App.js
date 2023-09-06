@@ -28,6 +28,7 @@ import FilterQuotation from './src/HomePage/SellingPage/QuotationPage/FilterQuot
 import QuotationDetails from './src/HomePage/SellingPage/QuotationPage/QuotationDetails';
 import QuotationItemDetails from './src/HomePage/SellingPage/QuotationPage/ItemDetails';
 import AddNewQuotation from './src/HomePage/SellingPage/QuotationPage/AddNewQuotation';
+import UpdateQuotation from './src/HomePage/SellingPage/QuotationPage/UpdateQuotation';
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
@@ -276,6 +277,20 @@ export default function App() {
                   header: () => (
                     <NavHeader
                       pageName={'Add New Quotation'}
+                      noHeader={true}
+                    />
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name='UpdateQuotation'
+                component={UpdateQuotation}
+                options={{
+                  title: '',
+                  headerShadowVisible: true,
+                  header: () => (
+                    <NavHeader
+                      pageName={'Edit Quotation'}
                       noHeader={true}
                     />
                   ),
