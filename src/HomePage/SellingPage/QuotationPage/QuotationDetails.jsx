@@ -20,7 +20,7 @@ import { Loading } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
 import useUpdate from '../../../../hooks/useUpdate';
 import useConfig from '../../../../config/path';
-import { Pressable } from 'react-native';
+import { Alert, Pressable } from 'react-native';
 import Animated from 'react-native-reanimated';
 import axios from 'axios';
 
@@ -215,29 +215,67 @@ function DetailsPage({ route, navigation }) {
     const urlUpdateStatus = baseURL + QUOTATION + '/' + data.name;
     // console.log(urlUpdateStatus);
     if (status === 'Draft') {
-      axios
-        .put(urlUpdateStatus, { docstatus: 1 })
-        .then((response) => response.data)
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log('An error occurred. Awkward.. : ', err);
-          alert('Status Error: ' + err);
-        })
-        .finally(() => {});
+      Alert.alert(
+        'Confirm Submit',
+        `Permanently Submit \n${data.name}?`,
+        [
+          {
+            text: 'Confirm',
+            onPress: () => {
+              axios
+                .put(urlUpdateStatus, { docstatus: 1 })
+                .then((response) => response.data)
+                .then((res) => {
+                  // console.log(res.data);
+                })
+                .catch((err) => {
+                  console.log('An error occurred. Awkward.. : ', err);
+                  alert('Status Error: ' + err);
+                })
+                .finally(() => {
+                  navigation.replace('QuotationDetails', { name: data.name });
+                });
+            },
+          },
+          {
+            text: 'Cancel',
+            // onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel', // This makes the button appear differently (e.g., grayed out)
+          },
+        ],
+        { cancelable: false } // Prevents users from dismissing the alert by tapping outside of it
+      );
     } else if (status === 'Open') {
-      axios
-        .put(urlUpdateStatus, { docstatus: 2 })
-        .then((response) => response.data)
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log('An error occurred. Awkward.. : ', err);
-          alert('Status Error: ' + err);
-        })
-        .finally(() => {});
+      Alert.alert(
+        'Confirm Cancel',
+        `Permanently Cancel \n${data.name}?`,
+        [
+          {
+            text: 'Confirm',
+            onPress: () => {
+              axios
+                .put(urlUpdateStatus, { docstatus: 2 })
+                .then((response) => response.data)
+                .then((res) => {
+                  // console.log(res.data);
+                })
+                .catch((err) => {
+                  console.log('An error occurred. Awkward.. : ', err);
+                  alert('Status Error: ' + err);
+                })
+                .finally(() => {
+                  navigation.replace('QuotationDetails', { name: data.name });
+                });
+            },
+          },
+          {
+            text: 'Cancel',
+            // onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel', // This makes the button appear differently (e.g., grayed out)
+          },
+        ],
+        { cancelable: false } // Prevents users from dismissing the alert by tapping outside of it
+      );
     } else if (status === 'Cancelled') {
     } else if (status === 'Expired') {
     } else if (status === 'Ordered') {
