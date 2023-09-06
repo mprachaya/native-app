@@ -97,7 +97,7 @@ function AddNewQuotation({ navigation }) {
     contact_person: '',
     transaction_date: '',
     valid_till: '',
-    company: 'VSiam Co., Ltd.',
+    company: '',
     order_type: 'Sales',
     currency: 'THB',
     selling_price_list: 'Standard Selling',
@@ -125,6 +125,7 @@ function AddNewQuotation({ navigation }) {
     TERMS_AND_CONDITIONS,
     ITEM_QRCODE,
     QUOTATION,
+    COMPANY,
   } = useConfig(true);
   const urlCurrency = baseURL + CURRENCY;
   const urlPriceList = baseURL + PRICE_LIST;
@@ -132,6 +133,7 @@ function AddNewQuotation({ navigation }) {
   const urlTermAndConditions = baseURL + TERMS_AND_CONDITIONS;
   const urlItemQRCode = baseURL + ITEM_QRCODE;
   const urlSubmit = baseURL + QUOTATION;
+  const urlCompany = baseURL + COMPANY;
 
   const urlCustomer = baseURL + CUSTOMER;
   const urlLead = baseURL + LEAD;
@@ -179,8 +181,9 @@ function AddNewQuotation({ navigation }) {
     var filterAddress = `?filters=[["address_title","=","${customer?.name}"]]&fields=["*"]`;
     var filterContact = `?fields=["*"]&filters=[["Dynamic Link","link_name", "=", "${customer?.name}"]]`;
     // start for required validation
-    const [requiredState] = useState(['party_name']);
+    const [requiredState] = useState(['company', 'party_name']);
     const [nullState, setNullState] = useState({
+      company: false,
       party_name: false,
     });
 
@@ -461,6 +464,15 @@ function AddNewQuotation({ navigation }) {
         >
           <ScrollView>
             <VStack h={{ base: 700, lg: 1400 }}>
+              <OnPressContainer onPress={() => handleOpenDynamicSelection('Company', 'company', urlCompany)}>
+                <StyledTextField
+                  caretHidden
+                  isRequired={nullState.company}
+                  label={'Company*'}
+                  value={ctmState.company}
+                  showSoftInputOnFocus={false} // disable toggle keyboard
+                />
+              </OnPressContainer>
               <HStack
                 w={'container'}
                 space={2}
