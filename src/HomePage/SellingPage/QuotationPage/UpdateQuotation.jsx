@@ -1030,35 +1030,6 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     // }, [stepState]);
     const [stateWithAmount, setStateWithAmount] = useState({ items: null });
 
-    const urlGetItemsQuotation =
-      'https://tonen.vsiam.com/api/method/frappe.quotation.oneitem?quotation_name=SAL-QTN-2023-00002';
-
-    const urlPutItems = 'https://tonen.vsiam.com/api/resource/Quotation/SAL-QTN-2023-00002';
-
-    // const handleSubmit = () => {
-    //   // prepare object delete amount of items
-    //   const cloneState = { ...items };
-    //   Object.values(cloneState.items)?.map((element) => {
-    //     delete element.amount;
-    //   });
-    //   if (cloneState.items.length === 0 && state.items.length === 0) {
-    //     alert('At least one Item must be selected.');
-    //     // () => navigation.replace('TestQRScanner');
-    //   } else {
-    //     useUpdate(
-    //       {
-    //         headers: {
-    //           Authorization: '',
-    //         },
-    //       },
-    //       urlPutItems,
-    //       cloneState,
-    //       () => navigation.replace('TestQRScanner'),
-    //       () => void 0
-    //     );
-    //   }
-    // };
-
     const AskCameraPermission = () =>
       Alert.alert('Ask for Permission', '"ERP Next" Would Like to Access the Camera', [
         {
@@ -1127,21 +1098,6 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     };
     useMemo(() => {
       getBarCodeScannerPermissions();
-      // axios
-      //   .get(urlGetItemsQuotation, {
-      //     headers: {
-      //       Authorization: '',
-      //     },
-      //   })
-      //   .then((response) => {
-      //     // console.log(response.data.message.data);
-      //     // setItems(response.data.message.data);
-      //     setItems((pre) => ({ ...pre, items: response.data.message.data }));
-      //     // setItemLength(response.data.message.data.length);
-      //   })
-      //   .catch((error) => {
-      //     alert(error);
-      //   });
     }, []);
 
     useMemo(() => {
@@ -1153,8 +1109,6 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     }, [scanned]);
 
     useMemo(() => {
-      // console.log(items);
-      // console.log('testssss:', items.items);
       if (items?.items !== null) {
         const updateState = Object.values(items?.items).map((data, index) => {
           const temp = { ...items.items };
@@ -1172,10 +1126,6 @@ function UpdateQuotation({ route, navigation, handleClose }) {
         setStateWithAmount(items);
       }
     }, [items]);
-
-    // React.useEffect(() => {
-    //   console.log('State With Amount', stateWithAmount);
-    // }, [stateWithAmount]);
 
     return (
       <React.Fragment>
@@ -1232,6 +1182,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                 {items.items !== null &&
                   Object.values(stateWithAmount)?.map((data, index) => (
                     <VStack
+                      key={data?.name}
                       bg={COLORS.white}
                       rounded={20}
                       space={2}
