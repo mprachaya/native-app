@@ -276,7 +276,12 @@ function QuotationPage({ route }) {
               ml={{ base: 6, lg: 0 }}
               rounded={12}
               variant={'unstyled'}
-              onPress={() => navigation.goBack()}
+              onPress={() => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Selling' }],
+                });
+              }}
               _pressed={{ bg: 'blueGray.200' }}
             >
               <ChevronLeftIcon />

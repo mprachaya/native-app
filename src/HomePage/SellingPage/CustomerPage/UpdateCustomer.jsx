@@ -237,7 +237,7 @@ function UpdateCustomer({ route, navigation, handleClose }) {
         rounded={'lg'}
         variant={'unstyled'}
         _pressed={{ bg: 'blueGray.200' }}
-        _pressed={{ background: COLORS.white }}
+        // _pressed={{ background: COLORS.white }}
         _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
         onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
       >

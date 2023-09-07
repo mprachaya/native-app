@@ -28,6 +28,9 @@ export default function useConfig(trigger) {
   // ?doctype=${docType}&name=${name}&format=${format}`
   // ex. const docType = 'Quotation'; const name = 'SAL-QTN-2023-00001'; const format = 'test-qt';
 
+  const PRINT_FORMAT_DOCTYPE = '/api/resource/Print Format';
+  // ?filters=[["doc_type","=","${doctype}"]]
+
   const getBaseURL = () => {
     getData('URL').then((value) => setBaseURL('https://' + value));
   };
@@ -60,5 +63,6 @@ export default function useConfig(trigger) {
     PAYMENT_TERMS_TEMPLATES,
     ITEM_QRCODE,
     DOCTYPE_EXPORT,
+    PRINT_FORMAT_DOCTYPE,
   };
 }

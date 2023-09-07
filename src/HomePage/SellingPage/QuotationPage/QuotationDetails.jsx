@@ -104,7 +104,7 @@ function DetailsPage({ route, navigation }) {
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => {
         // handleClose();
-        navigation.pop();
+        // navigation.pop();
         navigation.replace(title, { filterData: [] });
       }}
     >
