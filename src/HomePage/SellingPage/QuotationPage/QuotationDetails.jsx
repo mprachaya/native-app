@@ -153,6 +153,31 @@ function DetailsPage({ route, navigation }) {
       </Text>
     </Button>
   );
+  const CreateSalesOrderButton = () => (
+    <Button
+      mr={2}
+      px={3.5}
+      rounded={'xl'}
+      variant={'outline'}
+      background={COLORS.lightWhite}
+      _pressed={{ background: COLORS.white }}
+      _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
+      onPress={() => setOpenPrint(true)}
+      // onPress={() => handleOpenUpdate()}
+      // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
+    >
+      <Text
+        textAlign='left'
+        maxWidth={24}
+        fontWeight={'bold'}
+        fontSize={'sm'}
+        letterSpacing={1}
+        color={'blue.400'}
+      >
+        Create
+      </Text>
+    </Button>
+  );
   const StatusButton = ({ status }) => (
     <Button
       mr={2}
@@ -413,6 +438,7 @@ function DetailsPage({ route, navigation }) {
             <BackButton />
           </HStack>
           <HStack h={10}>
+            {data?.status === 'Open' && <CreateSalesOrderButton />}
             <StatusButton status={data?.status} />
             <PrintAndExport />
             {data?.status === 'Draft' && <EditButton />}

@@ -212,7 +212,7 @@ function ExportPDF({ open, handleClose, docType, name }) {
                     >
                       {Object.values(formatList)?.map((format) => (
                         <Select.Item
-                          label={format.name}
+                          label={'Format :' + format.name}
                           value={format.name}
                         />
                       ))}
@@ -265,7 +265,7 @@ function ExportPDF({ open, handleClose, docType, name }) {
                   >
                     {Object.values(formatList)?.map((format) => (
                       <Select.Item
-                        label={format.name}
+                        label={'Format : ' + format.name}
                         value={format.name}
                       />
                     ))}
