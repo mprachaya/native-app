@@ -32,6 +32,7 @@ import UpdateQuotation from './src/HomePage/SellingPage/QuotationPage/UpdateQuot
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
+import ExportPDF from './_test/ExportPDF';
 
 // import QuotationExportPDF from './_test/QuotationExportPDF';
 
@@ -297,6 +298,21 @@ export default function App() {
                 }}
               />
             </Stack.Group>
+
+            <Stack.Screen
+              name='ExportPDF'
+              component={ExportPDF}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'EXPORT DOCTYPE'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
           </Stack.Navigator>
         </Store>
       </NavigationContainer>

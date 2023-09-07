@@ -116,9 +116,11 @@ function LoginFrappeURL({ navigation }) {
             bg={COLORS.primary}
             _text={{ fontSize: 'lg', fontWeight: 'bold', letterSpacing: 0.5 }}
             _pressed={{ bg: COLORS.secondary }}
-            onPress={() => authenticate(state.url, state.usr, state.pwd, () => navigation.replace('TestQRScanner'))}
+            onPress={() =>
+              authenticate(state.url, state.usr, state.pwd, () => navigation.replace('Quotation', { filterData: [] }))
+            }
           >
-            {'Login -> scan add item'}
+            {'Login -> Quotation'}
           </Button>
         </FormControl>
       </VStack>

@@ -13,17 +13,18 @@ import {
   VStack,
   View,
 } from 'native-base';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { COLORS } from '../../../../constants/theme';
-import { Edit } from '../../../../constants/icons';
+import { Edit, SaleInvoice } from '../../../../constants/icons';
 import { Loading } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
 import useUpdate from '../../../../hooks/useUpdate';
 import useConfig from '../../../../config/path';
-import { Alert, Pressable } from 'react-native';
+import { Alert, ImageBackground, Pressable } from 'react-native';
 import Animated from 'react-native-reanimated';
 import axios from 'axios';
-
+import ExportPDF from '../../../../_test/ExportPDF';
+// import Export from '../../../../assets/icons/export.png';
 // wrap components
 const ContainerStyled = (props) => {
   return (
@@ -47,6 +48,7 @@ function DetailsPage({ route, navigation }) {
       // Authorization: config.API_TOKEN,
     },
   });
+  const [openPrint, setOpenPrint] = useState(false);
   const handleDisable = () => {
     const tempState = { ...data };
     tempState.disabled = !tempState.disabled;
@@ -94,8 +96,8 @@ function DetailsPage({ route, navigation }) {
   const BackButton = () => (
     <Button
       m={2}
-      w={'16'}
-      rounded={'xs'}
+      px={2}
+      rounded={'lg'}
       variant={'unstyled'}
       background={COLORS.lightWhite}
       _pressed={{ background: COLORS.white }}
@@ -111,9 +113,11 @@ function DetailsPage({ route, navigation }) {
   );
   const EditButton = () => (
     <Button
+      ml={3}
       mr={2}
-      w={'16'}
-      rounded={'xs'}
+      px={2}
+      justifyContent={'center'}
+      rounded={'lg'}
       variant={'unstyled'}
       background={COLORS.lightWhite}
       _pressed={{ background: COLORS.white }}
@@ -122,6 +126,31 @@ function DetailsPage({ route, navigation }) {
       // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
     >
       <Edit color={COLORS.primary} />
+    </Button>
+  );
+  const PrintAndExport = () => (
+    <Button
+      mr={0}
+      px={3.5}
+      rounded={'xl'}
+      variant={'outline'}
+      background={COLORS.lightWhite}
+      _pressed={{ background: COLORS.white }}
+      _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
+      onPress={() => setOpenPrint(true)}
+      // onPress={() => handleOpenUpdate()}
+      // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
+    >
+      <Text
+        textAlign='left'
+        maxWidth={24}
+        fontWeight={'bold'}
+        fontSize={'sm'}
+        letterSpacing={1}
+        color={COLORS.tertiary2}
+      >
+        Export
+      </Text>
     </Button>
   );
   const StatusButton = ({ status }) => (
@@ -385,12 +414,14 @@ function DetailsPage({ route, navigation }) {
           </HStack>
           <HStack h={10}>
             <StatusButton status={data?.status} />
+            <PrintAndExport />
             {data?.status === 'Draft' && <EditButton />}
           </HStack>
         </HStack>
         <ScrollView w={'full'}>
           <VStack
             m={2}
+            mt={6}
             mb={24}
             // h={heightScrollView}
 
@@ -930,6 +961,13 @@ function DetailsPage({ route, navigation }) {
             </VStack>
           </VStack>
         </ScrollView>
+        <ExportPDF
+          open={openPrint}
+          handleClose={() => setOpenPrint(false)}
+          docType={'Quotation'}
+          name={name}
+          format={'test-qt'}
+        />
       </Center>
     </ContainerStyled>
   );

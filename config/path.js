@@ -24,6 +24,10 @@ export default function useConfig(trigger) {
   const TERMS_AND_CONDITIONS = '/api/resource/Terms and Conditions';
   const ITEM_QRCODE = '/api/resource/Item';
 
+  const DOCTYPE_EXPORT = '/api/method/frappe.utils.print_format.download_pdf';
+  // ?doctype=${docType}&name=${name}&format=${format}`
+  // ex. const docType = 'Quotation'; const name = 'SAL-QTN-2023-00001'; const format = 'test-qt';
+
   const getBaseURL = () => {
     getData('URL').then((value) => setBaseURL('https://' + value));
   };
@@ -55,5 +59,6 @@ export default function useConfig(trigger) {
     TERMS_AND_CONDITIONS,
     PAYMENT_TERMS_TEMPLATES,
     ITEM_QRCODE,
+    DOCTYPE_EXPORT,
   };
 }
