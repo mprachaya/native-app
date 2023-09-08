@@ -33,6 +33,8 @@ import UpdateQuotation from './src/HomePage/SellingPage/QuotationPage/UpdateQuot
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
 import ExportPDF from './_test/ExportPDF';
+import SalesOrderPage from './src/HomePage/SellingPage/SalesOrderPage';
+import AddNewSalesOrder from './src/HomePage/SellingPage/SalesOrderPage/AddNewSalesOrder';
 
 // import QuotationExportPDF from './_test/QuotationExportPDF';
 
@@ -74,7 +76,6 @@ export default function App() {
                 header: () => '',
               }}
             />
-
             <Stack.Screen
               name='Home'
               component={HomePage}
@@ -298,7 +299,6 @@ export default function App() {
                 }}
               />
             </Stack.Group>
-
             <Stack.Screen
               name='ExportPDF'
               component={ExportPDF}
@@ -308,6 +308,35 @@ export default function App() {
                 header: () => (
                   <NavHeader
                     pageName={'EXPORT DOCTYPE'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            {/* SalesOrder Page */}
+            <Stack.Screen
+              name='SalesOrder'
+              component={SalesOrderPage}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Sales Order'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='AddNewSalesOrder'
+              component={AddNewSalesOrder}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Create New Sales Order'}
                     noHeader={true}
                   />
                 ),

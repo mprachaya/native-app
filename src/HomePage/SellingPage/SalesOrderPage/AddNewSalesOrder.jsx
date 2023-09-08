@@ -75,13 +75,15 @@ const StyledTextField = (props) => {
   );
 };
 // main component
-function AddNewQuotation({ navigation }) {
+function AddNewSalesOrder({ navigation, route }) {
   // page name display
   const title = 'Add New Quotation';
   // navigate step state
   const [stepState, setStepState] = useState(1);
   // max of steps
   const maxStep = 3;
+
+  const { QuotationState } = route.params;
 
   // state for show / hide selection (dynamically)
   const [openSelection, setOpenSelection] = useState(false);
@@ -90,16 +92,16 @@ function AddNewQuotation({ navigation }) {
 
   // initial state
   const initialState = {
-    doctype: 'Quotation',
-    quotation_to: 'Customer',
-    party_name: '',
-    customer_address: '',
+    doctype: 'Sales Order',
+    customer: '',
+    order_type: '',
     contact_person: '',
     transaction_date: '',
-    valid_till: '',
+    delivery_date: '',
     company: '',
     order_type: 'Sales',
     currency: 'THB',
+    set_warehouse: '',
     selling_price_list: 'Standard Selling',
     payment_terms_template: '',
     tc_name: '',
@@ -108,7 +110,6 @@ function AddNewQuotation({ navigation }) {
 
   // main state
   const [state, setState] = useState(initialState);
-  // for sum amount
   // for handle selection title (dynamic)
   const [titleSelection, setTitleSelection] = useState('');
   // for handle dynamic url selection
@@ -144,7 +145,7 @@ function AddNewQuotation({ navigation }) {
   const [propertySelected, setPropertySelected] = useState('');
 
   //option selection with static option
-  const customerTypes = [{ name: 'Company' }, { name: 'Individual' }];
+  // const customerTypes = [{ name: 'Company' }, { name: 'Individual' }];
 
   // const handleSubmit = (state) => {
   //   setState((pre) => ({ ...pre, items: state }));
@@ -182,10 +183,10 @@ function AddNewQuotation({ navigation }) {
     var filterAddress = `?filters=[["address_title","=","${customer?.name}"]]&fields=["*"]`;
     var filterContact = `?fields=["*"]&filters=[["Dynamic Link","link_name", "=", "${customer?.name}"]]`;
     // start for required validation
-    const [requiredState] = useState(['company', 'party_name']);
+    const [requiredState] = useState(['company', 'customer']);
     const [nullState, setNullState] = useState({
       company: false,
-      party_name: false,
+      customer: false,
     });
 
     // date now for android
@@ -266,10 +267,10 @@ function AddNewQuotation({ navigation }) {
       if (mm < 10) mm = '0' + mm;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
         return;
       } else {
-        setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
       }
     };
 
@@ -384,13 +385,9 @@ function AddNewQuotation({ navigation }) {
     );
 
     useMemo(() => {
-      if (ctmState.party_name !== undefined && ctmState.party_name !== '') {
+      if (ctmState.customer !== undefined) {
         axios
-          .get(
-            ctmState.quotation_to === 'Customer'
-              ? urlCustomer + '/' + ctmState.party_name
-              : urlLead + '/' + ctmState.party_name
-          )
+          .get(urlCustomer + '/' + ctmState.customer)
           .then((response) => response.data)
           .then((res) => {
             // console.log(res.data);
@@ -474,100 +471,38 @@ function AddNewQuotation({ navigation }) {
                   showSoftInputOnFocus={false} // disable toggle keyboard
                 />
               </OnPressContainer>
-              <HStack
-                w={'container'}
-                space={2}
-                direction={{ base: 'column', lg: 'row' }}
-              >
-                {/* quotation to  */}
-                <View>
-                  <FormControl justifyContent={'center'}>
-                    <FormControl.Label>Quotation To</FormControl.Label>
-                  </FormControl>
-                  <Select
-                    dropdownIcon={true}
-                    selectedValue={ctmState.quotation_to}
-                    w={{ base: 'full', lg: 400 }}
-                    fontSize={18}
-                    borderWidth={2}
-                    borderColor={'gray.200'}
-                    accessibilityLabel='Quotation To'
-                    placeholder='Choose Quotation To'
-                    _selectedItem={{
-                      bg: 'blueGray.200',
-                      endIcon: <CheckIcon color={'blueGray.400'} />,
-                    }}
-                    onValueChange={(itemValue) => {
-                      setCtmState((pre) => ({
-                        ...pre,
-                        quotation_to: itemValue,
-                        party_name: '',
-                        customer_address: '',
-                        contact_person: '',
-                      }));
-                      setCustomer({});
-                    }}
-                  >
-                    <Select.Item
-                      label='Lead'
-                      value='Lead'
-                    />
-
-                    <Select.Item
-                      label='Customer'
-                      value='Customer'
-                    />
-                  </Select>
-                </View>
-              </HStack>
               <VStack space={2}>
-                <OnPressContainer
-                  onPress={() =>
-                    handleOpenDynamicSelection(
-                      ctmState.quotation_to === 'Customer' ? 'Customer' : 'Lead',
-                      'party_name',
-                      ctmState.quotation_to === 'Customer' ? urlCustomer : urlLead
-                    )
-                  }
-                >
+                <OnPressContainer onPress={() => handleOpenDynamicSelection('Customer', 'customer', urlCustomer)}>
                   <StyledTextField
                     caretHidden
-                    isRequired={nullState.party_name}
-                    label={ctmState.quotation_to === 'Customer' ? 'Customer*' : 'Lead*'}
-                    value={ctmState.party_name}
+                    isRequired={nullState.customer}
+                    label={'Customer*'}
+                    value={ctmState.customer}
                     showSoftInputOnFocus={false} // disable toggle keyboard
                   />
                 </OnPressContainer>
                 {/* <OnPressContainer onPress={() => handleOpenDynamicSelection('Territory', 'territory', urlTerritory)}> */}
-                {ctmState.quotation_to === 'Customer' ? (
-                  <VStack>
-                    <StyledTextField
-                      caretHidden
-                      isDisabled
-                      label={'Customer Group'}
-                      name={'customer_group'}
-                      value={customer?.customer_group}
-                      showSoftInputOnFocus={false} // disable toggle keyboard
-                    />
 
-                    <StyledTextField
-                      caretHidden
-                      isDisabled
-                      label={'Territory'}
-                      name={'territory'}
-                      value={customer?.territory}
-                      showSoftInputOnFocus={false} // disable toggle keyboard
-                    />
-                  </VStack>
-                ) : (
+                <VStack>
                   <StyledTextField
                     caretHidden
                     isDisabled
-                    label={'Company'}
-                    value={customer?.company_name}
+                    label={'Customer Group'}
+                    name={'customer_group'}
+                    value={customer?.customer_group}
                     showSoftInputOnFocus={false} // disable toggle keyboard
                   />
-                )}
+
+                  <StyledTextField
+                    caretHidden
+                    isDisabled
+                    label={'Territory'}
+                    name={'territory'}
+                    value={customer?.territory}
+                    showSoftInputOnFocus={false} // disable toggle keyboard
+                  />
+                </VStack>
+
                 {/* </OnPressContainer> */}
               </VStack>
               {/* for Android */}
@@ -607,14 +542,24 @@ function AddNewQuotation({ navigation }) {
                     <View w={'container'}>
                       <View alignItems={'start'}>
                         <HStack>
-                          <RNDateTimePicker
-                            display='inline'
-                            // disabled={!checkState}
-                            is24Hour={true}
-                            mode='date'
-                            value={dateIOS}
-                            onChange={onChangeIOSfrom}
-                          />
+                          <View w={'container'}>
+                            <FormControl justifyContent={'center'}>
+                              <FormControl.Label mx={7}>Transaction Date</FormControl.Label>
+                            </FormControl>
+                            <View
+                              mx={12}
+                              alignItems={'start'}
+                            >
+                              <RNDateTimePicker
+                                display='inline'
+                                // disabled={!checkState}
+                                is24Hour={true}
+                                mode='date'
+                                value={dateIOS}
+                                onChange={onChangeIOSfrom}
+                              />
+                            </View>
+                          </View>
                         </HStack>
                       </View>
                     </View>
@@ -622,7 +567,7 @@ function AddNewQuotation({ navigation }) {
                   <HStack justifyContent={'center'}>
                     <View w={'container'}>
                       <FormControl justifyContent={'center'}>
-                        <FormControl.Label mx={7}>To Date</FormControl.Label>
+                        <FormControl.Label mx={7}>Delivery Date</FormControl.Label>
                       </FormControl>
                       <View
                         mx={12}
@@ -641,12 +586,12 @@ function AddNewQuotation({ navigation }) {
                 </React.Fragment>
               )}
 
-              {ctmState.quotation_to === 'Customer' && (
+              {ctmState.customer !== undefined && (
                 <React.Fragment>
                   <OnPressContainer
                     onPress={() => {
-                      ctmState.party_name === ''
-                        ? alert(ctmState.quotation_to === 'Customer' ? 'Please select Customer' : 'Please select Lead')
+                      ctmState.customer === ''
+                        ? alert('Please select Customer')
                         : handleOpenDynamicSelection('Address', 'customer_address', urlAddress + filterAddress);
                     }}
                   >
@@ -1099,15 +1044,6 @@ function AddNewQuotation({ navigation }) {
     //     );
     //   }
     // };
-    function sumAmount(obj) {
-      let totalAmount = 0;
-      for (let key in obj) {
-        if (obj[key] !== null && typeof obj[key] === 'object' && 'amount' in obj[key]) {
-          totalAmount += parseFloat(obj[key].amount);
-        }
-      }
-      return totalAmount.toFixed(2);
-    }
 
     const AskCameraPermission = () =>
       Alert.alert('Ask for Permission', '"ERP Next" Would Like to Access the Camera', [
@@ -1221,10 +1157,6 @@ function AddNewQuotation({ navigation }) {
       } else {
         setStateWithAmount(items);
       }
-      // console.log('stateWithAmount', stateWithAmount);
-      // const sumAmountResult = sumAmount(stateWithAmount);
-      // setTotalAmount(sumAmountResult);
-      // console.log(sumAmount(stateWithAmount));
     }, [items]);
 
     // React.useEffect(() => {
@@ -1254,7 +1186,7 @@ function AddNewQuotation({ navigation }) {
           space={SPACING.small}
           alignItems={'center'}
         >
-          <Text>Item List (Net Total:{sumAmount(stateWithAmount)})</Text>
+          <Text>Item List</Text>
           <View h={500}>
             {scanned && hasPermission && (
               <Modal
@@ -1616,6 +1548,37 @@ function AddNewQuotation({ navigation }) {
       </FadeTransition>
     );
   };
+  useMemo(() => {
+    const reformatQuotationState = () => {
+      function mapProperties(inputObject) {
+        return {
+          doctype: 'Sales Order',
+          customer: inputObject.party_name,
+          customer_address: inputObject.customer_address || '',
+          order_type: inputObject.order_type,
+          contact_person: inputObject.contact_person || '',
+          transaction_date: '',
+          delivery_date: '',
+          company: inputObject.company,
+          currency: inputObject.currency,
+          set_warehouse: '',
+          selling_price_list: inputObject.selling_price_list || '',
+          payment_terms_template: inputObject.payment_terms_template || '',
+          items: Object.values(inputObject.items).map((it) => {
+            return { item_code: it.item_code, rate: it.rate, qty: it.qty };
+          }),
+        };
+        // return { doctype: inputObject.doctype };
+      }
+      const newData = mapProperties(QuotationState);
+      // console.log('newData', newData);
+      setState(newData);
+      console.log(newData);
+    };
+    reformatQuotationState();
+    // console.log('QuotationState :', QuotationState);
+  }, []);
+
   // log when state having changed
   useMemo(() => {
     console.log('state: ', state);
@@ -1683,4 +1646,4 @@ function AddNewQuotation({ navigation }) {
   );
 }
 
-export default AddNewQuotation;
+export default AddNewSalesOrder;
