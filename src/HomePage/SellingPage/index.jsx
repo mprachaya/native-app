@@ -77,6 +77,7 @@ function SellingPage({ navigation }) {
             </HStack>
             <HStack
               w={400}
+              mt={6}
               flexWrap={'wrap'}
               justifyContent={{ base: 'center', lg: 'space-around' }}
             >
@@ -113,6 +114,7 @@ function SellingPage({ navigation }) {
             </HStack>
             <HStack
               w={400}
+              mt={6}
               flexWrap={'wrap'}
               justifyContent={{ base: 'center', lg: 'space-around' }}
             >
@@ -128,7 +130,8 @@ function SellingPage({ navigation }) {
                 }
               />
               <MenuIcon
-                menuLabel={'SaleOrder'}
+                onPress={() => navigation.navigate('SalesOrder', { filterData: [] })}
+                menuLabel={'Sales Order'}
                 Icon={
                   <SaleOrder
                     width={24}
@@ -149,6 +152,7 @@ function SellingPage({ navigation }) {
               />
             </HStack>
             <HStack
+              mt={6}
               w={400}
               space={SPACING.small}
               flexWrap={'wrap'}

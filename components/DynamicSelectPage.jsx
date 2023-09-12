@@ -138,7 +138,7 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property, isRe
     );
   }
 
-  if (error && !option) {
+  if (error) {
     return (
       <ContainerStyled>
         <HStack justifyContent='center'>

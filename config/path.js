@@ -16,13 +16,19 @@ export default function useConfig(trigger) {
   const SALE_PARTNER = '/api/resource/Sales Partner/';
   const PAYMENT_TERM = '/api/resource/Payment Term/';
   const ADDRESS = '/api/resource/Address';
-  const QUOTATIONS = '/api/resource/Quotation?fields=["*"]';
+  const QUOTATIONS = '/api/resource/Quotation?fields=["*"]&limit=500';
   const QUOTATION = '/api/resource/Quotation';
   const LEAD = '/api/resource/Lead';
   const CONTACT = '/api/resource/Contact';
   const PAYMENT_TERMS_TEMPLATES = '/api/resource/Payment Terms Template';
   const TERMS_AND_CONDITIONS = '/api/resource/Terms and Conditions';
   const ITEM_QRCODE = '/api/resource/Item';
+
+  const SALES_ORDERS = '/api/resource/Sales Order?fields=["*"]&limit=500';
+  const SALES_ORDER = '/api/resource/Sales Order';
+  const PROJECT = '/api/resource/Project';
+  const WAREHOUSE = '/api/resource/Warehouse';
+  const SALES_PARTNER = '/api/resource/Sales Partner';
 
   const DOCTYPE_EXPORT = '/api/method/frappe.utils.print_format.download_pdf';
   // ?doctype=${docType}&name=${name}&format=${format}`
@@ -64,5 +70,10 @@ export default function useConfig(trigger) {
     ITEM_QRCODE,
     DOCTYPE_EXPORT,
     PRINT_FORMAT_DOCTYPE,
+    PROJECT,
+    WAREHOUSE,
+    SALES_ORDER,
+    SALES_ORDERS,
+    SALES_PARTNER,
   };
 }

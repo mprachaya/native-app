@@ -7,10 +7,10 @@ import {
   Container,
   DeleteIcon,
   Divider,
-  FlatList,
+  // FlatList,
   FormControl,
   HStack,
-  Image,
+  // Image,
   Input,
   Modal,
   ScrollView,
@@ -31,6 +31,7 @@ import useConfig from '../../../../config/path';
 import axios from 'axios';
 import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { handleChange } from '../../../../hooks/useValidation';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -59,6 +60,7 @@ const StyledTextField = (props) => {
           borderColor={'gray.200'}
           variant={'filled'}
           rounded={6}
+          keyboardType={props.keyboardType}
           placeholder={props.placeholder}
           fontSize={{ base: SIZES.medium || props.baseSize, lg: SIZES.large || props.lgSize }}
           minW={{ base: 'full', lg: 400 }}
@@ -77,7 +79,7 @@ const StyledTextField = (props) => {
 // main component
 function AddNewSalesOrder({ navigation, route }) {
   // page name display
-  const title = 'Add New Quotation';
+  const title = 'SalesOrder';
   // navigate step state
   const [stepState, setStepState] = useState(1);
   // max of steps
@@ -94,17 +96,20 @@ function AddNewSalesOrder({ navigation, route }) {
   const initialState = {
     doctype: 'Sales Order',
     customer: '',
-    order_type: '',
-    contact_person: '',
+    company: '',
     transaction_date: '',
     delivery_date: '',
-    company: '',
+    project: '',
     order_type: 'Sales',
     currency: 'THB',
+    conversion_rate: 1,
+    selling_price_list: '',
     set_warehouse: '',
-    selling_price_list: 'Standard Selling',
+    customer_address: '',
     payment_terms_template: '',
+    contact_person: '',
     tc_name: '',
+    sales_partner: '',
     items: null,
   };
 
@@ -118,7 +123,6 @@ function AddNewSalesOrder({ navigation, route }) {
   const {
     baseURL,
     CUSTOMER,
-    LEAD,
     ADDRESS,
     CONTACT,
     CURRENCY,
@@ -126,41 +130,39 @@ function AddNewSalesOrder({ navigation, route }) {
     PAYMENT_TERMS_TEMPLATES,
     TERMS_AND_CONDITIONS,
     ITEM_QRCODE,
-    QUOTATION,
+    SALES_ORDER,
     COMPANY,
+    PROJECT,
+    WAREHOUSE,
+    SALES_PARTNER,
   } = useConfig(true);
   const urlCurrency = baseURL + CURRENCY;
   const urlPriceList = baseURL + PRICE_LIST;
   const urlPaymentTermTemplate = baseURL + PAYMENT_TERMS_TEMPLATES;
   const urlTermAndConditions = baseURL + TERMS_AND_CONDITIONS;
   const urlItemQRCode = baseURL + ITEM_QRCODE;
-  const urlSubmit = baseURL + QUOTATION;
+  const urlSubmit = baseURL + SALES_ORDER;
   const urlCompany = baseURL + COMPANY;
+  const urlProject = baseURL + PROJECT;
+  const urlWarehouse = baseURL + WAREHOUSE;
+  const urlSalesPartner = baseURL + SALES_PARTNER;
 
   const urlCustomer = baseURL + CUSTOMER;
-  const urlLead = baseURL + LEAD;
+  // const urlLead = baseURL + LEAD;
   const urlAddress = baseURL + ADDRESS;
   const urlContact = baseURL + CONTACT;
   // handle dynamic property for multi selection in page
   const [propertySelected, setPropertySelected] = useState('');
 
-  //option selection with static option
-  // const customerTypes = [{ name: 'Company' }, { name: 'Individual' }];
-
-  // const handleSubmit = (state) => {
-  //   setState((pre) => ({ ...pre, items: state }));
-  //   // useSubmit(
-  //   //   {
-  //   //     headers: {
-  //   //       Authorization: '',
-  //   //     },
-  //   //   },
-  //   //   baseURL + CUSTOMER,
-  //   //   state,
-  //   //   () => void 0,
-  //   //   () => void 0
-  //   // );
-  // };
+  function sumAmount(obj) {
+    let totalAmount = 0;
+    for (let key in obj) {
+      if (obj[key] !== null && typeof obj[key] === 'object' && 'amount' in obj[key]) {
+        totalAmount += parseFloat(obj[key].amount);
+      }
+    }
+    return totalAmount.toFixed(2);
+  }
 
   // handle change property when open selection (dynamic)
   const getValueFromSelection = (name) => {
@@ -215,10 +217,10 @@ function AddNewSalesOrder({ navigation, route }) {
       if (mm < 10) mm = '0' + mm;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
         return;
       }
-      setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+      setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
     };
 
     const showAndoirdDatepickerFrom = () => {
@@ -308,7 +310,7 @@ function AddNewSalesOrder({ navigation, route }) {
     const handleBackFirstPage = () => {
       // handleClose();
       navigation.pop();
-      navigation.replace('Quotation', { filterData: [] });
+      navigation.replace(title, { filterData: [] });
       setState(initialState);
     };
 
@@ -433,7 +435,7 @@ function AddNewSalesOrder({ navigation, route }) {
       if (mm2 < 10) mm = '0' + mm2;
       const formattedNextMonth = yyyy2 + '-' + mm2 + '-' + dd2;
 
-      setCtmState((pre) => ({ ...pre, transaction_date: formattedToday, valid_till: formattedNextMonth }));
+      setCtmState((pre) => ({ ...pre, transaction_date: formattedToday, delivery_date: formattedNextMonth }));
     }, []);
 
     return (
@@ -461,7 +463,7 @@ function AddNewSalesOrder({ navigation, route }) {
           space={SPACING.small}
         >
           <ScrollView>
-            <VStack h={{ base: 700, lg: 1400 }}>
+            <VStack h={1400}>
               <OnPressContainer onPress={() => handleOpenDynamicSelection('Company', 'company', urlCompany)}>
                 <StyledTextField
                   caretHidden
@@ -525,7 +527,7 @@ function AddNewSalesOrder({ navigation, route }) {
                         caretHidden
                         label={'To Date'}
                         placeholder={'Select Valid Date'}
-                        value={ctmState.valid_till}
+                        value={ctmState.delivery_date}
                         showSoftInputOnFocus={false} // disable toggle keyboard
                       />
                     </OnPressContainer>
@@ -628,46 +630,37 @@ function AddNewSalesOrder({ navigation, route }) {
   // sub component second step
   const SecondStep = ({ state, setState }) => {
     const [ctmState2, setCtmState2] = useState(state);
+    const [requiredState] = useState(['set_warehouse']);
+    const [nullState, setNullState] = useState({
+      set_warehouse: false,
+    });
 
-    // const [requiredState] = useState([]);
-    // const [nullState, setNullState] = useState({
-    //   customer_name: false,
-    //   customer_type: false,
-    //   customer_group: false,
-    //   territory: false,
-    // });
-
-    // const handleCheckRequired = () => {
-    //   requiredState.forEach((st_name) => {
-    //     if (!ctmState2[st_name]) {
-    //       setNullState((pre) => ({ ...pre, [st_name]: true }));
-    //     } else {
-    //       setNullState((pre) => ({ ...pre, [st_name]: false }));
-    //     }
-    //   });
-    //   // console.log(nullState);
-    // };
-
+    const handleCheckRequired = () => {
+      console.log(ctmState2['set_warehouse']);
+      requiredState.forEach((st_name) => {
+        if (!ctmState2[st_name]) {
+          setNullState((pre) => ({ ...pre, [st_name]: true }));
+        } else {
+          setNullState((pre) => ({ ...pre, [st_name]: false }));
+        }
+      });
+      // console.log(nullState);
+    };
     const handleForward = () => {
-      // before go to next step check all required state
-      // check then make input error style
-      // handleCheckRequired();
-      // if column required is not filled push property name into check array
-      // let check = [];
-      // requiredState.forEach((st_name) => {
-      //   if (!ctmState2[st_name]) {
-      //     check.push(st_name);
-      //   }
-      // });
-      // // if have any length of check mean required state is still not filled yet
-      // if (check.length !== 0) {
-      // } else {
-      // if filled go to next step
-      // handleSubmit(ctmState2);
-
-      setStepState((post) => post + 1);
-      // setState(ctmState2);
-      // }
+      handleCheckRequired();
+      let check = [];
+      requiredState.forEach((st_name) => {
+        if (!ctmState2[st_name]) {
+          check.push(st_name);
+        }
+      });
+      // if have any length of check mean required state is still not filled yet
+      if (check.length !== 0) {
+      } else {
+        // if filled go to next step
+        setStepState((post) => post + 1);
+        setState(ctmState2);
+      }
     };
 
     const handleBack = () => {
@@ -747,10 +740,6 @@ function AddNewSalesOrder({ navigation, route }) {
       </Pressable>
     );
 
-    // useMemo(() => {
-    //   console.log(stepState);
-    // }, [stepState]);
-
     return (
       <React.Fragment>
         <HStack
@@ -776,8 +765,18 @@ function AddNewSalesOrder({ navigation, route }) {
           space={SPACING.small}
         >
           <ScrollView>
-            <VStack h={{ base: 700, lg: 1400 }}>
+            <VStack h={1000}>
               <VStack space={2}>
+                <OnPressContainer onPress={() => handleOpenDynamicSelection('Project', 'project', urlProject)}>
+                  <StyledTextField
+                    // isRequired
+                    caretHidden
+                    value={ctmState2.project}
+                    label={'Project'}
+                    name={'project'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
                 <View>
                   <FormControl justifyContent={'center'}>
                     <FormControl.Label>Order Type</FormControl.Label>
@@ -828,15 +827,8 @@ function AddNewSalesOrder({ navigation, route }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
-                {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
-                {/* tc_name: null,
-              <OnPressContainer
-                onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
-              > */}
-
-                {/* </OnPressContainer> */}
                 <OnPressContainer
-                  onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
+                  onPress={() => handleOpenDynamicSelection('Price List', 'selling_price_list', urlPriceList)}
                 >
                   <StyledTextField
                     // isRequired
@@ -847,9 +839,39 @@ function AddNewSalesOrder({ navigation, route }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
+                <StyledTextField
+                  label={'Exchange Rate'}
+                  value={String(ctmState2.conversion_rate)}
+                  keyboardType='numeric'
+                  handleChange={(val) => setCtmState2((pre) => ({ ...pre, conversion_rate: val }))}
+                />
+                <OnPressContainer
+                  onPress={() => handleOpenDynamicSelection('Set Source Warehouse', 'set_warehouse', urlWarehouse)}
+                >
+                  <StyledTextField
+                    isRequired={nullState.set_warehouse}
+                    caretHidden
+                    value={ctmState2.set_warehouse}
+                    label={'Set Source Warehouse'}
+                    name={'set_warehouse'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
+                {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
+                {/* tc_name: null,
+              <OnPressContainer
+                onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
+              > */}
+
+                {/* </OnPressContainer> */}
+
                 <OnPressContainer
                   onPress={() =>
-                    handleOpenDynamicSelection('Price List', 'payment_terms_template', urlPaymentTermTemplate)
+                    handleOpenDynamicSelection(
+                      'Price Payment Terms Template',
+                      'payment_terms_template',
+                      urlPaymentTermTemplate
+                    )
                   }
                 >
                   <StyledTextField
@@ -869,6 +891,18 @@ function AddNewSalesOrder({ navigation, route }) {
                     caretHidden
                     value={ctmState2.tc_name}
                     label={'Terms & Conditions'}
+                    // name={'default_price_list'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
+                <OnPressContainer
+                  onPress={() => handleOpenDynamicSelection('Sales Partner', 'sales_partner', urlSalesPartner)}
+                >
+                  <StyledTextField
+                    // isRequired
+                    caretHidden
+                    value={ctmState2.sales_partner}
+                    label={'Sales Partner'}
                     // name={'default_price_list'}
                     showSoftInputOnFocus={false}
                   />
@@ -915,17 +949,18 @@ function AddNewSalesOrder({ navigation, route }) {
           return newObj;
         });
         cloneState.items = Object.values(stateNoAmount);
-        console.log(cloneState);
-        console.log(urlSubmit);
+        // console.log(cloneState);
+        // console.log(urlSubmit);
         axios
           .post(urlSubmit, cloneState)
-          .then((response) => console.log('Response:', response.data))
+          .then(
+            (response) =>
+              // console.log('Response:', response.data);
+              response.data && setStepState(4)
+          )
           .catch((err) => {
-            console.log('An error occurred. Awkward.. : ', err);
+            alert('An error occurred. Awkward.. : ' + err);
             // alert('Status Error: ' + err);
-          })
-          .finally(() => {
-            setStepState(4);
           });
       }
     };
@@ -937,7 +972,7 @@ function AddNewSalesOrder({ navigation, route }) {
 
     const handleBackStoreItems = () => {
       setStepState((post) => post - 1);
-      console.log('items: ', stateWithAmount);
+      // console.log('items: ', stateWithAmount);
       if (items.items === null) {
         setState((pre) => ({ ...pre, items: null }));
       } else {
@@ -1015,35 +1050,6 @@ function AddNewSalesOrder({ navigation, route }) {
     //   console.log(stepState);
     // }, [stepState]);
     const [stateWithAmount, setStateWithAmount] = useState({ items: null });
-
-    const urlGetItemsQuotation =
-      'https://tonen.vsiam.com/api/method/frappe.quotation.oneitem?quotation_name=SAL-QTN-2023-00002';
-
-    const urlPutItems = 'https://tonen.vsiam.com/api/resource/Quotation/SAL-QTN-2023-00002';
-
-    // const handleSubmit = () => {
-    //   // prepare object delete amount of items
-    //   const cloneState = { ...items };
-    //   Object.values(cloneState.items)?.map((element) => {
-    //     delete element.amount;
-    //   });
-    //   if (cloneState.items.length === 0 && state.items.length === 0) {
-    //     alert('At least one Item must be selected.');
-    //     // () => navigation.replace('TestQRScanner');
-    //   } else {
-    //     useUpdate(
-    //       {
-    //         headers: {
-    //           Authorization: '',
-    //         },
-    //       },
-    //       urlPutItems,
-    //       cloneState,
-    //       () => navigation.replace('TestQRScanner'),
-    //       () => void 0
-    //     );
-    //   }
-    // };
 
     const AskCameraPermission = () =>
       Alert.alert('Ask for Permission', '"ERP Next" Would Like to Access the Camera', [
@@ -1186,7 +1192,7 @@ function AddNewSalesOrder({ navigation, route }) {
           space={SPACING.small}
           alignItems={'center'}
         >
-          <Text>Item List</Text>
+          <Text>Item List (Net Total:{sumAmount(stateWithAmount)})</Text>
           <View h={500}>
             {scanned && hasPermission && (
               <Modal
@@ -1218,6 +1224,7 @@ function AddNewSalesOrder({ navigation, route }) {
                 {items.items !== null &&
                   Object.values(stateWithAmount)?.map((data, index) => (
                     <VStack
+                      key={data?.item_code}
                       bg={COLORS.white}
                       rounded={20}
                       space={2}
@@ -1360,7 +1367,7 @@ function AddNewSalesOrder({ navigation, route }) {
                             variant={'filled'}
                             keyboardType='numeric'
                             selectTextOnFocus
-                            value={String(data?.rate) === '0' ? '1.0' : String(data?.rate)}
+                            value={String(data?.rate)}
                             onBlur={() => {
                               if (data?.rate === '' || data?.rate === '1') {
                                 const updatedItems = items.items;
@@ -1473,11 +1480,12 @@ function AddNewSalesOrder({ navigation, route }) {
       // setState(initialState);
       // refetchData();
       navigation.pop();
-      navigation.replace('Quotation', { filterData: [] });
+      navigation.replace(title, { filterData: [] });
     };
     const handleAddAnother = () => {
       setState(initialState);
-      setStepState(1);
+      navigation.replace('AddNewSalesOrder', { QuotationState: [] });
+      // setStepState(1);
     };
 
     return (
@@ -1515,7 +1523,7 @@ function AddNewSalesOrder({ navigation, route }) {
               textWeight={'bold'}
               fontSize={24}
             >
-              {'Add Quotation\nSuccess!'}
+              {'Add Sales Order\nSuccess!'}
             </Text>
 
             <VStack
@@ -1530,7 +1538,7 @@ function AddNewSalesOrder({ navigation, route }) {
                 _pressed={{ bg: 'blueGray.200' }}
                 onPress={() => handleBack()}
               >
-                Back to Quotation Page
+                Back to Sales Order Page
               </Button>
               <Button
                 rounded={24}
@@ -1540,7 +1548,7 @@ function AddNewSalesOrder({ navigation, route }) {
                 _pressed={{ bg: COLORS.tertiary2 }}
                 onPress={() => handleAddAnother()}
               >
-                Add another quotation
+                Add another Sales Order
               </Button>
             </VStack>
           </VStack>
@@ -1557,6 +1565,8 @@ function AddNewSalesOrder({ navigation, route }) {
           customer_address: inputObject.customer_address || '',
           order_type: inputObject.order_type,
           contact_person: inputObject.contact_person || '',
+          project: '',
+          conversion_rate: 1.0,
           transaction_date: '',
           delivery_date: '',
           company: inputObject.company,
@@ -1564,16 +1574,20 @@ function AddNewSalesOrder({ navigation, route }) {
           set_warehouse: '',
           selling_price_list: inputObject.selling_price_list || '',
           payment_terms_template: inputObject.payment_terms_template || '',
+          tc_name: inputObject.tc_name || '',
+          sales_partner: '',
           items: Object.values(inputObject.items).map((it) => {
-            return { item_code: it.item_code, rate: it.rate, qty: it.qty };
+            return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
           }),
         };
         // return { doctype: inputObject.doctype };
       }
-      const newData = mapProperties(QuotationState);
-      // console.log('newData', newData);
-      setState(newData);
-      console.log(newData);
+      if (Object.values(QuotationState).length > 0) {
+        const newData = mapProperties(QuotationState);
+        // console.log('newData', newData);
+        setState(newData);
+        console.log(newData);
+      }
     };
     reformatQuotationState();
     // console.log('QuotationState :', QuotationState);

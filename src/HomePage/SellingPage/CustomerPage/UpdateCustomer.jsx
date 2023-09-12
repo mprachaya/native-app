@@ -71,7 +71,7 @@ const StyledTextField = (props) => {
 function UpdateCustomer({ route, navigation, handleClose }) {
   const { name, preState } = route.params;
   // page name display
-  const title = 'Add New Customer';
+  const title = 'Update Customer';
   const mainPage = 'Customer';
   // navigate step state
   const [stepState, setStepState] = useState(1);
@@ -150,7 +150,7 @@ function UpdateCustomer({ route, navigation, handleClose }) {
           // Authorization: config.API_TOKEN,
         },
       },
-      baseURL + CUSTOMER + name,
+      baseURL + CUSTOMER + '/' + name,
       state,
       () => void 0,
       () => void 0

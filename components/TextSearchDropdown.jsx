@@ -15,6 +15,7 @@ import {
 import React, { useState, useEffect } from 'react';
 import { SearchInput } from './Inputs';
 import FadeTransition from './FadeTransition';
+import { Dimensions } from 'react-native';
 
 // import { SearchInput, FadeTransition } from '.';
 
@@ -22,7 +23,7 @@ const ContainerStyled = (props) => {
   return (
     <View
       w={{ base: '96', lg: 'full' }}
-      h={props.Focus ? '600px' : ''}
+      h={props.Focus ? '600px' : '40px'}
       position='absolute'
       background={'blueGray.100'}
       zIndex={props.Focus ? 999 : 1}
@@ -34,7 +35,7 @@ const ContainerStyled = (props) => {
 };
 
 function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, handleClick }) {
-  const [onFocus, setOnFocus] = useState(false);
+  const [focus, setOnFocus] = useState(false);
   const [SearchText, setSearchText] = useState('');
   const [data, setData] = useState();
 
@@ -69,45 +70,53 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
     }
   }, [allData]);
 
-  useEffect(() => {
-    if (!SearchText && onFocus) {
-      if (allData) {
-        console.log('reset : ', allData);
-        setData(allData);
-      }
-    } else if (SearchText && onFocus) {
-      setOnFocus(true);
-      Object.keys(allData[0])?.map((key) => {
-        if (key !== 'image') {
-          const search = handleSearch(data, SearchText, key);
-          if (search) {
-            setData(search);
-            returnLength(search.length);
-          } else {
-          }
-        }
-      });
-    }
-  }, [SearchText]);
+  // useEffect(() => {
+  //   if (!SearchText && focus) {
+  //     if (allData) {
+  //       console.log('reset : ', allData);
+  //       setData(allData);
+  //     }
+  //   } else if (SearchText && focus) {
+  //     setOnFocus(true);
+  //     Object.keys(allData[0])?.map((key) => {
+  //       if (key !== 'image') {
+  //         const search = handleSearch(data, SearchText, key);
+  //         if (search) {
+  //           setData(search);
+  //           returnLength(search.length);
+  //         } else {
+  //         }
+  //       }
+  //     });
+  //   }
+  // }, [SearchText]);
 
   useEffect(() => {
-    if (onFocus) {
+    // if (focus) {
+    //   () => returnData(true);
+    // }else
+    if (focus) {
       returnData(true);
-    } else if (SearchText.length === 0 && !onFocus) {
+    } else if (SearchText.length === 0 && !focus) {
       returnData(false);
     }
-  }, [onFocus]);
+    // if (onFocus) {
+    //   returnData(true);
+    // } else {
+    //   returnData(false);
+    // }
+  }, [focus]);
 
   return (
-    <ContainerStyled Focus={onFocus}>
+    <ContainerStyled Focus={focus}>
       <Center>
         <VStack
           m={6}
           justifyContent={'center'}
-          height={'100vh'}
+          // height={'100vh'}
         >
           <SearchInput
-            isFocused={onFocus}
+            isFocused={focus}
             onChangeText={(val) => setSearchText(val)}
             onFocus={() => setOnFocus(true)}
             value={SearchText}
@@ -115,7 +124,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
             clearAction={() => clearSearch()}
           />
         </VStack>
-        {onFocus && (
+        {focus && (
           <VStack
             m={6}
             // mx={{ base: 4 }}
@@ -123,7 +132,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
             position={'absolute'}
             top={50}
           >
-            <FadeTransition animated={onFocus}>
+            <FadeTransition animated={focus}>
               <FlatList
                 h={{ base: 500, lg: 800 }}
                 mx={{ base: 4, lg: '30%' }}
@@ -142,7 +151,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
                       _text={{ fontWeight: 'bold', letterSpacing: 1 }}
                       leftIcon={<CloseIcon />}
                       onPress={() => {
-                        returnData(false);
+                        // returnData(false);
                         setOnFocus(false);
                       }}
                       _pressed={{ bg: 'error.800' }}

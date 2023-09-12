@@ -337,7 +337,6 @@ function QuotationPage({ route }) {
               returnData={setShowBackgroundSearch}
               returnLength={setLengthSearch}
               handleClick={handleClickDetails}
-              // handleClick={() => setOpenState((pre) => ({ ...pre, details: true }))}
             />
           </HStack>
           {!showBackgroundSearch && (
@@ -357,7 +356,7 @@ function QuotationPage({ route }) {
                     <List
                       rounded={12}
                       mx={{ base: 2, lg: 12 }}
-                      minW={'24'}
+                      minW={'32'}
                       borderWidth={0}
                       alignItems={'center'}
                       bg={

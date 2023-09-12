@@ -29,12 +29,15 @@ import QuotationDetails from './src/HomePage/SellingPage/QuotationPage/Quotation
 import QuotationItemDetails from './src/HomePage/SellingPage/QuotationPage/ItemDetails';
 import AddNewQuotation from './src/HomePage/SellingPage/QuotationPage/AddNewQuotation';
 import UpdateQuotation from './src/HomePage/SellingPage/QuotationPage/UpdateQuotation';
+
+// sales order
+import SalesOrderPage from './src/HomePage/SellingPage/SalesOrderPage';
+import AddNewSalesOrder from './src/HomePage/SellingPage/SalesOrderPage/AddNewSalesOrder';
+import SalesOrderDetails from './src/HomePage/SellingPage/SalesOrderPage/SalesOrderDetails';
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
 import ExportPDF from './_test/ExportPDF';
-import SalesOrderPage from './src/HomePage/SellingPage/SalesOrderPage';
-import AddNewSalesOrder from './src/HomePage/SellingPage/SalesOrderPage/AddNewSalesOrder';
 
 // import QuotationExportPDF from './_test/QuotationExportPDF';
 
@@ -337,6 +340,20 @@ export default function App() {
                 header: () => (
                   <NavHeader
                     pageName={'Create New Sales Order'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='SalesOrderDetails'
+              component={SalesOrderDetails}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Sales Order Details'}
                     noHeader={true}
                   />
                 ),

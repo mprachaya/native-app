@@ -148,9 +148,7 @@ function DetailsPage({ route, navigation }) {
   if (error) {
     return (
       <ContainerStyled>
-        <HStack justifyContent='center'>
-          <Text>ERROR</Text>
-        </HStack>
+        <HStack justifyContent='center'>{/* <Text>ERROR</Text> */}</HStack>
       </ContainerStyled>
     );
   }
@@ -190,7 +188,7 @@ function DetailsPage({ route, navigation }) {
                   rounded={6}
                   alt={'customer image'}
                   source={{
-                    uri: url.BASE_URL + data.image,
+                    uri: baseURL + data.image,
                     method: 'GET',
                     headers: {
                       // Authorization: config.API_TOKEN,

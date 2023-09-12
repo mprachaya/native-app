@@ -464,7 +464,7 @@ function AddNewQuotation({ navigation }) {
           space={SPACING.small}
         >
           <ScrollView>
-            <VStack h={{ base: 700, lg: 1400 }}>
+            <VStack h={1400}>
               <OnPressContainer onPress={() => handleOpenDynamicSelection('Company', 'company', urlCompany)}>
                 <StyledTextField
                   caretHidden
@@ -831,7 +831,7 @@ function AddNewQuotation({ navigation }) {
           space={SPACING.small}
         >
           <ScrollView>
-            <VStack h={{ base: 700, lg: 1400 }}>
+            <VStack h={1400}>
               <VStack space={2}>
                 <View>
                   <FormControl justifyContent={'center'}>
@@ -904,7 +904,11 @@ function AddNewQuotation({ navigation }) {
                 </OnPressContainer>
                 <OnPressContainer
                   onPress={() =>
-                    handleOpenDynamicSelection('Price List', 'payment_terms_template', urlPaymentTermTemplate)
+                    handleOpenDynamicSelection(
+                      'Price Payment Terms Template',
+                      'payment_terms_template',
+                      urlPaymentTermTemplate
+                    )
                   }
                 >
                   <StyledTextField
@@ -974,13 +978,10 @@ function AddNewQuotation({ navigation }) {
         console.log(urlSubmit);
         axios
           .post(urlSubmit, cloneState)
-          .then((response) => console.log('Response:', response.data))
+          .then((response) => response.data && setStepState(4))
           .catch((err) => {
             console.log('An error occurred. Awkward.. : ', err);
             // alert('Status Error: ' + err);
-          })
-          .finally(() => {
-            setStepState(4);
           });
       }
     };
@@ -1286,6 +1287,7 @@ function AddNewQuotation({ navigation }) {
                 {items.items !== null &&
                   Object.values(stateWithAmount)?.map((data, index) => (
                     <VStack
+                      key={data?.item_code}
                       bg={COLORS.white}
                       rounded={20}
                       space={2}

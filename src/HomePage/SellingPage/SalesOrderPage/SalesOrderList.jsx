@@ -6,7 +6,7 @@ import { COLORS } from '../../../../constants/theme';
 import GetScreenSize from '../../../../hooks/GetScreenSize';
 import useConfig from '../../../../config/path';
 
-export function QuotationList({ data, reload, setReload, returnDataIndex, handleClickDetails }) {
+export function SalesOrderList({ data, reload, setReload, returnDataIndex, handleClickDetails }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
   const [dataIndex, setDataIndex] = useState(20);
   const length = 20;
@@ -67,18 +67,44 @@ export function QuotationList({ data, reload, setReload, returnDataIndex, handle
           bottom={6}
           right={6}
           rounded={6}
+          // Draft ,To Deliver ,Deliver and Bill
+          // Draft
+          //   - This is the initial status of a Sales Order. It indicates that the order has been created but not yet submitted.
+          // To Deliver
+          //   - Once a Sales Order is ready for processing, it is submitted. This status signifies that the order is in the queue for further action.
+          // To Bill
+          //   - This status indicates that the Sales Order is ready to be invoiced. It typically means that the items in the order are in stock and can be shipped.
+          // To Deliver and Bill
+          //   - This status indicates that the Sales Order is ready to be delivered and invoiced. It implies that the items are in stock and can be both shipped and billed.
+          // Completed
+          //   - This status signifies that the Sales Order has been fulfilled. It may mean that the items have been shipped and invoiced, and the transaction is considered closed.
+          // Cancelled
+          //   - A Sales Order with this status has been cancelled and will not be processed further.
+          // On Hold
+          //   - This status is used to indicate that the Sales Order is temporarily halted and not being processed at the moment.
+          // Stopped
+          //   - This status is similar to "On Hold" and signifies that the Sales Order has been stopped and is not being processed.
+          // Lost
+          //   - This status is used when a Sales Order is not won and is considered lost.
+          // Closed
+          //   - This status typically means that the Sales Order has been closed and is no longer active.
+
           bg={
-            status === 'Draft'
+            status === 'Draft' // default status
               ? 'error.100'
-              : status === 'Open'
+              : status === 'To Deliver and Bill' // show when already create invoice
               ? 'warning.100'
-              : status === 'Ordered'
+              : status === 'To Deliver' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
+              ? 'warning.100'
+              : status === 'Completed'
               ? 'success.100'
               : status === 'Cancelled'
               ? 'error.100'
-              : status === 'Expired'
+              : status === 'Closed'
               ? 'error.100'
-              : null
+              : status === 'On Hold'
+              ? 'error.100'
+              : 'blue.100'
           }
         >
           <Text
@@ -133,6 +159,7 @@ export function QuotationList({ data, reload, setReload, returnDataIndex, handle
         returnDataIndex(dataIndex);
       }
     }
+    // console.log('data: ', data);
   }, [data]);
 
   if (reload) {

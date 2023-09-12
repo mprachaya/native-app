@@ -192,7 +192,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
           keyExtractor={(item) => item.name}
           onEndReached={() =>
             dataIndex < data.length && dataIndex + length < data.length
-              ? handleScrollEnd(post + length)
+              ? handleScrollEnd(dataIndex + length)
               : handleScrollEnd(data.length)
           }
           removeClippedSubviews={true}
@@ -237,7 +237,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
           initialNumToRender={2}
           onEndReached={() =>
             dataIndex < data.length && dataIndex + length < data.length
-              ? handleScrollEnd(post + length)
+              ? handleScrollEnd(dataIndex + length)
               : handleScrollEnd(data.length)
           }
           ListFooterComponent={() =>

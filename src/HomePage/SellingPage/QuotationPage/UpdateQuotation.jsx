@@ -144,6 +144,15 @@ function UpdateQuotation({ route, navigation, handleClose }) {
   // handle dynamic property for multi selection in page
   const [propertySelected, setPropertySelected] = useState('');
 
+  function sumAmount(obj) {
+    let totalAmount = 0;
+    for (let key in obj) {
+      if (obj[key] !== null && typeof obj[key] === 'object' && 'amount' in obj[key]) {
+        totalAmount += parseFloat(obj[key].amount);
+      }
+    }
+    return totalAmount.toFixed(2);
+  }
   // handle change property when open selection (dynamic)
   const getValueFromSelection = (name) => {
     setPropertySelected(name);
@@ -1174,7 +1183,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
           space={SPACING.small}
           alignItems={'center'}
         >
-          <Text>Item List</Text>
+          <Text>Item List (Net Total:{sumAmount(stateWithAmount)})</Text>
           <View h={500}>
             {scanned && hasPermission && (
               <Modal
