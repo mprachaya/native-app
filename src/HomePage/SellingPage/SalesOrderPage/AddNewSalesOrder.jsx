@@ -630,13 +630,14 @@ function AddNewSalesOrder({ navigation, route }) {
   // sub component second step
   const SecondStep = ({ state, setState }) => {
     const [ctmState2, setCtmState2] = useState(state);
-    const [requiredState] = useState(['set_warehouse']);
+    const [requiredState] = useState(['selling_price_list', 'set_warehouse']);
     const [nullState, setNullState] = useState({
       set_warehouse: false,
+      selling_price_list: false,
     });
 
     const handleCheckRequired = () => {
-      console.log(ctmState2['set_warehouse']);
+      // console.log(ctmState2['set_warehouse']);
       requiredState.forEach((st_name) => {
         if (!ctmState2[st_name]) {
           setNullState((pre) => ({ ...pre, [st_name]: true }));
@@ -833,9 +834,10 @@ function AddNewSalesOrder({ navigation, route }) {
                   <StyledTextField
                     // isRequired
                     caretHidden
+                    isRequired={nullState.selling_price_list}
                     value={ctmState2.selling_price_list}
                     label={'Price List'}
-                    name={'default_price_list'}
+                    name={'selling_price_list'}
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
@@ -951,17 +953,18 @@ function AddNewSalesOrder({ navigation, route }) {
         cloneState.items = Object.values(stateNoAmount);
         // console.log(cloneState);
         // console.log(urlSubmit);
-        axios
-          .post(urlSubmit, cloneState)
-          .then(
-            (response) =>
-              // console.log('Response:', response.data);
-              response.data && setStepState(4)
-          )
-          .catch((err) => {
-            alert('An error occurred. Awkward.. : ' + err);
-            // alert('Status Error: ' + err);
-          });
+        console.log(cloneState);
+        // axios
+        //   .post(urlSubmit, cloneState)
+        //   .then(
+        //     (response) =>
+        //       // console.log('Response:', response.data);
+        //       response.data && setStepState(4)
+        //   )
+        //   .catch((err) => {
+        //     alert('An error occurred. Awkward.. : ' + err);
+        //     // alert('Status Error: ' + err);
+        //   });
       }
     };
 

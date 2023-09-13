@@ -38,12 +38,12 @@ const ContainerStyled = (props) => {
 };
 
 function DetailsPage({ route, navigation }) {
-  const title = 'Quotation';
+  const title = 'SalesOrder';
   const { name } = route.params;
-  const { baseURL, QUOTATION } = useConfig(true);
+  const { baseURL, SALES_ORDER } = useConfig(true);
   // const heightScrollView = 2000;
   // data fetching with custom hook useFetch
-  const { data, setData, setRefetch, loading, error } = useFetch(baseURL + QUOTATION + '/' + name, {
+  const { data, setData, setRefetch, loading, error } = useFetch(baseURL + SALES_ORDER + '/' + name, {
     headers: {
       // Authorization: config.API_TOKEN,
     },
@@ -59,7 +59,7 @@ function DetailsPage({ route, navigation }) {
           // Authorization: config.API_TOKEN,
         },
       },
-      baseURL + QUOTATION + name,
+      baseURL + SALES_ORDER + name,
       tempState,
       () => void 0,
       () => setRefetch(1)
@@ -69,28 +69,32 @@ function DetailsPage({ route, navigation }) {
   const handleOpenUpdate = () => {
     function mapProperties(inputObject) {
       return {
-        doctype: inputObject.doctype,
-        quotation_to: inputObject.quotation_to,
-        party_name: inputObject.party_name,
+        doctype: 'Sales Order',
+        customer: inputObject.customer,
         customer_address: inputObject.customer_address || '',
         order_type: inputObject.order_type,
         contact_person: inputObject.contact_person || '',
-        company: inputObject.company,
+        project: inputObject.project,
+        conversion_rate: inputObject.conversion_rate || '0.0',
         transaction_date: inputObject.transaction_date,
-        valid_till: inputObject.valid_till,
+        delivery_date: inputObject.delivery_date,
+        company: inputObject.company,
         currency: inputObject.currency,
+        set_warehouse: inputObject.set_warehouse,
         selling_price_list: inputObject.selling_price_list || '',
         payment_terms_template: inputObject.payment_terms_template || '',
         tc_name: inputObject.tc_name || '',
+        sales_partner: inputObject.sales_partner || '',
         items: Object.values(inputObject.items).map((it) => {
-          return { item_code: it.item_code, rate: it.rate, qty: it.qty };
+          return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
         }),
       };
+      // return { doctype: inputObject.doctype };
       // return { doctype: inputObject.doctype };
     }
     const newData = mapProperties(data);
     // console.log('newData', newData);
-    navigation.replace('UpdateQuotation', { name: data.name, preState: newData, amend: 0 });
+    navigation.replace('UpdateSalesOrder', { name: data.name, preState: newData, amend: 0, QuotationState: [] });
   };
 
   const BackButton = () => (
@@ -196,39 +200,35 @@ function DetailsPage({ route, navigation }) {
         fontSize={'sm'}
         letterSpacing={1}
         borderColor={
-          status === 'Draft'
+          status === 'Draft' // default status
             ? 'blue.400'
-            : status === 'Open'
-            ? 'warning.300'
-            : status === 'Ordered'
-            ? 'success.300'
+            : status === 'To Deliver and Bill' // show when already create invoice
+            ? 'error.400'
+            : status === 'To Deliver' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
+            ? 'error.400'
             : status === 'Cancelled'
-            ? 'error.300'
-            : status === 'Expired'
-            ? 'error.300'
+            ? 'error.400'
             : null
         }
         color={
-          status === 'Draft'
+          status === 'Draft' // default status
             ? 'blue.400'
-            : status === 'Open'
+            : status === 'To Deliver and Bill' // show when already create invoice
             ? 'error.400'
-            : status === 'Ordered'
+            : status === 'To Deliver' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
             ? 'error.400'
             : status === 'Cancelled'
-            ? 'error.400'
-            : status === 'Expired'
             ? 'error.400'
             : null
         }
       >
         {status === 'Draft'
           ? 'Submit'
-          : status === 'Open'
+          : status === 'To Deliver and Bill' || status === 'To Deliver'
           ? 'Cancel'
-          : status === 'Ordered'
-          ? 'Cancel'
-          : status === 'Cancelled' && 'Amend'}
+          : status === 'Cancelled'
+          ? 'Amend'
+          : null}
       </Text>
     </Button>
   );
@@ -260,15 +260,19 @@ function DetailsPage({ route, navigation }) {
       fontSize={'xs'}
       letterSpacing={1}
       color={
-        status === 'Draft'
+        status === 'Draft' // default status
           ? 'error.300'
-          : status === 'Open'
+          : status === 'To Deliver and Bill' // show when already create invoice
           ? 'warning.300'
-          : status === 'Ordered'
+          : status === 'To Deliver' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
+          ? 'warning.300'
+          : status === 'Completed'
           ? 'success.300'
           : status === 'Cancelled'
           ? 'error.300'
-          : status === 'Expired'
+          : status === 'Closed'
+          ? 'error.300'
+          : status === 'On Hold'
           ? 'error.300'
           : null
       }
@@ -287,7 +291,7 @@ function DetailsPage({ route, navigation }) {
   );
 
   const UpdateStatus = (status) => {
-    const urlUpdateStatus = baseURL + QUOTATION + '/' + data.name;
+    const urlUpdateStatus = baseURL + SALES_ORDER + '/' + data.name;
     // console.log(urlUpdateStatus);
     if (status === 'Draft') {
       Alert.alert(
@@ -301,14 +305,16 @@ function DetailsPage({ route, navigation }) {
                 .put(urlUpdateStatus, { docstatus: 1 })
                 .then((response) => response.data)
                 .then((res) => {
-                  // console.log(res.data);
+                  //  navigation.replace('SalesOrderDetails', { name: data.name });
+                  res.data &&
+                    navigation.reset({
+                      index: 1,
+                      routes: [{ name: 'SalesOrderDetails', params: { name: data.name } }],
+                    });
                 })
                 .catch((err) => {
                   console.log('An error occurred. Awkward.. : ', err);
                   alert('Status Error: ' + err);
-                })
-                .finally(() => {
-                  navigation.replace('QuotationDetails', { name: data.name });
                 });
             },
           },
@@ -320,7 +326,7 @@ function DetailsPage({ route, navigation }) {
         ],
         { cancelable: false } // Prevents users from dismissing the alert by tapping outside of it
       );
-    } else if (status === 'Open') {
+    } else if (status === 'To Deliver and Bill' || status === 'to Bill' || status === 'To Deliver') {
       Alert.alert(
         'Confirm Cancel',
         `Permanently Cancel \n${data.name}?`,
@@ -332,14 +338,11 @@ function DetailsPage({ route, navigation }) {
                 .put(urlUpdateStatus, { docstatus: 2 })
                 .then((response) => response.data)
                 .then((res) => {
-                  // console.log(res.data);
+                  res.data && navigation.replace('SalesOrderDetails', { name: data.name });
                 })
                 .catch((err) => {
                   console.log('An error occurred. Awkward.. : ', err);
                   alert('Status Error: ' + err);
-                })
-                .finally(() => {
-                  navigation.replace('QuotationDetails', { name: data.name });
                 });
             },
           },
@@ -354,27 +357,31 @@ function DetailsPage({ route, navigation }) {
     } else if (status === 'Cancelled') {
       function mapProperties(inputObject) {
         return {
-          doctype: inputObject.doctype,
-          quotation_to: inputObject.quotation_to,
-          party_name: inputObject.party_name,
+          doctype: 'Sales Order',
+          customer: inputObject.customer,
           customer_address: inputObject.customer_address || '',
           order_type: inputObject.order_type,
           contact_person: inputObject.contact_person || '',
-          company: inputObject.company,
+          project: inputObject.project,
+          conversion_rate: inputObject.conversion_rate,
           transaction_date: inputObject.transaction_date,
-          valid_till: inputObject.valid_till,
+          delivery_date: inputObject.delivery_date,
+          company: inputObject.company,
           currency: inputObject.currency,
+          set_warehouse: inputObject.set_warehouse,
           selling_price_list: inputObject.selling_price_list || '',
           payment_terms_template: inputObject.payment_terms_template || '',
           tc_name: inputObject.tc_name || '',
+          sales_partner: inputObject.sales_partner || '',
           items: Object.values(inputObject.items).map((it) => {
-            return { item_code: it.item_code, rate: it.rate, qty: it.qty };
+            return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
           }),
         };
         // return { doctype: inputObject.doctype };
+        // return { doctype: inputObject.doctype };
       }
       const newData = mapProperties(data);
-      navigation.replace('UpdateQuotation', { name: data.name, preState: newData, amend: 1 });
+      navigation.replace('UpdateSalesOrder', { name: data.name, preState: newData, amend: 1, QuotationState: [] });
     } else if (status === 'Expired') {
     } else if (status === 'Ordered') {
     } else if (state === 'Expired') {
@@ -407,7 +414,7 @@ function DetailsPage({ route, navigation }) {
     UpdateStatus(status);
   };
   const handleShowItemDetails = (data) => {
-    navigation.navigate('QuotationItemsDetails', {
+    navigation.navigate('SalesOrderItemDetails', {
       data: data,
     });
   };
@@ -437,7 +444,7 @@ function DetailsPage({ route, navigation }) {
           </HStack>
           <HStack h={10}>
             {data?.status === 'Open' && <CreateSalesOrderButton />}
-            <StatusButton status={data?.status} />
+            {data?.status !== 'Completed' && <StatusButton status={data?.status} />}
             <PrintAndExport />
             {data?.status === 'Draft' && <EditButton />}
           </HStack>
@@ -463,7 +470,6 @@ function DetailsPage({ route, navigation }) {
               >
                 {data.name}
               </Text>
-              <Text color={COLORS.gray}> Quotation To : {data.quotation_to}</Text>
               <Text color={COLORS.gray}> Customer : {data.customer_name}</Text>
               <HStack
                 alignItems='center'
@@ -503,8 +509,8 @@ function DetailsPage({ route, navigation }) {
                   alignItems={'flex-start'}
                 >
                   <VStack minHeight={10}>
-                    <DisplayTextLeft>{data.valid_till}</DisplayTextLeft>
-                    <SubTextRight>{'Valid Till'}</SubTextRight>
+                    <DisplayTextLeft>{data.delivery_date}</DisplayTextLeft>
+                    <SubTextRight>{'Delivery Date'}</SubTextRight>
                   </VStack>
                   <VStack
                     alignItems={'flex-start'}
@@ -615,6 +621,19 @@ function DetailsPage({ route, navigation }) {
                 space={6}
                 justifyContent='space-between'
               >
+                <Text fontSize={'xs'}>Project</Text>
+                <Text
+                  fontWeight='bold'
+                  _ios={{ fontSize: 'xs', textAlign: 'right', maxWidth: 100 }}
+                >
+                  {data.project ? data.project : '-'}
+                </Text>
+              </HStack>
+              <HStack
+                w={300}
+                space={6}
+                justifyContent='space-between'
+              >
                 <Text fontSize={'xs'}>Order Type</Text>
                 <Text
                   fontWeight='bold'
@@ -660,6 +679,19 @@ function DetailsPage({ route, navigation }) {
                   _ios={{ fontSize: 'xs', textAlign: 'right', maxWidth: 100 }}
                 >
                   {data.selling_price_list ? data.selling_price_list : '-'}
+                </Text>
+              </HStack>
+              <HStack
+                w={300}
+                space={6}
+                justifyContent='space-between'
+              >
+                <Text fontSize={'xs'}>Source Warehouse</Text>
+                <Text
+                  fontWeight='bold'
+                  _ios={{ fontSize: 'xs', textAlign: 'right', maxWidth: 140 }}
+                >
+                  {data.set_warehouse ? data.set_warehouse : '-'}
                 </Text>
               </HStack>
               <HStack
@@ -713,6 +745,66 @@ function DetailsPage({ route, navigation }) {
                     _ios={{ fontSize: 'xs', textAlign: 'right', maxWidth: 100 }}
                   >
                     {data.payment_terms_template ? data.payment_terms_template : '-'}
+                  </Text>
+                </View>
+              </HStack>
+              <HStack
+                w={300}
+                space={6}
+                justifyContent='space-between'
+              >
+                <Text fontSize={'xs'}>{'Campaign'}</Text>
+                <View>
+                  <Text
+                    fontWeight='bold'
+                    _ios={{ fontSize: 'xs', textAlign: 'right', maxWidth: 100 }}
+                  >
+                    {data.campaign ? data.campaign : '-'}
+                  </Text>
+                </View>
+              </HStack>
+              <HStack
+                w={300}
+                space={6}
+                justifyContent='space-between'
+              >
+                <Text fontSize={'xs'}>{'Sales Partner'}</Text>
+                <View>
+                  <Text
+                    fontWeight='bold'
+                    _ios={{ fontSize: 'xs', textAlign: 'right', maxWidth: 100 }}
+                  >
+                    {data.sales_partner ? data.sales_partner : '-'}
+                  </Text>
+                </View>
+              </HStack>
+              <HStack
+                w={300}
+                space={6}
+                justifyContent='space-between'
+              >
+                <Text fontSize={'xs'}>{'Commission Rate'}</Text>
+                <View>
+                  <Text
+                    fontWeight='bold'
+                    _ios={{ fontSize: 'xs', textAlign: 'right', maxWidth: 100 }}
+                  >
+                    {data.commission_rate ? data.commission_rate + '%' : '0.0%'}
+                  </Text>
+                </View>
+              </HStack>
+              <HStack
+                w={300}
+                space={6}
+                justifyContent='space-between'
+              >
+                <Text fontSize={'xs'}>{'Total Commission'}</Text>
+                <View>
+                  <Text
+                    fontWeight='bold'
+                    _ios={{ fontSize: 'xs', textAlign: 'right', maxWidth: 100 }}
+                  >
+                    {data.total_commission ? data.total_commission : '0.0'}
                   </Text>
                 </View>
               </HStack>
@@ -988,9 +1080,9 @@ function DetailsPage({ route, navigation }) {
         <ExportPDF
           open={openPrint}
           handleClose={() => setOpenPrint(false)}
-          docType={'Quotation'}
+          docType={'Sales Order'}
           name={name}
-          format={'test-qt'}
+          // format={'test-qt'}
         />
       </Center>
     </ContainerStyled>

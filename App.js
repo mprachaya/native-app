@@ -34,6 +34,8 @@ import UpdateQuotation from './src/HomePage/SellingPage/QuotationPage/UpdateQuot
 import SalesOrderPage from './src/HomePage/SellingPage/SalesOrderPage';
 import AddNewSalesOrder from './src/HomePage/SellingPage/SalesOrderPage/AddNewSalesOrder';
 import SalesOrderDetails from './src/HomePage/SellingPage/SalesOrderPage/SalesOrderDetails';
+import SalesOrderItemDetails from './src/HomePage/SellingPage/SalesOrderPage/ItemDetails';
+import UpdateSalesOrder from './src/HomePage/SellingPage/SalesOrderPage/UpdateSalesOrder';
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
@@ -281,7 +283,7 @@ export default function App() {
                   headerShadowVisible: true,
                   header: () => (
                     <NavHeader
-                      pageName={'Add New Quotation'}
+                      pageName={'Item Details'}
                       noHeader={true}
                     />
                   ),
@@ -354,6 +356,34 @@ export default function App() {
                 header: () => (
                   <NavHeader
                     pageName={'Sales Order Details'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='SalesOrderItemDetails'
+              component={SalesOrderItemDetails}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Item Details'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='UpdateSalesOrder'
+              component={UpdateSalesOrder}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Edit Sales Order'}
                     noHeader={true}
                   />
                 ),

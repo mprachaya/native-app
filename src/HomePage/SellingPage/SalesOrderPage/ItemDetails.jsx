@@ -1,4 +1,4 @@
-import { Center, ChevronLeftIcon, HStack, Text, VStack, View } from 'native-base';
+import { Button, Center, ChevronLeftIcon, HStack, Text, VStack, View } from 'native-base';
 import React from 'react';
 import { COLORS } from '../../../../constants/theme';
 
@@ -15,7 +15,7 @@ const ContainerStyled = (props) => {
   );
 };
 
-function ItemDetails({ route }) {
+function ItemDetails({ navigation, route }) {
   const { data } = route.params;
 
   const CustomNumberText = ({ children, label }) => (

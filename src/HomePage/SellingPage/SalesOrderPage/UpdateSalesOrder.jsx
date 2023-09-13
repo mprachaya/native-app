@@ -7,10 +7,10 @@ import {
   Container,
   DeleteIcon,
   Divider,
-  FlatList,
+  // FlatList,
   FormControl,
   HStack,
-  Image,
+  // Image,
   Input,
   Modal,
   ScrollView,
@@ -31,7 +31,7 @@ import useConfig from '../../../../config/path';
 import axios from 'axios';
 import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { Quotation } from '../../../../constants/icons';
+import { handleChange } from '../../../../hooks/useValidation';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -60,6 +60,7 @@ const StyledTextField = (props) => {
           borderColor={'gray.200'}
           variant={'filled'}
           rounded={6}
+          keyboardType={props.keyboardType}
           placeholder={props.placeholder}
           fontSize={{ base: SIZES.medium || props.baseSize, lg: SIZES.large || props.lgSize }}
           minW={{ base: 'full', lg: 400 }}
@@ -76,14 +77,15 @@ const StyledTextField = (props) => {
   );
 };
 // main component
-function UpdateQuotation({ route, navigation, handleClose }) {
-  const { name, preState, amend } = route.params;
+function UpdateSalesOrder({ navigation, route }) {
   // page name display
-  const title = 'Add New Quotation';
+  const title = 'SalesOrder';
   // navigate step state
   const [stepState, setStepState] = useState(1);
   // max of steps
   const maxStep = 3;
+
+  const { QuotationState, name, preState, amend } = route.params;
 
   // state for show / hide selection (dynamically)
   const [openSelection, setOpenSelection] = useState(false);
@@ -92,19 +94,22 @@ function UpdateQuotation({ route, navigation, handleClose }) {
 
   // initial state
   const initialState = {
-    doctype: 'Quotation',
-    quotation_to: 'Customer',
-    party_name: '',
-    customer_address: '',
-    contact_person: '',
-    transaction_date: '',
-    valid_till: '',
+    doctype: 'Sales Order',
+    customer: '',
     company: '',
+    transaction_date: '',
+    delivery_date: '',
+    project: '',
     order_type: 'Sales',
     currency: 'THB',
-    selling_price_list: 'Standard Selling',
+    conversion_rate: 1,
+    selling_price_list: '',
+    set_warehouse: '',
+    customer_address: '',
     payment_terms_template: '',
+    contact_person: '',
     tc_name: '',
+    sales_partner: '',
     items: null,
   };
 
@@ -118,7 +123,6 @@ function UpdateQuotation({ route, navigation, handleClose }) {
   const {
     baseURL,
     CUSTOMER,
-    LEAD,
     ADDRESS,
     CONTACT,
     CURRENCY,
@@ -126,19 +130,25 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     PAYMENT_TERMS_TEMPLATES,
     TERMS_AND_CONDITIONS,
     ITEM_QRCODE,
-    QUOTATION,
+    SALES_ORDER,
     COMPANY,
+    PROJECT,
+    WAREHOUSE,
+    SALES_PARTNER,
   } = useConfig(true);
   const urlCurrency = baseURL + CURRENCY;
   const urlPriceList = baseURL + PRICE_LIST;
   const urlPaymentTermTemplate = baseURL + PAYMENT_TERMS_TEMPLATES;
   const urlTermAndConditions = baseURL + TERMS_AND_CONDITIONS;
   const urlItemQRCode = baseURL + ITEM_QRCODE;
-  const urlSubmit = baseURL + QUOTATION;
+  const urlSubmit = baseURL + SALES_ORDER;
   const urlCompany = baseURL + COMPANY;
+  const urlProject = baseURL + PROJECT;
+  const urlWarehouse = baseURL + WAREHOUSE;
+  const urlSalesPartner = baseURL + SALES_PARTNER;
 
   const urlCustomer = baseURL + CUSTOMER;
-  const urlLead = baseURL + LEAD;
+  // const urlLead = baseURL + LEAD;
   const urlAddress = baseURL + ADDRESS;
   const urlContact = baseURL + CONTACT;
   // handle dynamic property for multi selection in page
@@ -153,6 +163,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     }
     return totalAmount.toFixed(2);
   }
+
   // handle change property when open selection (dynamic)
   const getValueFromSelection = (name) => {
     setPropertySelected(name);
@@ -174,14 +185,14 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     var filterAddress = `?filters=[["address_title","=","${customer?.name}"]]&fields=["*"]`;
     var filterContact = `?fields=["*"]&filters=[["Dynamic Link","link_name", "=", "${customer?.name}"]]`;
     // start for required validation
-    const [requiredState] = useState(['company', 'party_name']);
+    const [requiredState] = useState(['company', 'customer']);
     const [nullState, setNullState] = useState({
       company: false,
-      party_name: false,
+      customer: false,
     });
 
     // date now for android
-    const [dateAndroidNow] = useState(new Date());
+    const [dateAndroidNow, setDateAndroidNow] = useState(new Date());
     const [dateAndroidNextMount, setAndroidNextMount] = useState(new Date()); // add 1 mount
     const onChangeAndroidFrom = (event, selectedDate) => {
       const currentDate = selectedDate;
@@ -206,10 +217,10 @@ function UpdateQuotation({ route, navigation, handleClose }) {
       if (mm < 10) mm = '0' + mm;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
         return;
       }
-      setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+      setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
     };
 
     const showAndoirdDatepickerFrom = () => {
@@ -234,7 +245,6 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     const [dateIOSNextMonth, setDateIOSNextMonth] = useState(new Date());
     // const [show, setShow] = useState(false);
     const onChangeIOSfrom = (event, selectedDate) => {
-      console.log(selectedDate);
       const currentDate = selectedDate;
       const yyyy = currentDate.getFullYear();
       let mm = currentDate.getMonth() + 1; // Months start at 0!
@@ -259,10 +269,10 @@ function UpdateQuotation({ route, navigation, handleClose }) {
       if (mm < 10) mm = '0' + mm;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
         return;
       } else {
-        setCtmState((pre) => ({ ...pre, valid_till: formattedToday }));
+        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
       }
     };
 
@@ -292,15 +302,19 @@ function UpdateQuotation({ route, navigation, handleClose }) {
       if (check.length !== 0) {
       } else {
         // if filled go to next step
-        setStepState((post) => post + 1);
-        setState(ctmState);
+        if (Date.parse(ctmState.delivery_date) < Date.parse(ctmState.transaction_date)) {
+          alert('Delivery Date should be after Transaction Date');
+        } else {
+          setStepState((post) => post + 1);
+          setState(ctmState);
+        }
       }
     };
 
     const handleBackFirstPage = () => {
       // handleClose();
       navigation.pop();
-      navigation.replace('Quotation', { filterData: [] });
+      navigation.replace(title, { filterData: [] });
       setState(initialState);
     };
 
@@ -336,7 +350,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
         _text={{ fontSize: 'sm', fontWeight: 'extrabold', color: COLORS.lightWhite }}
         onPress={() => stepState <= maxStep && handleForward()}
       >
-        {stepState !== maxStep ? 'Next' : 'Update'}
+        {stepState !== maxStep ? 'Next' : 'Submit'}
       </Button>
     );
 
@@ -377,13 +391,9 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     );
 
     useMemo(() => {
-      if (ctmState.party_name !== undefined && ctmState.party_name !== '') {
+      if (ctmState.customer !== undefined) {
         axios
-          .get(
-            ctmState.quotation_to === 'Customer'
-              ? urlCustomer + '/' + ctmState.party_name
-              : urlLead + '/' + ctmState.party_name
-          )
+          .get(urlCustomer + '/' + ctmState.customer)
           .then((response) => response.data)
           .then((res) => {
             // console.log(res.data);
@@ -399,16 +409,52 @@ function UpdateQuotation({ route, navigation, handleClose }) {
             // console.log(err);
           });
       }
-      // console.log(ctmState);
+      console.log(ctmState);
     }, [ctmState]);
     // set Default value of to Date Object (+ 1 month)
     useMemo(() => {
-      setCtmState((pre) => ({ ...pre, transaction_date: preState.transaction_date, valid_till: preState.valid_till }));
-      dateAndroidNow(new Date(preState.transaction_date));
-      setAndroidNextMount(new Date(preState.valid_till));
-      setDateIOS(new Date(preState.transaction_date));
-      setDateIOSNextMonth(new Date(preState.valid_till));
+      const plusMonth = new Date();
+      plusMonth.setMonth(plusMonth.getMonth() + 1);
+      setAndroidNextMount(() => plusMonth);
+      setDateIOSNextMonth(() => plusMonth);
+
+      const dateNow = new Date();
+      dateNow.setMonth(dateNow.getMonth());
+      setDateIOS(dateNow);
+
+      const currentDate = dateNow;
+
+      const yyyy = currentDate.getFullYear();
+      let mm = currentDate.getMonth() + 1; // Months start at 0!
+      let dd = currentDate.getDate();
+      if (dd < 10) dd = '0' + dd;
+      if (mm < 10) mm = '0' + mm;
+      const formattedToday = yyyy + '-' + mm + '-' + dd;
+
+      const nextDate = plusMonth;
+      const yyyy2 = plusMonth.getFullYear();
+      let mm2 = nextDate.getMonth() + 1; // Months start at 0!
+      let dd2 = nextDate.getDate();
+      if (dd2 < 10) dd = '0' + dd2;
+      if (mm2 < 10) mm = '0' + mm2;
+      const formattedNextMonth = yyyy2 + '-' + mm2 + '-' + dd2;
+
+      if (preState) {
+        setCtmState((pre) => ({
+          ...pre,
+          transaction_date: preState.transaction_date,
+          valid_till: preState.delivery_date,
+        }));
+        setDateAndroidNow(new Date(preState.transaction_date));
+        setAndroidNextMount(new Date(preState.delivery_date));
+        setDateIOS(new Date(preState.transaction_date));
+        setDateIOSNextMonth(new Date(preState.delivery_date));
+      } else {
+        setCtmState((pre) => ({ ...pre, transaction_date: formattedToday, delivery_date: formattedNextMonth }));
+      }
     }, []);
+
+    // read date from pres tate (when came from edit details)
 
     return (
       <React.Fragment>
@@ -435,7 +481,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
           space={SPACING.small}
         >
           <ScrollView>
-            <VStack h={{ base: 700, lg: 1400 }}>
+            <VStack h={1400}>
               <OnPressContainer onPress={() => handleOpenDynamicSelection('Company', 'company', urlCompany)}>
                 <StyledTextField
                   caretHidden
@@ -445,100 +491,38 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                   showSoftInputOnFocus={false} // disable toggle keyboard
                 />
               </OnPressContainer>
-              <HStack
-                w={'container'}
-                space={2}
-                direction={{ base: 'column', lg: 'row' }}
-              >
-                {/* quotation to  */}
-                <View>
-                  <FormControl justifyContent={'center'}>
-                    <FormControl.Label>Quotation To</FormControl.Label>
-                  </FormControl>
-                  <Select
-                    dropdownIcon={true}
-                    selectedValue={ctmState.quotation_to}
-                    w={{ base: 'full', lg: 400 }}
-                    fontSize={18}
-                    borderWidth={2}
-                    borderColor={'gray.200'}
-                    accessibilityLabel='Quotation To'
-                    placeholder='Choose Quotation To'
-                    _selectedItem={{
-                      bg: 'blueGray.200',
-                      endIcon: <CheckIcon color={'blueGray.400'} />,
-                    }}
-                    onValueChange={(itemValue) => {
-                      setCtmState((pre) => ({
-                        ...pre,
-                        quotation_to: itemValue,
-                        party_name: '',
-                        customer_address: '',
-                        contact_person: '',
-                      }));
-                      setCustomer({});
-                    }}
-                  >
-                    <Select.Item
-                      label='Lead'
-                      value='Lead'
-                    />
-
-                    <Select.Item
-                      label='Customer'
-                      value='Customer'
-                    />
-                  </Select>
-                </View>
-              </HStack>
               <VStack space={2}>
-                <OnPressContainer
-                  onPress={() =>
-                    handleOpenDynamicSelection(
-                      ctmState.quotation_to === 'Customer' ? 'Customer' : 'Lead',
-                      'party_name',
-                      ctmState.quotation_to === 'Customer' ? urlCustomer : urlLead
-                    )
-                  }
-                >
+                <OnPressContainer onPress={() => handleOpenDynamicSelection('Customer', 'customer', urlCustomer)}>
                   <StyledTextField
                     caretHidden
-                    isRequired={nullState.party_name}
-                    label={ctmState.quotation_to === 'Customer' ? 'Customer*' : 'Lead*'}
-                    value={ctmState.party_name}
+                    isRequired={nullState.customer}
+                    label={'Customer*'}
+                    value={ctmState.customer}
                     showSoftInputOnFocus={false} // disable toggle keyboard
                   />
                 </OnPressContainer>
                 {/* <OnPressContainer onPress={() => handleOpenDynamicSelection('Territory', 'territory', urlTerritory)}> */}
-                {ctmState.quotation_to === 'Customer' ? (
-                  <VStack>
-                    <StyledTextField
-                      caretHidden
-                      isDisabled
-                      label={'Customer Group'}
-                      name={'customer_group'}
-                      value={customer?.customer_group}
-                      showSoftInputOnFocus={false} // disable toggle keyboard
-                    />
 
-                    <StyledTextField
-                      caretHidden
-                      isDisabled
-                      label={'Territory'}
-                      name={'territory'}
-                      value={customer?.territory}
-                      showSoftInputOnFocus={false} // disable toggle keyboard
-                    />
-                  </VStack>
-                ) : (
+                <VStack>
                   <StyledTextField
                     caretHidden
                     isDisabled
-                    label={'Company'}
-                    value={customer?.company_name}
+                    label={'Customer Group'}
+                    name={'customer_group'}
+                    value={customer?.customer_group}
                     showSoftInputOnFocus={false} // disable toggle keyboard
                   />
-                )}
+
+                  <StyledTextField
+                    caretHidden
+                    isDisabled
+                    label={'Territory'}
+                    name={'territory'}
+                    value={customer?.territory}
+                    showSoftInputOnFocus={false} // disable toggle keyboard
+                  />
+                </VStack>
+
                 {/* </OnPressContainer> */}
               </VStack>
               {/* for Android */}
@@ -550,6 +534,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                         caretHidden
                         label={'From Date'}
                         // placeholder={'Select Transaction Date'}
+                        isDisabled
                         value={ctmState.transaction_date}
                         showSoftInputOnFocus={false} // disable toggle keyboard
                       />
@@ -561,7 +546,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                         caretHidden
                         label={'To Date'}
                         placeholder={'Select Valid Date'}
-                        value={ctmState.valid_till}
+                        value={ctmState.delivery_date}
                         showSoftInputOnFocus={false} // disable toggle keyboard
                       />
                     </OnPressContainer>
@@ -578,14 +563,25 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                     <View w={'container'}>
                       <View alignItems={'start'}>
                         <HStack>
-                          <RNDateTimePicker
-                            display='inline'
-                            // disabled={!checkState}
-                            is24Hour={true}
-                            mode='date'
-                            value={dateIOS}
-                            onChange={onChangeIOSfrom}
-                          />
+                          <View w={'container'}>
+                            <FormControl justifyContent={'center'}>
+                              <FormControl.Label mx={7}>Transaction Date</FormControl.Label>
+                            </FormControl>
+                            <View
+                              mx={12}
+                              alignItems={'start'}
+                            >
+                              <RNDateTimePicker
+                                display='inline'
+                                disabled
+                                // disabled={!checkState}
+                                is24Hour={true}
+                                mode='date'
+                                value={dateIOS}
+                                onChange={onChangeIOSfrom}
+                              />
+                            </View>
+                          </View>
                         </HStack>
                       </View>
                     </View>
@@ -593,7 +589,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                   <HStack justifyContent={'center'}>
                     <View w={'container'}>
                       <FormControl justifyContent={'center'}>
-                        <FormControl.Label mx={7}>To Date</FormControl.Label>
+                        <FormControl.Label mx={7}>Delivery Date</FormControl.Label>
                       </FormControl>
                       <View
                         mx={12}
@@ -612,39 +608,39 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                 </React.Fragment>
               )}
 
-              {ctmState.quotation_to === 'Customer' && (
-                <React.Fragment>
-                  <OnPressContainer
-                    onPress={() => {
-                      ctmState.party_name === ''
-                        ? alert(ctmState.quotation_to === 'Customer' ? 'Please select Customer' : 'Please select Lead')
-                        : handleOpenDynamicSelection('Address', 'customer_address', urlAddress + filterAddress);
-                    }}
-                  >
-                    <StyledTextField
-                      caretHidden
-                      label={'Address'}
-                      name={'customer_address'}
-                      value={ctmState.customer_address}
-                      showSoftInputOnFocus={false} // disable toggle keyboard
-                    />
-                  </OnPressContainer>
+              {/* {ctmState.customer !== undefined && ( */}
+              <React.Fragment>
+                <OnPressContainer
+                  onPress={() => {
+                    ctmState.customer === ''
+                      ? alert('Please select Customer')
+                      : handleOpenDynamicSelection('Address', 'customer_address', urlAddress + filterAddress);
+                  }}
+                >
+                  <StyledTextField
+                    caretHidden
+                    label={'Address'}
+                    name={'customer_address'}
+                    value={ctmState.customer_address}
+                    showSoftInputOnFocus={false} // disable toggle keyboard
+                  />
+                </OnPressContainer>
 
-                  <OnPressContainer
-                    onPress={() => {
-                      handleOpenDynamicSelection('Contact Person', 'contact_person', urlContact + filterContact);
-                    }}
-                  >
-                    <StyledTextField
-                      caretHidden
-                      label={'Contact Person'}
-                      name={'contact_person'}
-                      value={ctmState.contact_person}
-                      showSoftInputOnFocus={false} // disable toggle keyboard
-                    />
-                  </OnPressContainer>
-                </React.Fragment>
-              )}
+                <OnPressContainer
+                  onPress={() => {
+                    handleOpenDynamicSelection('Contact Person', 'contact_person', urlContact + filterContact);
+                  }}
+                >
+                  <StyledTextField
+                    caretHidden
+                    label={'Contact Person'}
+                    name={'contact_person'}
+                    value={ctmState.contact_person}
+                    showSoftInputOnFocus={false} // disable toggle keyboard
+                  />
+                </OnPressContainer>
+              </React.Fragment>
+              {/* )} */}
             </VStack>
           </ScrollView>
         </VStack>
@@ -654,46 +650,38 @@ function UpdateQuotation({ route, navigation, handleClose }) {
   // sub component second step
   const SecondStep = ({ state, setState }) => {
     const [ctmState2, setCtmState2] = useState(state);
+    const [requiredState] = useState(['selling_price_list', 'set_warehouse']);
+    const [nullState, setNullState] = useState({
+      set_warehouse: false,
+      selling_price_list: false,
+    });
 
-    // const [requiredState] = useState([]);
-    // const [nullState, setNullState] = useState({
-    //   customer_name: false,
-    //   customer_type: false,
-    //   customer_group: false,
-    //   territory: false,
-    // });
-
-    // const handleCheckRequired = () => {
-    //   requiredState.forEach((st_name) => {
-    //     if (!ctmState2[st_name]) {
-    //       setNullState((pre) => ({ ...pre, [st_name]: true }));
-    //     } else {
-    //       setNullState((pre) => ({ ...pre, [st_name]: false }));
-    //     }
-    //   });
-    //   // console.log(nullState);
-    // };
-
+    const handleCheckRequired = () => {
+      // console.log(ctmState2['set_warehouse']);
+      requiredState.forEach((st_name) => {
+        if (!ctmState2[st_name]) {
+          setNullState((pre) => ({ ...pre, [st_name]: true }));
+        } else {
+          setNullState((pre) => ({ ...pre, [st_name]: false }));
+        }
+      });
+      // console.log(nullState);
+    };
     const handleForward = () => {
-      // before go to next step check all required state
-      // check then make input error style
-      // handleCheckRequired();
-      // if column required is not filled push property name into check array
-      // let check = [];
-      // requiredState.forEach((st_name) => {
-      //   if (!ctmState2[st_name]) {
-      //     check.push(st_name);
-      //   }
-      // });
-      // // if have any length of check mean required state is still not filled yet
-      // if (check.length !== 0) {
-      // } else {
-      // if filled go to next step
-      // handleSubmit(ctmState2);
-
-      setStepState((post) => post + 1);
-      // setState(ctmState2);
-      // }
+      handleCheckRequired();
+      let check = [];
+      requiredState.forEach((st_name) => {
+        if (!ctmState2[st_name]) {
+          check.push(st_name);
+        }
+      });
+      // if have any length of check mean required state is still not filled yet
+      if (check.length !== 0) {
+      } else {
+        // if filled go to next step
+        setStepState((post) => post + 1);
+        setState(ctmState2);
+      }
     };
 
     const handleBack = () => {
@@ -733,7 +721,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
         _text={{ fontSize: 'sm', fontWeight: 'extrabold', color: COLORS.lightWhite }}
         onPress={() => stepState <= maxStep && handleForward()}
       >
-        {stepState !== maxStep ? 'Next' : 'Update'}
+        {stepState !== maxStep ? 'Next' : 'Submit'}
       </Button>
     );
 
@@ -773,10 +761,6 @@ function UpdateQuotation({ route, navigation, handleClose }) {
       </Pressable>
     );
 
-    // useMemo(() => {
-    //   console.log(stepState);
-    // }, [stepState]);
-
     return (
       <React.Fragment>
         <HStack
@@ -802,8 +786,18 @@ function UpdateQuotation({ route, navigation, handleClose }) {
           space={SPACING.small}
         >
           <ScrollView>
-            <VStack h={{ base: 700, lg: 1400 }}>
+            <VStack h={1000}>
               <VStack space={2}>
+                <OnPressContainer onPress={() => handleOpenDynamicSelection('Project', 'project', urlProject)}>
+                  <StyledTextField
+                    // isRequired
+                    caretHidden
+                    value={ctmState2.project}
+                    label={'Project'}
+                    name={'project'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
                 <View>
                   <FormControl justifyContent={'center'}>
                     <FormControl.Label>Order Type</FormControl.Label>
@@ -854,6 +848,37 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
+                <OnPressContainer
+                  onPress={() => handleOpenDynamicSelection('Price List', 'selling_price_list', urlPriceList)}
+                >
+                  <StyledTextField
+                    // isRequired
+                    caretHidden
+                    isRequired={nullState.selling_price_list}
+                    value={ctmState2.selling_price_list}
+                    label={'Price List'}
+                    name={'selling_price_list'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
+                <StyledTextField
+                  label={'Exchange Rate'}
+                  value={String(ctmState2.conversion_rate)}
+                  keyboardType='numeric'
+                  handleChange={(val) => setCtmState2((pre) => ({ ...pre, conversion_rate: val }))}
+                />
+                <OnPressContainer
+                  onPress={() => handleOpenDynamicSelection('Set Source Warehouse', 'set_warehouse', urlWarehouse)}
+                >
+                  <StyledTextField
+                    isRequired={nullState.set_warehouse}
+                    caretHidden
+                    value={ctmState2.set_warehouse}
+                    label={'Set Source Warehouse'}
+                    name={'set_warehouse'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
                 {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
                 {/* tc_name: null,
               <OnPressContainer
@@ -861,21 +886,14 @@ function UpdateQuotation({ route, navigation, handleClose }) {
               > */}
 
                 {/* </OnPressContainer> */}
-                <OnPressContainer
-                  onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
-                >
-                  <StyledTextField
-                    // isRequired
-                    caretHidden
-                    value={ctmState2.selling_price_list}
-                    label={'Price List'}
-                    name={'default_price_list'}
-                    showSoftInputOnFocus={false}
-                  />
-                </OnPressContainer>
+
                 <OnPressContainer
                   onPress={() =>
-                    handleOpenDynamicSelection('Price List', 'payment_terms_template', urlPaymentTermTemplate)
+                    handleOpenDynamicSelection(
+                      'Price Payment Terms Template',
+                      'payment_terms_template',
+                      urlPaymentTermTemplate
+                    )
                   }
                 >
                   <StyledTextField
@@ -895,6 +913,18 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                     caretHidden
                     value={ctmState2.tc_name}
                     label={'Terms & Conditions'}
+                    // name={'default_price_list'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
+                <OnPressContainer
+                  onPress={() => handleOpenDynamicSelection('Sales Partner', 'sales_partner', urlSalesPartner)}
+                >
+                  <StyledTextField
+                    // isRequired
+                    caretHidden
+                    value={ctmState2.sales_partner}
+                    label={'Sales Partner'}
                     // name={'default_price_list'}
                     showSoftInputOnFocus={false}
                   />
@@ -978,7 +1008,6 @@ function UpdateQuotation({ route, navigation, handleClose }) {
         }
       }
     };
-
     const handleBack = () => {
       navigation.goBack();
       setState(initialState);
@@ -986,7 +1015,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
 
     const handleBackStoreItems = () => {
       setStepState((post) => post - 1);
-      console.log('items: ', stateWithAmount);
+      // console.log('items: ', stateWithAmount);
       if (items.items === null) {
         setState((pre) => ({ ...pre, items: null }));
       } else {
@@ -1020,7 +1049,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
         _text={{ fontSize: 'sm', fontWeight: 'extrabold', color: COLORS.lightWhite }}
         onPress={() => stepState <= maxStep && handleForward()}
       >
-        {stepState !== maxStep ? 'Next' : 'Update'}
+        {stepState !== maxStep ? 'Next' : 'Submit'}
       </Button>
     );
 
@@ -1133,6 +1162,21 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     };
     useMemo(() => {
       getBarCodeScannerPermissions();
+      // axios
+      //   .get(urlGetItemsQuotation, {
+      //     headers: {
+      //       Authorization: '',
+      //     },
+      //   })
+      //   .then((response) => {
+      //     // console.log(response.data.message.data);
+      //     // setItems(response.data.message.data);
+      //     setItems((pre) => ({ ...pre, items: response.data.message.data }));
+      //     // setItemLength(response.data.message.data.length);
+      //   })
+      //   .catch((error) => {
+      //     alert(error);
+      //   });
     }, []);
 
     useMemo(() => {
@@ -1144,6 +1188,8 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     }, [scanned]);
 
     useMemo(() => {
+      // console.log(items);
+      // console.log('testssss:', items.items);
       if (items?.items !== null) {
         const updateState = Object.values(items?.items).map((data, index) => {
           const temp = { ...items.items };
@@ -1161,6 +1207,10 @@ function UpdateQuotation({ route, navigation, handleClose }) {
         setStateWithAmount(items);
       }
     }, [items]);
+
+    // React.useEffect(() => {
+    //   console.log('State With Amount', stateWithAmount);
+    // }, [stateWithAmount]);
 
     return (
       <React.Fragment>
@@ -1217,7 +1267,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                 {items.items !== null &&
                   Object.values(stateWithAmount)?.map((data, index) => (
                     <VStack
-                      key={data?.name}
+                      key={index}
                       bg={COLORS.white}
                       rounded={20}
                       space={2}
@@ -1360,7 +1410,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                             variant={'filled'}
                             keyboardType='numeric'
                             selectTextOnFocus
-                            value={String(data?.rate) === '0' ? '1.0' : String(data?.rate)}
+                            value={String(data?.rate)}
                             onBlur={() => {
                               if (data?.rate === '' || data?.rate === '1') {
                                 const updatedItems = items.items;
@@ -1473,11 +1523,12 @@ function UpdateQuotation({ route, navigation, handleClose }) {
       // setState(initialState);
       // refetchData();
       navigation.pop();
-      navigation.replace('Quotation', { filterData: [] });
+      navigation.replace(title, { filterData: [] });
     };
     const handleAddAnother = () => {
       setState(initialState);
-      setStepState(1);
+      navigation.replace('UpdateSalesOrder', { QuotationState: [] });
+      // setStepState(1);
     };
 
     return (
@@ -1515,7 +1566,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
               textWeight={'bold'}
               fontSize={24}
             >
-              {'Add Quotation\nSuccess!'}
+              {'Update Sales Order\nSuccess!'}
             </Text>
 
             <VStack
@@ -1530,7 +1581,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                 _pressed={{ bg: 'blueGray.200' }}
                 onPress={() => handleBack()}
               >
-                Back to Quotation Page
+                Back to Sales Order Page
               </Button>
               {/* <Button
                 rounded={24}
@@ -1540,7 +1591,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                 _pressed={{ bg: COLORS.tertiary2 }}
                 onPress={() => handleAddAnother()}
               >
-                Add another quotation
+                Add another Sales Order
               </Button> */}
             </VStack>
           </VStack>
@@ -1548,10 +1599,78 @@ function UpdateQuotation({ route, navigation, handleClose }) {
       </FadeTransition>
     );
   };
-  // log when state having changed
   // useMemo(() => {
-  //   console.log('state: ', state);
-  // }, [state]);
+  //   const reformatQuotationState = () => {
+  //     function mapProperties(inputObject) {
+  //       if (QuotationState) {
+  //         return {
+  //           doctype: 'Sales Order',
+  //           customer: inputObject.party_name,
+  //           customer_address: inputObject.customer_address || '',
+  //           order_type: inputObject.order_type,
+  //           contact_person: inputObject.contact_person || '',
+  //           project: '',
+  //           conversion_rate: inputObject.conversion_rate || '0.0',
+  //           transaction_date: inputObject.transaction_date,
+  //           delivery_date: '',
+  //           company: inputObject.company,
+  //           currency: inputObject.currency,
+  //           set_warehouse: inputObject.set_warehouse || '',
+  //           selling_price_list: inputObject.selling_price_list || '',
+  //           payment_terms_template: inputObject.payment_terms_template || '',
+  //           tc_name: inputObject.tc_name || '',
+  //           sales_partner: inputObject.sales_partner || '',
+  //           items: Object.values(inputObject.items).map((it) => {
+  //             return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
+  //           }),
+  //         };
+  //       } else {
+  //         return {
+  //           doctype: 'Sales Order',
+  //           customer: inputObject.customer,
+  //           customer_address: inputObject.customer_address || '',
+  //           order_type: inputObject.order_type,
+  //           contact_person: inputObject.contact_person || '',
+  //           project: inputObject.project || '',
+  //           conversion_rate: inputObject.conversion_rate || '0.0',
+  //           transaction_date: inputObject.transaction_date,
+  //           delivery_date: QuotationState ? inputObject.valid_till : inputObject.delivery_date,
+  //           company: inputObject.company,
+  //           currency: inputObject.currency,
+  //           set_warehouse: inputObject.set_warehouse || '',
+  //           selling_price_list: inputObject.selling_price_list || '',
+  //           payment_terms_template: inputObject.payment_terms_template || '',
+  //           tc_name: inputObject.tc_name || '',
+  //           sales_partner: inputObject.sales_partner || '',
+  //           items: Object.values(inputObject.items).map((it) => {
+  //             return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
+  //           }),
+  //         };
+  //       }
+
+  //       // return { doctype: inputObject.doctype };
+  //     }
+  //     if (Object.values(QuotationState).length > 0) {
+  //       const newData = mapProperties(QuotationState);
+  //       // console.log('newData', newData);
+  //       setState(newData);
+
+  //       // console.log('Quotation  state reformatted');
+  //     } else {
+  //       const newData = mapProperties(preState);
+  //       // console.log('newData', newData);
+  //       setState(newData);
+  //       // console.log('Pre state reformatted');
+  //     }
+  //   };
+  //   reformatQuotationState();
+  //   // console.log('QuotationState :', QuotationState);
+  // }, []);
+
+  // log when state having changed
+  useMemo(() => {
+    console.log('state: ', state);
+  }, [state]);
 
   return (
     <ContainerStyled>
@@ -1599,10 +1718,20 @@ function UpdateQuotation({ route, navigation, handleClose }) {
               property={propertySelected} // name of property for send data to outside
             />
           )}
+          {/* {openCustomerType && (
+            <StaticSelectPage
+              title={'Customer Type'} // name of statice selection
+              data={customerTypes} // data of statice selection
+              open={openCustomerType} // state for show/hide selection
+              setOpen={setOpenCustomerType} // for control show/hide
+              setState={setState} // for send data to outside selection and set it in main state by property
+              property={'customer_type'} // name of property for send data to outside
+            />
+          )} */}
         </Center>
       </FadeTransition>
     </ContainerStyled>
   );
 }
 
-export default UpdateQuotation;
+export default UpdateSalesOrder;

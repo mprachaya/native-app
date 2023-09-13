@@ -277,7 +277,7 @@ function ExportPDF({ open, handleClose, docType, name }) {
         </View>
       ) : (
         <View
-          m={'25%'}
+          m={'40'}
           w={'full'}
           h={1200}
         >
