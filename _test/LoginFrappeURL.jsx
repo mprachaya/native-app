@@ -117,10 +117,10 @@ function LoginFrappeURL({ navigation }) {
             _text={{ fontSize: 'lg', fontWeight: 'bold', letterSpacing: 0.5 }}
             _pressed={{ bg: COLORS.secondary }}
             onPress={() =>
-              authenticate(state.url, state.usr, state.pwd, () => navigation.replace('Quotation', { filterData: [] }))
+              authenticate(state.url, state.usr, state.pwd, () => navigation.replace('SalesOrder', { filterData: [] }))
             }
           >
-            {'Login -> Quotation'}
+            {'Login -> Sales Order'}
           </Button>
         </FormControl>
       </VStack>

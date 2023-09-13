@@ -13,19 +13,20 @@ import useConfig from '../../../../config/path';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
+const ContainerStyled = (props) => {
+  return (
+    <View
+      style={{ zIndex: 0 }}
+      height={SCREEN_HEIGHT}
+      bg={'blueGray.100'}
+      {...props}
+    >
+      {props.children}
+    </View>
+  );
+};
+
 function SalesOrderPage({ route }) {
-  const ContainerStyled = (props) => {
-    return (
-      <View
-        style={{ zIndex: 0 }}
-        height={SCREEN_HEIGHT}
-        bg={'blueGray.100'}
-        {...props}
-      >
-        {props.children}
-      </View>
-    );
-  };
   const { baseURL, SALES_ORDERS } = useConfig(true);
   const { filterData, toggleFilter } = route.params;
   // for hot reload
@@ -41,10 +42,8 @@ function SalesOrderPage({ route }) {
   const [openState, setOpenState] = useState({
     sort: false,
   });
-
   // column for searching
-  const dataColumn = ['customer', 'status', 'name', 'transaction_date'];
-  // const dataColumn = ['name'];
+  const dataColumn = ['customer_name', 'status', 'name', 'transaction_date'];
   const initialsSortBy = {
     Creation: false,
     Modified: false,
@@ -62,7 +61,7 @@ function SalesOrderPage({ route }) {
   const FilterName = 'FilterQuotation';
   const SortName = 'SortAndroidQuotation';
   const DetailsName = 'SalesOrderDetails';
-  const AddNewName = 'AddNewQuotation';
+  const AddNewName = 'AddNewSalesOrder';
 
   const [tempData, setTempData] = useState(null); // for store filtered Data
   // data fetching with custom hook useFetch
@@ -70,7 +69,7 @@ function SalesOrderPage({ route }) {
   const [sortActive, setSortActive] = useState(false);
   const {
     data: salesOrderData,
-    setData: setsalesOrderData,
+    setData: setSalesOrderData,
     setRefetch: refetchData,
     loading,
     error,
@@ -309,35 +308,35 @@ function SalesOrderPage({ route }) {
             </Button>
             {Platform.OS === 'android' && (
               <NavHeaderRight
-              // filterActive={filterActive ? 'filter' : null} // for active option bg color
-              // sortActive={sortActive ? 'sort' : null}
-              // openAdd={() => navigation.navigate(AddNewName)}
-              // // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
-              // openSort={() =>
-              //   navigation.navigate(SortName, {
-              //     sortBy: SortBy,
-              //     data: quotationData,
-              //     setData: setQuotationData,
-              //     setReload: setReloadState,
-              //     sortByst: sortByState,
-              //     sortTypest: sortTypeState,
-              //     setSortByst: setSortByState,
-              //     setSortTypest: setSortTypeState,
-              //   })
-              // }
-              // openFilter={() => {
-              //   navigation.navigate(FilterName, { toggleFilter: false, storeFilter: filterData });
-              // }}
+                filterActive={filterActive ? 'filter' : null} // for active option bg color
+                sortActive={sortActive ? 'sort' : null}
+                openAdd={() => navigation.navigate(AddNewName)}
+                // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
+                openSort={() =>
+                  navigation.navigate(SortName, {
+                    sortBy: SortBy,
+                    data: salesOrderData,
+                    setData: setSalesOrderData,
+                    setReload: setReloadState,
+                    sortByst: sortByState,
+                    sortTypest: sortTypeState,
+                    setSortByst: setSortByState,
+                    setSortTypest: setSortTypeState,
+                  })
+                }
+                openFilter={() => {
+                  navigation.navigate(FilterName, { toggleFilter: false, storeFilter: filterData });
+                }}
               />
             )}
             {Platform.OS === 'ios' && (
               <NavHeaderRight
-              // filterActive={filterActive ? 'filter' : null} // for active option bg color
-              // sortActive={sortActive ? 'sort' : null}
-              // openAdd={() => navigation.navigate(AddNewName)}
-              // // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
-              // openSort={() => setOpenState((pre) => ({ ...pre, sort: true }))}
-              // openFilter={() => navigation.navigate(FilterName, { toggleFilter: false, storeFilter: filterData })}
+                filterActive={filterActive ? 'filter' : null} // for active option bg color
+                sortActive={sortActive ? 'sort' : null}
+                openAdd={() => navigation.navigate(AddNewName, { QuotationState: [] })}
+                // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
+                openSort={() => setOpenState((pre) => ({ ...pre, sort: true }))}
+                openFilter={() => navigation.navigate(FilterName, { toggleFilter: false, storeFilter: filterData })}
               />
             )}
           </HStack>
@@ -370,7 +369,7 @@ function SalesOrderPage({ route }) {
               >
                 <FlatList
                   horizontal
-                  mx={{ base: 4, lg: 12 }}
+                  mx={12}
                   removeClippedSubviews={true}
                   data={countData}
                   renderItem={({ item }) => (
@@ -444,15 +443,15 @@ function SalesOrderPage({ route }) {
         </VStack>
       </Center>
       {/* {Platform.OS === 'ios' && ( */}
-      {/* 
+
       <SortModal
         open={openState.sort}
         setOpen={setOpenState}
         setReload={setReloadState}
         data={salesOrderData}
-        setData={setsalesOrderData}
+        setData={setSalesOrderData}
         sortBy={SortBy}
-      /> */}
+      />
 
       {/* )} */}
       {/* {openState.add && navigation.navigate('AddNewCustomer')} */}

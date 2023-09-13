@@ -14,7 +14,7 @@ function NavHeaderRight({ sortActive, filterActive, openAdd, openSort, openFilte
       justifyContent={'center'}
       onPress={handleOpen}
       _pressed={{ bg: 'blueGray.200' }}
-      bg={active !== undefined && active === filterName && 'blueGray.300'}
+      // bg={active !== undefined && active === filterName && 'blueGray.300'}
     >
       {children}
     </Button>

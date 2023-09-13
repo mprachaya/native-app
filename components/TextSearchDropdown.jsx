@@ -70,31 +70,28 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
     }
   }, [allData]);
 
-  // useEffect(() => {
-  //   if (!SearchText && focus) {
-  //     if (allData) {
-  //       console.log('reset : ', allData);
-  //       setData(allData);
-  //     }
-  //   } else if (SearchText && focus) {
-  //     setOnFocus(true);
-  //     Object.keys(allData[0])?.map((key) => {
-  //       if (key !== 'image') {
-  //         const search = handleSearch(data, SearchText, key);
-  //         if (search) {
-  //           setData(search);
-  //           returnLength(search.length);
-  //         } else {
-  //         }
-  //       }
-  //     });
-  //   }
-  // }, [SearchText]);
+  useEffect(() => {
+    if (!SearchText && focus) {
+      if (allData) {
+        console.log('reset : ', allData);
+        setData(allData);
+      }
+    } else if (SearchText && focus) {
+      setOnFocus(true);
+      Object.keys(allData[0])?.map((key) => {
+        if (key !== 'image') {
+          const search = handleSearch(data, SearchText, key);
+          if (search) {
+            setData(search);
+            returnLength(search.length);
+          } else {
+          }
+        }
+      });
+    }
+  }, [SearchText]);
 
   useEffect(() => {
-    // if (focus) {
-    //   () => returnData(true);
-    // }else
     if (focus) {
       returnData(true);
     } else if (SearchText.length === 0 && !focus) {
@@ -118,7 +115,17 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
           <SearchInput
             isFocused={focus}
             onChangeText={(val) => setSearchText(val)}
-            onFocus={() => setOnFocus(true)}
+            onFocus={() => {
+              // returnData(true);
+              setOnFocus(true);
+            }}
+            onBlur={() => {
+              if (SearchText.length > 0) {
+              } else {
+                // returnData(false);
+                setOnFocus(false);
+              }
+            }}
             value={SearchText}
             clear={SearchText ? true : false}
             clearAction={() => clearSearch()}
@@ -127,14 +134,15 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
         {focus && (
           <VStack
             m={6}
+            h={1000}
+            bg={'blueGray.100'}
             // mx={{ base: 4 }}
-            w={{ base: '96', lg: 'full' }}
+            // w={{ base: '96', lg: 'full' }}
             position={'absolute'}
             top={50}
           >
             <FadeTransition animated={focus}>
               <FlatList
-                h={{ base: 500, lg: 800 }}
                 mx={{ base: 4, lg: '30%' }}
                 data={data}
                 ListHeaderComponent={() => (

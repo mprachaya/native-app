@@ -44,7 +44,7 @@ export default function useFetch(url, header) {
               //checking for multiple responses for more flexibility
               //with the url we send in.
               res.data && setData(res.data);
-              // console.log('Fetching successful!');
+              // sconsole.log('Fetching successful!');
             })
             .catch((err) => {
               setLoading(false);
