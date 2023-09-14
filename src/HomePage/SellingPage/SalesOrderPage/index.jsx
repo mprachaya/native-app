@@ -58,7 +58,7 @@ function SalesOrderPage({ route }) {
   const [sortByState, setSortByState] = useState(initialsSortBy);
   const [sortTypeState, setSortTypeState] = useState(initialsSortType);
 
-  const FilterName = 'FilterQuotation';
+  const FilterName = 'FilterSalesOrder';
   const SortName = 'SortAndroidQuotation';
   const DetailsName = 'SalesOrderDetails';
   const AddNewName = 'AddNewSalesOrder';
@@ -143,7 +143,7 @@ function SalesOrderPage({ route }) {
   ];
 
   const handleClickDetails = (name) => {
-    navigation.navigate(DetailsName, {
+    navigation.replace(DetailsName, {
       name: name,
     });
   };
@@ -169,13 +169,15 @@ function SalesOrderPage({ route }) {
       const newObjFilter = Object.fromEntries(Object.entries(filterData)?.filter(([key, value]) => value !== ''));
       // console.log('FilterState: ', Object.values(newObjFilter).length);
       // filtering
-      console.log('newObjFilter', newObjFilter);
+      // console.log('newObjFilter', newObjFilter);
       const filterResult = dataTemp.filter((item) => {
         if (Object.keys(newObjFilter).length > 0) {
           for (let key in newObjFilter) {
             if (
               item[key] === '' ||
-              (!newObjFilter[key].includes(item[key]) && key !== 'transaction_date' && key !== 'valid_till')
+              (!newObjFilter[key].includes(item[key]) &&
+                key !== 'transaction_date_from' &&
+                key !== 'transaction_date_to')
             ) {
               return false;
               // console.log(filterData[key]);
@@ -185,24 +187,18 @@ function SalesOrderPage({ route }) {
         return true;
       });
       // console.log('filterResult', filterResult);
-      if (newObjFilter.transaction_date !== undefined || newObjFilter.valid_till !== undefined) {
+      if (newObjFilter.transaction_date_from !== undefined && newObjFilter.transaction_date_to !== undefined) {
         const filterFromDate = Object.values(filterResult)?.filter((item) => {
-          const itemDate = item.transaction_date;
-          // console.log('raw', itemDate);
-          // console.log('-----------');
-          // console.log('filter', newObjFilter.transaction_date);
-          if (newObjFilter.transaction_date !== undefined && newObjFilter.valid_till !== undefined) {
-            return itemDate >= newObjFilter.transaction_date && itemDate <= newObjFilter.valid_till;
-          } else if (newObjFilter.transaction_date !== undefined && newObjFilter.valid_till === undefined) {
-            return itemDate === newObjFilter.transaction_date;
-          } else if (newObjFilter.transaction_date === undefined && newObjFilter.valid_till !== undefined) {
-            return itemDate === newObjFilter.transaction_date;
-          }
+          return (
+            item.transaction_date >= newObjFilter.transaction_date_from &&
+            item.transaction_date <= newObjFilter.transaction_date_to
+          );
         });
         console.log('filterFromDate', filterFromDate);
         setTempData(filterFromDate);
-      } else if (filterResult.length > 0) setTempData(filterResult);
-      else {
+      } else if (filterResult.length > 0) {
+        setTempData(filterResult);
+      } else {
         setTempData(null);
       }
       // console.log('filterResult:', filterResult);
@@ -306,7 +302,7 @@ function SalesOrderPage({ route }) {
             >
               <ChevronLeftIcon />
             </Button>
-            {Platform.OS === 'android' && (
+            {/* {Platform.OS === 'android' && (
               <NavHeaderRight
                 filterActive={filterActive ? 'filter' : null} // for active option bg color
                 sortActive={sortActive ? 'sort' : null}
@@ -328,7 +324,7 @@ function SalesOrderPage({ route }) {
                   navigation.navigate(FilterName, { toggleFilter: false, storeFilter: filterData });
                 }}
               />
-            )}
+            )} */}
             {Platform.OS === 'ios' && (
               <NavHeaderRight
                 filterActive={filterActive ? 'filter' : null} // for active option bg color

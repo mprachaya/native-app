@@ -60,8 +60,7 @@ function FilterQuotation({ route, navigation }) {
     if (mm < 10) mm = '0' + mm;
     const formattedToday = yyyy + '-' + mm + '-' + dd;
     if (event?.type === 'dismissed') {
-      setFilterState((pre) => ({ ...pre, transaction_date: formattedToday }));
-      return;
+      // setFilterState((pre) => ({ ...pre, transaction_date: formattedToday }));
     }
     setFilterState((pre) => ({ ...pre, transaction_date: formattedToday }));
   };
@@ -74,8 +73,7 @@ function FilterQuotation({ route, navigation }) {
     if (mm < 10) mm = '0' + mm;
     const formattedToday = yyyy + '-' + mm + '-' + dd;
     if (event?.type === 'dismissed') {
-      setFilterState((pre) => ({ ...pre, valid_till: formattedToday }));
-      return;
+      // setFilterState((pre) => ({ ...pre, valid_till: formattedToday }));
     }
     setFilterState((pre) => ({ ...pre, valid_till: formattedToday }));
   };
@@ -397,41 +395,44 @@ function FilterQuotation({ route, navigation }) {
               </HStack>
             </React.Fragment>
           )}
+          <HStack
+            mb={24}
+            justifyContent={'center'}
+            space={2.5}
+          >
+            <Button
+              px={6}
+              mt={12}
+              minW={'32'}
+              rounded={20}
+              variant={'unstyled'}
+              bg={COLORS.tertiary2}
+              _text={{ color: 'white', fontWeight: 'semibold', letterSpacing: 0.5 }}
+              _pressed={{ bg: COLORS.tertiary }}
+              onPress={() => handleSetFilter()}
+            >
+              Apply Filter
+            </Button>
+            <Button
+              px={6}
+              mt={12}
+              minW={'32'}
+              rounded={20}
+              borderWidth={1}
+              borderColor={'blueGray.200'}
+              variant={'unstyled'}
+              // bg={COLORS.tertiary2}
+              _text={{ color: 'blueGray.400', fontWeight: 'semibold', letterSpacing: 0.5 }}
+              _pressed={{ bg: 'blueGray.200' }}
+              onPress={() => {
+                navigation.pop();
+                navigation.replace(RouteName, { filterData: initialsFilterState, toggleFilter: true });
+              }}
+            >
+              CLEAR
+            </Button>
+          </HStack>
         </ScrollView>
-
-        <HStack space={2.5}>
-          <Button
-            px={6}
-            mt={12}
-            minW={'32'}
-            rounded={20}
-            variant={'unstyled'}
-            bg={COLORS.tertiary2}
-            _text={{ color: 'white', fontWeight: 'semibold', letterSpacing: 0.5 }}
-            _pressed={{ bg: COLORS.tertiary }}
-            onPress={() => handleSetFilter()}
-          >
-            Apply Filter
-          </Button>
-          <Button
-            px={6}
-            mt={12}
-            minW={'32'}
-            rounded={20}
-            borderWidth={1}
-            borderColor={'blueGray.200'}
-            variant={'unstyled'}
-            // bg={COLORS.tertiary2}
-            _text={{ color: 'blueGray.400', fontWeight: 'semibold', letterSpacing: 0.5 }}
-            _pressed={{ bg: 'blueGray.200' }}
-            onPress={() => {
-              navigation.pop();
-              navigation.replace(RouteName, { filterData: initialsFilterState, toggleFilter: true });
-            }}
-          >
-            CLEAR
-          </Button>
-        </HStack>
       </Center>
     </ContainerStyled>
   );

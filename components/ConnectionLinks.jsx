@@ -2,8 +2,8 @@ import { Box, Button, ChevronRightIcon, HStack, Text, VStack } from 'native-base
 import React from 'react';
 import { COLORS } from '../constants/theme';
 
-export default function ConnectionLinks({ Icon, name, count, links }) {
-  return (
+export default function ConnectionLinks({ Icon, name, links }) {
+  return links !== undefined ? (
     <VStack
       m={0}
       py={6}
@@ -36,7 +36,8 @@ export default function ConnectionLinks({ Icon, name, count, links }) {
           {links?.length}
         </Text>
       </HStack>
-      {Object.values(links)?.map((link) => (
+
+      {Object.values(links)?.map((link, index) => (
         <HStack
           key={link.parent}
           bg={COLORS.lightWhite}
@@ -59,7 +60,7 @@ export default function ConnectionLinks({ Icon, name, count, links }) {
               </Text>
             </VStack>
             <Button
-              _pressed={{ background: COLORS.white }}
+              _pressed={{ background: 'white' }}
               variant={'unstyled'}
               my={2}
             >
@@ -68,6 +69,40 @@ export default function ConnectionLinks({ Icon, name, count, links }) {
           </HStack>
         </HStack>
       ))}
+    </VStack>
+  ) : (
+    <VStack
+      m={0}
+      py={6}
+      space={2}
+      shadow={1}
+      rounded={'lg'}
+      bg={'white'}
+      justifyContent={'start'}
+    >
+      <HStack
+        px={6}
+        space={3}
+        w={'300'}
+        justifyContent={'space-between'}
+      >
+        <HStack space={6}>
+          {Icon}
+          <Text
+            fontWeight={'bold'}
+            color={COLORS.primary}
+          >
+            {name}
+          </Text>
+        </HStack>
+        <Text
+          mr={4}
+          fontWeight={'semibold'}
+          color={COLORS.gray2}
+        >
+          {0}
+        </Text>
+      </HStack>
     </VStack>
   );
 }

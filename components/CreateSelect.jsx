@@ -1,7 +1,9 @@
 import { CheckIcon, Select } from 'native-base';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 
-export default function StaticSelect({ label }) {
+export default function StaticSelect({ label, menus, navigateName, id }) {
+  const navigation = useNavigation();
   return (
     <Select
       dropdownIcon={true}
@@ -19,21 +21,15 @@ export default function StaticSelect({ label }) {
         bg: 'blueGray.200',
         endIcon: <CheckIcon color={'blueGray.400'} />,
       }}
-      // onValueChange={(itemValue) => setFilterState((pre) => ({ ...pre, order_type: itemValue }))}
+      // onValueChange={() => navigation.replace(navigateName, { CreateFrom: id })}
+      onValueChange={() => console.log('Create Sales Invoice from ' + id)}
     >
-      <Select.Item
-        label='Sales'
-        value='Sales'
-      />
-
-      <Select.Item
-        label='Maintenance'
-        value='Maintenance'
-      />
-      <Select.Item
-        label='Shopping Cart'
-        value='Shopping Cart'
-      />
+      {Object.values(menus)?.map((menu) => (
+        <Select.Item
+          label={menu.label}
+          value={menu.value}
+        />
+      ))}
     </Select>
   );
 }

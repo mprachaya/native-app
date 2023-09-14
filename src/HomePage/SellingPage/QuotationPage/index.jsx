@@ -123,7 +123,7 @@ function QuotationPage({ route }) {
   ];
 
   const handleClickDetails = (name) => {
-    navigation.navigate(DetailsName, {
+    navigation.replace(DetailsName, {
       name: name,
     });
   };

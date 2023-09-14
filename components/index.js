@@ -22,7 +22,7 @@ import DynamicSelectPage from './DynamicSelectPage';
 import StaticSelectPage from './StaticSelectPage';
 import TextSearchDropdown from './TextSearchDropdown';
 import ConnectionLinks from './ConnectionLinks';
-import StaticSelect from './StaticSelect';
+import CreateSelect from './CreateSelect';
 
 export {
   AppBar,
@@ -52,5 +52,5 @@ export {
   StaticSelectPage,
   TextSearchDropdown,
   ConnectionLinks,
-  StaticSelect,
+  CreateSelect,
 };

@@ -17,7 +17,7 @@ import {
 import React, { useEffect, useMemo, useState } from 'react';
 import { COLORS } from '../../../../constants/theme';
 import { Edit, SaleInvoice } from '../../../../constants/icons';
-import { ConnectionLinks, Loading, StaticSelect } from '../../../../components';
+import { ConnectionLinks, Loading, CreateSelect } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
 import useUpdate from '../../../../hooks/useUpdate';
 import useConfig from '../../../../config/path';
@@ -451,7 +451,14 @@ function DetailsPage({ route, navigation }) {
           </HStack>
           <HStack h={10}>
             {/* {data?.status === 'Open' && <CreateSalesOrderButton />} */}
-            {data?.status === 'To Deliver and Bill' && <StaticSelect label={'Create'} />}
+            {data?.status === 'To Deliver and Bill' && (
+              <CreateSelect
+                id={name}
+                // navigateName={'AddNewSalesOrder'}
+                label={'Create'}
+                menus={[{ label: 'Sales Invoice', value: 'Sales Invoice' }]}
+              />
+            )}
             {data?.status !== 'Completed' && <StatusButton status={data?.status} />}
             <PrintAndExport />
             {data?.status === 'Draft' && <EditButton />}

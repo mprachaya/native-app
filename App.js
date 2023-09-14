@@ -36,6 +36,7 @@ import AddNewSalesOrder from './src/HomePage/SellingPage/SalesOrderPage/AddNewSa
 import SalesOrderDetails from './src/HomePage/SellingPage/SalesOrderPage/SalesOrderDetails';
 import SalesOrderItemDetails from './src/HomePage/SellingPage/SalesOrderPage/ItemDetails';
 import UpdateSalesOrder from './src/HomePage/SellingPage/SalesOrderPage/UpdateSalesOrder';
+import FilterSalesOrder from './src/HomePage/SellingPage/SalesOrderPage/FilterSalesOrder';
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
@@ -384,6 +385,20 @@ export default function App() {
                 header: () => (
                   <NavHeader
                     pageName={'Edit Sales Order'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='FilterSalesOrder'
+              component={FilterSalesOrder}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Filter Sales Order'}
                     noHeader={true}
                   />
                 ),

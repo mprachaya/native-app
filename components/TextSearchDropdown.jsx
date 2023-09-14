@@ -133,7 +133,8 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
         </VStack>
         {focus && (
           <VStack
-            m={6}
+            mt={4}
+            // m={6}
             h={1000}
             bg={'blueGray.100'}
             // mx={{ base: 4 }}
