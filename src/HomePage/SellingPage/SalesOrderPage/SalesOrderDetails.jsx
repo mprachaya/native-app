@@ -14,10 +14,10 @@ import {
   VStack,
   View,
 } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { COLORS } from '../../../../constants/theme';
 import { Edit, SaleInvoice } from '../../../../constants/icons';
-import { ConnectionLinks, Loading } from '../../../../components';
+import { ConnectionLinks, Loading, StaticSelect } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
 import useUpdate from '../../../../hooks/useUpdate';
 import useConfig from '../../../../config/path';
@@ -25,6 +25,7 @@ import { Alert, ImageBackground, Pressable } from 'react-native';
 import Animated from 'react-native-reanimated';
 import axios from 'axios';
 import ExportPDF from '../../../../_test/ExportPDF';
+import { getDataAPICustom } from '../../../../utils/reformatresponse';
 // import Export from '../../../../assets/icons/export.png';
 // wrap components
 const ContainerStyled = (props) => {
@@ -41,7 +42,7 @@ const ContainerStyled = (props) => {
 function DetailsPage({ route, navigation }) {
   const title = 'SalesOrder';
   const { name } = route.params;
-  const { baseURL, SALES_ORDER } = useConfig(true);
+  const { baseURL, SALES_ORDER, SALES_INVOICE_BY_SALES_ORDER } = useConfig(true);
   // const heightScrollView = 2000;
   // data fetching with custom hook useFetch
   const { data, setData, setRefetch, loading, error } = useFetch(baseURL + SALES_ORDER + '/' + name, {
@@ -50,22 +51,6 @@ function DetailsPage({ route, navigation }) {
     },
   });
   const [openPrint, setOpenPrint] = useState(false);
-  const handleDisable = () => {
-    const tempState = { ...data };
-    tempState.disabled = !tempState.disabled;
-
-    useUpdate(
-      {
-        headers: {
-          // Authorization: config.API_TOKEN,
-        },
-      },
-      baseURL + SALES_ORDER + name,
-      tempState,
-      () => void 0,
-      () => setRefetch(1)
-    );
-  };
 
   const handleOpenUpdate = () => {
     function mapProperties(inputObject) {
@@ -420,6 +405,27 @@ function DetailsPage({ route, navigation }) {
     });
   };
 
+  // get connection links
+  const [links, setLinks] = useState([]);
+
+  useMemo(() => {
+    if (baseURL) {
+      console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
+      axios
+        .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + name)
+        .then((response) => {
+          // Handle the successful response here
+
+          // console.log('Response:', getDataAPICustom(response));
+          setLinks(getDataAPICustom(response));
+        })
+        .catch((error) => {
+          // Handle any errors that occur during the request
+          console.error('Error:', error);
+        });
+    }
+  }, [baseURL]);
+
   if (loading) {
     return <Loading loading={loading} />;
   }
@@ -444,7 +450,8 @@ function DetailsPage({ route, navigation }) {
             <BackButton />
           </HStack>
           <HStack h={10}>
-            {data?.status === 'Open' && <CreateSalesOrderButton />}
+            {/* {data?.status === 'Open' && <CreateSalesOrderButton />} */}
+            {data?.status === 'To Deliver and Bill' && <StaticSelect label={'Create'} />}
             {data?.status !== 'Completed' && <StatusButton status={data?.status} />}
             <PrintAndExport />
             {data?.status === 'Draft' && <EditButton />}
@@ -1082,9 +1089,9 @@ function DetailsPage({ route, navigation }) {
                   Connections
                 </Text>
                 <ConnectionLinks
+                  links={links}
                   Icon={<SaleInvoice color={COLORS.secondary} />}
                   name={'Sales Invoice'}
-                  count={'0'}
                 />
               </VStack>
             </VStack>

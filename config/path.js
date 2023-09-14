@@ -29,6 +29,7 @@ export default function useConfig(trigger) {
   const PROJECT = '/api/resource/Project';
   const WAREHOUSE = '/api/resource/Warehouse';
   const SALES_PARTNER = '/api/resource/Sales Partner';
+  const SALES_INVOICE_BY_SALES_ORDER = '/api/method/frappe.sales_order.sales_order_detail?sales_order_id=';
 
   const DOCTYPE_EXPORT = '/api/method/frappe.utils.print_format.download_pdf';
   // ?doctype=${docType}&name=${name}&format=${format}`
@@ -75,5 +76,6 @@ export default function useConfig(trigger) {
     SALES_ORDER,
     SALES_ORDERS,
     SALES_PARTNER,
+    SALES_INVOICE_BY_SALES_ORDER,
   };
 }
