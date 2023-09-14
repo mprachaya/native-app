@@ -186,13 +186,32 @@ function SalesOrderPage({ route }) {
         return true;
       });
       // console.log('filterResult', filterResult);
-      if (newObjFilter.transaction_date_from !== undefined && newObjFilter.transaction_date_to !== undefined) {
-        const filterFromDate = Object.values(filterResult)?.filter((item) => {
-          return (
-            item.transaction_date >= newObjFilter.transaction_date_from &&
-            item.transaction_date <= newObjFilter.transaction_date_to
-          );
-        });
+      if (newObjFilter.transaction_date_from !== undefined || newObjFilter.delivery_date_from !== undefined) {
+        const filterFromDate =
+          newObjFilter.transaction_date && newObjFilter.delivery_date_from
+            ? Object.values(filterResult)?.filter((item) => {
+                return (
+                  item.transaction_date >= newObjFilter.transaction_date_from &&
+                  item.transaction_date <= newObjFilter.transaction_date_to &&
+                  item.delivery_date >= newObjFilter.delivery_date_from &&
+                  item.delivery_date <= newObjFilter.delivery_date_to
+                );
+              })
+            : newObjFilter.transaction_date
+            ? Object.values(filterResult)?.filter((item) => {
+                return (
+                  item.transaction_date >= newObjFilter.transaction_date_from &&
+                  item.transaction_date <= newObjFilter.transaction_date_to
+                );
+              })
+            : newObjFilter.delivery_date_from
+            ? Object.values(filterResult)?.filter((item) => {
+                return (
+                  item.delivery_date >= newObjFilter.delivery_date_from &&
+                  item.delivery_date <= newObjFilter.delivery_date_to
+                );
+              })
+            : null;
         // console.log('filterFromDate', filterFromDate);
         setTempData(filterFromDate);
       } else if (filterResult.length > 0) {

@@ -10,6 +10,7 @@ import {
   Pressable,
   ScrollView,
   Select,
+  Text,
   VStack,
   View,
 } from 'native-base';
@@ -45,6 +46,8 @@ function FilterSalesOrder({ route, navigation }) {
     customer: '',
     transaction_date_from: '',
     transaction_date_to: '',
+    delivery_date_from: '',
+    delivery_date_to: '',
     delivery_status: '',
     billing_status: '',
   };
@@ -56,10 +59,14 @@ function FilterSalesOrder({ route, navigation }) {
   // date now for ios
   const [dateIOS, setDateIOS] = useState(new Date());
   const [dateIOSNextMonth, setDateIOSNextMonth] = useState(new Date());
+  const [deliveryDateIOS, setDeliveryDateIOS] = useState(new Date());
+  const [deliveryDateIOSNextMonth, setDeliveryDateIOSNextMonth] = useState(new Date());
   const [checkedFromDateState, setCheckedFromDateState] = useState(false);
   const [checkedToDateState, setCheckedToDateState] = useState(false);
+  const [checkedDeliveryFromDateState, setCheckedDeliveryFromDateState] = useState(false);
+  const [checkedDeliveryToDateState, setCheckedDeliveryToDateState] = useState(false);
   // const [show, setShow] = useState(false);
-  const onChangeIOSfrom = (event, selectedDate) => {
+  const onChangeIOSfrom = (event, selectedDate, type) => {
     const currentDate = selectedDate;
     const yyyy = currentDate.getFullYear();
     let mm = currentDate.getMonth(); // Months start at 0!
@@ -71,10 +78,12 @@ function FilterSalesOrder({ route, navigation }) {
     if (event?.type === 'dismissed') {
       // setFilterState((pre) => ({ ...pre, transaction_date_from: formattedToday }));
     } else {
-      setFilterState((pre) => ({ ...pre, transaction_date_from: formattedToday }));
+      type === 'transaction'
+        ? setFilterState((pre) => ({ ...pre, transaction_date_from: formattedToday }))
+        : setFilterState((pre) => ({ ...pre, delivery_date_from: formattedToday }));
     }
   };
-  const onChangeIOSto = (event, selectedDate) => {
+  const onChangeIOSto = (event, selectedDate, type) => {
     const currentDate = selectedDate;
     const yyyy = currentDate.getFullYear();
     let mm = currentDate.getMonth(); // Months start at 0!
@@ -85,7 +94,9 @@ function FilterSalesOrder({ route, navigation }) {
     if (event?.type === 'dismissed') {
       // setFilterState((pre) => ({ ...pre, transaction_date_to: formattedToday }));
     } else {
-      setFilterState((pre) => ({ ...pre, transaction_date_to: formattedToday }));
+      type === 'transaction'
+        ? setFilterState((pre) => ({ ...pre, transaction_date_to: formattedToday }))
+        : setFilterState((pre) => ({ ...pre, delivery_date_to: formattedToday }));
     }
   };
 
@@ -128,9 +139,49 @@ function FilterSalesOrder({ route, navigation }) {
   }, [checkedFromDateState]);
 
   useMemo(() => {
+    if (checkedDeliveryFromDateState) {
+      const currentDate = new Date();
+      const yyyy = currentDate.getFullYear();
+      let mm = currentDate.getMonth() + 1; // Months start at 0!
+      let dd = currentDate.getDate();
+      if (dd < 10) dd = '0' + dd;
+      if (mm < 10) mm = '0' + mm;
+      const formattedToday = yyyy + '-' + mm + '-' + dd;
+      setFilterState((pre) => ({ ...pre, delivery_date_from: formattedToday }));
+    }
+  }, [checkedDeliveryFromDateState]);
+
+  useMemo(() => {
+    if (checkedDeliveryToDateState) {
+      const currentDate = new Date();
+      const yyyy = currentDate.getFullYear();
+      let mm = currentDate.getMonth(); // Months start at 0!
+      let dd = currentDate.getDate();
+      if (dd < 10) dd = '0' + dd;
+      if (mm < 10) mm = '0' + mm;
+      const formattedToday = yyyy + '-' + mm + '-' + dd;
+      setFilterState((pre) => ({ ...pre, delivery_date_to: formattedToday }));
+    }
+  }, [checkedDeliveryToDateState]);
+
+  useMemo(() => {
     // if filtered set state with storeFilter
     if (storeFilter !== undefined) {
       setFilterState(storeFilter);
+      // set Filter Date from storeFilter
+      if (storeFilter.transaction_date_from) {
+        setCheckedFromDateState(true);
+        setCheckedToDateState(true);
+        setDateIOS(new Date(storeFilter.transaction_date_from));
+        setDateIOSNextMonth(new Date(storeFilter.transaction_date_to));
+      }
+      // set Filter Date from storeFilter
+      if (storeFilter.delivery_date_from) {
+        setCheckedDeliveryFromDateState(true);
+        setCheckedDeliveryToDateState(true);
+        setDeliveryDateIOS(new Date(storeFilter.delivery_date_from));
+        setDeliveryDateIOSNextMonth(new Date(storeFilter.delivery_date_to));
+      }
     }
   }, [storeFilter]);
 
@@ -141,11 +192,15 @@ function FilterSalesOrder({ route, navigation }) {
   const handleSetFilter = () => {
     // select from date but not select to date
     if (filterState.transaction_date_from && !filterState.transaction_date_to) {
-      alert('Please select to date!');
+      alert('Please select transaction to date!');
     }
     // select from to but not select to from
     else if (!filterState.transaction_date_from && filterState.transaction_date_to) {
-      alert('Please select from date!');
+      alert('Please select transaction from date!');
+    } else if (filterState.delivery_date_from && !filterState.delivery_date_to) {
+      alert('Please delivery to date!');
+    } else if (!filterState.delivery_date_from && filterState.delivery_date_to) {
+      alert('Please select delivery from date!');
     } else {
       navigation.pop();
       navigation.replace(RouteName, { filterData: filterState, toggleFilter: true });
@@ -363,10 +418,19 @@ function FilterSalesOrder({ route, navigation }) {
             {/* for IOS */}
             {/* {Platform.OS === 'ios' && ( */}
             <React.Fragment>
-              <HStack>
+              <FormControl justifyContent={'center'}>
+                <FormControl.Label mx={6}> Transaction Date</FormControl.Label>
+              </FormControl>
+
+              <HStack
+                mx={6}
+                rounded={'md'}
+                borderColor={'blueGray.200'}
+                borderWidth={2}
+              >
                 <View
-                  ml={6}
-                  my={6}
+                  ml={2.5}
+                  my={3}
                   w={'40'}
                 >
                   <FormControl justifyContent={'center'}>
@@ -374,11 +438,9 @@ function FilterSalesOrder({ route, navigation }) {
                   </FormControl>
                   <HStack justifyContent={'space-between'}>
                     <Button
+                      ml={-3}
                       opacity={checkedFromDateState ? 1 : 0.1}
-                      ml={-2}
-                      mr={2}
                       px={0}
-                      alignItems={'start'}
                       onPress={() => setCheckedFromDateState(true)}
                       variant={'unstyled'}
                     >
@@ -388,7 +450,7 @@ function FilterSalesOrder({ route, navigation }) {
                         is24Hour={true}
                         mode='date'
                         value={dateIOS}
-                        onChange={onChangeIOSfrom}
+                        onChange={(e, value) => onChangeIOSfrom(e, value, 'transaction')}
                       />
                     </Button>
                     {checkedFromDateState && (
@@ -404,24 +466,18 @@ function FilterSalesOrder({ route, navigation }) {
                     )}
                   </HStack>
                 </View>
-                <View my={6}>
+                <View
+                  ml={6}
+                  my={3}
+                >
                   <FormControl justifyContent={'center'}>
-                    <FormControl.Label
-                      ml={6}
-                      my={0}
-                    >
-                      To Date
-                    </FormControl.Label>
+                    <FormControl.Label my={0}>To Date</FormControl.Label>
                   </FormControl>
-                  <HStack
-                    ml={4}
-                    justifyContent={'space-between'}
-                  >
+                  <HStack justifyContent={'space-between'}>
                     <Button
-                      opacity={checkedToDateState ? 1 : 0.1}
-                      mr={2}
+                      ml={-3}
                       px={0}
-                      alignItems={'start'}
+                      opacity={checkedToDateState ? 1 : 0.1}
                       onPress={() => setCheckedToDateState(true)}
                       variant={'unstyled'}
                     >
@@ -431,7 +487,7 @@ function FilterSalesOrder({ route, navigation }) {
                         is24Hour={true}
                         mode='date'
                         value={dateIOSNextMonth}
-                        onChange={onChangeIOSto}
+                        onChange={(e, value) => onChangeIOSto(e, value, 'transaction')}
                       />
                     </Button>
                     {checkedToDateState && (
@@ -440,6 +496,95 @@ function FilterSalesOrder({ route, navigation }) {
                         onPress={() => {
                           setFilterState((pre) => ({ ...pre, transaction_date_to: '' }));
                           setCheckedToDateState(false);
+                        }}
+                      >
+                        <CloseIcon />
+                      </Button>
+                    )}
+                  </HStack>
+                </View>
+              </HStack>
+            </React.Fragment>
+            <React.Fragment>
+              <FormControl justifyContent={'center'}>
+                <FormControl.Label mx={6}> Delivery Date</FormControl.Label>
+              </FormControl>
+
+              <HStack
+                mx={6}
+                mb={6}
+                rounded={'md'}
+                borderColor={'blueGray.200'}
+                borderWidth={2}
+              >
+                <View
+                  ml={2.5}
+                  my={3}
+                  w={'40'}
+                >
+                  <FormControl justifyContent={'center'}>
+                    <FormControl.Label my={0}>From Date</FormControl.Label>
+                  </FormControl>
+                  <HStack justifyContent={'space-between'}>
+                    <Button
+                      ml={-3}
+                      opacity={checkedDeliveryFromDateState ? 1 : 0.1}
+                      px={0}
+                      onPress={() => setCheckedDeliveryFromDateState(true)}
+                      variant={'unstyled'}
+                    >
+                      <RNDateTimePicker
+                        display='clock'
+                        disabled={!checkedDeliveryFromDateState}
+                        is24Hour={true}
+                        mode='date'
+                        value={deliveryDateIOS}
+                        onChange={onChangeIOSfrom}
+                      />
+                    </Button>
+                    {checkedDeliveryFromDateState && (
+                      <Button
+                        variant={'unstyled'}
+                        onPress={() => {
+                          setFilterState((pre) => ({ ...pre, delivery_date_from: '' }));
+                          setCheckedDeliveryFromDateState(false);
+                        }}
+                      >
+                        <CloseIcon />
+                      </Button>
+                    )}
+                  </HStack>
+                </View>
+                <View
+                  ml={6}
+                  my={3}
+                >
+                  <FormControl justifyContent={'center'}>
+                    <FormControl.Label my={0}>To Date</FormControl.Label>
+                  </FormControl>
+                  <HStack justifyContent={'space-between'}>
+                    <Button
+                      ml={-3}
+                      px={0}
+                      opacity={checkedDeliveryToDateState ? 1 : 0.1}
+                      onPress={() => setCheckedDeliveryToDateState(true)}
+                      variant={'unstyled'}
+                    >
+                      <RNDateTimePicker
+                        display='clock'
+                        disabled={!checkedDeliveryToDateState}
+                        is24Hour={true}
+                        mode='date'
+                        value={deliveryDateIOSNextMonth}
+                        onChange={onChangeIOSto}
+                      />
+                    </Button>
+                    {checkedDeliveryToDateState && (
+                      <Button
+                        variant={'unstyled'}
+                        onPress={() => {
+                          setFilterState((pre) => ({ ...pre, delivery_date_to: '' }));
+                          setCheckedDeliveryToDateState(false);
                         }}
                       >
                         <CloseIcon />
