@@ -45,7 +45,8 @@ function FilterSalesOrder({ route, navigation }) {
     customer: '',
     transaction_date_from: '',
     transaction_date_to: '',
-    // delivery_date: '',
+    delivery_status: '',
+    billing_status: '',
   };
 
   const RouteName = 'SalesOrder';
@@ -233,7 +234,7 @@ function FilterSalesOrder({ route, navigation }) {
                 borderWidth={2}
                 borderColor={'gray.200'}
                 accessibilityLabel='Status'
-                placeholder='Choose Status'
+                placeholder='None'
                 _selectedItem={{
                   bg: 'blueGray.200',
                   endIcon: <CheckIcon color={'blueGray.400'} />,
@@ -271,10 +272,93 @@ function FilterSalesOrder({ route, navigation }) {
                   caretHidden
                   value={filterState.customer}
                   label={'Customer'}
+                  placeholder={'None'}
                   // name={'default_price_list'}
                   showSoftInputOnFocus={false}
                 />
               </OnPressContainer>
+            </View>
+            <View w={'container'}>
+              <FormControl justifyContent={'center'}>
+                <FormControl.Label mx={6}>Delivery Status</FormControl.Label>
+              </FormControl>
+              <Select
+                dropdownIcon={true}
+                selectedValue={filterState.delivery_status}
+                mx={6}
+                w={'full'}
+                fontSize={18}
+                borderWidth={2}
+                borderColor={'gray.200'}
+                accessibilityLabel='Delivery Status'
+                placeholder='None'
+                _selectedItem={{
+                  bg: 'blueGray.200',
+                  endIcon: <CheckIcon color={'blueGray.400'} />,
+                }}
+                onValueChange={(itemValue) => setFilterState((pre) => ({ ...pre, delivery_status: itemValue }))}
+              >
+                <Select.Item
+                  label='Not Delivered'
+                  value='Not Delivered'
+                />
+
+                <Select.Item
+                  label='Fully Delivered'
+                  value='Fully Delivered'
+                />
+                <Select.Item
+                  label='Partly Delivered'
+                  value='Partly Delivered'
+                />
+                <Select.Item
+                  label='Closed'
+                  value='Closed'
+                />
+                <Select.Item
+                  label='Not Applicable'
+                  value='Not Applicable'
+                />
+              </Select>
+            </View>
+            <View w={'container'}>
+              <FormControl justifyContent={'center'}>
+                <FormControl.Label mx={6}>Billing Status</FormControl.Label>
+              </FormControl>
+              <Select
+                dropdownIcon={true}
+                selectedValue={filterState.billing_status}
+                mx={6}
+                w={'full'}
+                fontSize={18}
+                borderWidth={2}
+                borderColor={'gray.200'}
+                accessibilityLabel='Billing Status'
+                placeholder='None'
+                _selectedItem={{
+                  bg: 'blueGray.200',
+                  endIcon: <CheckIcon color={'blueGray.400'} />,
+                }}
+                onValueChange={(itemValue) => setFilterState((pre) => ({ ...pre, billing_status: itemValue }))}
+              >
+                <Select.Item
+                  label='Not Billed'
+                  value='Not Billed'
+                />
+
+                <Select.Item
+                  label='Fully Billed'
+                  value='Fully Billed'
+                />
+                <Select.Item
+                  label='Partly Billed'
+                  value='Partly Billed'
+                />
+                <Select.Item
+                  label='Closed'
+                  value='Closed'
+                />
+              </Select>
             </View>
             {/* for IOS */}
             {/* {Platform.OS === 'ios' && ( */}
@@ -290,6 +374,7 @@ function FilterSalesOrder({ route, navigation }) {
                   </FormControl>
                   <HStack justifyContent={'space-between'}>
                     <Button
+                      opacity={checkedFromDateState ? 1 : 0.1}
                       ml={-2}
                       mr={2}
                       px={0}
@@ -333,6 +418,7 @@ function FilterSalesOrder({ route, navigation }) {
                     justifyContent={'space-between'}
                   >
                     <Button
+                      opacity={checkedToDateState ? 1 : 0.1}
                       mr={2}
                       px={0}
                       alignItems={'start'}

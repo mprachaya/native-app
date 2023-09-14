@@ -175,9 +175,8 @@ function SalesOrderPage({ route }) {
           for (let key in newObjFilter) {
             if (
               item[key] === '' ||
-              (!newObjFilter[key].includes(item[key]) &&
-                key !== 'transaction_date_from' &&
-                key !== 'transaction_date_to')
+              // (!newObjFilter[key].includes(item[key]) &&
+              (newObjFilter[key] !== item[key] && key !== 'transaction_date_from' && key !== 'transaction_date_to')
             ) {
               return false;
               // console.log(filterData[key]);
@@ -194,7 +193,7 @@ function SalesOrderPage({ route }) {
             item.transaction_date <= newObjFilter.transaction_date_to
           );
         });
-        console.log('filterFromDate', filterFromDate);
+        // console.log('filterFromDate', filterFromDate);
         setTempData(filterFromDate);
       } else if (filterResult.length > 0) {
         setTempData(filterResult);
@@ -420,7 +419,7 @@ function SalesOrderPage({ route }) {
             mt={6}
             mr={{ base: 8, lg: 6 }}
           >
-            {dataShowLength !== 0 && (
+            {tempData && (
               <Text>
                 {dataShowLength} to {tempData?.length || salesOrderData?.length}
               </Text>
