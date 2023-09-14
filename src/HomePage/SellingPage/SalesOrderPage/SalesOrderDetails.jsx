@@ -8,6 +8,7 @@ import {
   Divider,
   HStack,
   Image,
+  Modal,
   ScrollView,
   Text,
   VStack,
@@ -16,7 +17,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { COLORS } from '../../../../constants/theme';
 import { Edit, SaleInvoice } from '../../../../constants/icons';
-import { Loading } from '../../../../components';
+import { ConnectionLinks, Loading } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
 import useUpdate from '../../../../hooks/useUpdate';
 import useConfig from '../../../../config/path';
@@ -974,15 +975,12 @@ function DetailsPage({ route, navigation }) {
                   {data.in_words ? data.in_words : '-'}
                 </Text>
               </HStack>
-              <Divider
-                w={'300'}
-                mt={2}
-              />
+
               <VStack
-                my={6}
+                mt={4}
                 space={2}
               >
-                <Text> Items list</Text>
+                <Text textAlign={'center'}> Items list</Text>
                 {data.items?.map((item, index) => (
                   <Button
                     p={0}
@@ -1073,6 +1071,21 @@ function DetailsPage({ route, navigation }) {
                     </HStack>
                   </Button>
                 ))}
+                <Divider
+                  w={'300'}
+                  mt={6}
+                />
+                <Text
+                  textAlign={'center'}
+                  mt={2}
+                >
+                  Connections
+                </Text>
+                <ConnectionLinks
+                  Icon={<SaleInvoice color={COLORS.secondary} />}
+                  name={'Sales Invoice'}
+                  count={'0'}
+                />
               </VStack>
             </VStack>
           </VStack>

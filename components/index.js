@@ -21,6 +21,7 @@ import TextStyled from './TextStyled';
 import DynamicSelectPage from './DynamicSelectPage';
 import StaticSelectPage from './StaticSelectPage';
 import TextSearchDropdown from './TextSearchDropdown';
+import ConnectionLinks from './ConnectionLinks';
 
 export {
   AppBar,
@@ -49,4 +50,5 @@ export {
   DynamicSelectPage,
   StaticSelectPage,
   TextSearchDropdown,
+  ConnectionLinks,
 };

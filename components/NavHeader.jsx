@@ -11,7 +11,7 @@ function NavHeader({ pageName, pageBackName, activeFunction, openAdd, openSort, 
   return (
     <View
       _android={{ pt: noHeader ? 12 : 0, pb: 3 }}
-      _ios={{ pt: 12, pb: 6 }}
+      _ios={{ pt: 20, pb: 6 }}
       style={{ backgroundColor: 'white' }}
       shadow={1}
     >

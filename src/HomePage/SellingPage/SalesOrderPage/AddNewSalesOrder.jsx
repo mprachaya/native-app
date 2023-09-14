@@ -953,18 +953,18 @@ function AddNewSalesOrder({ navigation, route }) {
         cloneState.items = Object.values(stateNoAmount);
         // console.log(cloneState);
         // console.log(urlSubmit);
-        console.log(cloneState);
-        // axios
-        //   .post(urlSubmit, cloneState)
-        //   .then(
-        //     (response) =>
-        //       // console.log('Response:', response.data);
-        //       response.data && setStepState(4)
-        //   )
-        //   .catch((err) => {
-        //     alert('An error occurred. Awkward.. : ' + err);
-        //     // alert('Status Error: ' + err);
-        //   });
+        // console.log(cloneState);
+        axios
+          .post(urlSubmit, cloneState)
+          .then(
+            (response) =>
+              // console.log('Response:', response.data);
+              response.data && setStepState(4)
+          )
+          .catch((err) => {
+            alert('An error occurred. Awkward.. : ' + err);
+            // alert('Status Error: ' + err);
+          });
       }
     };
 
