@@ -91,25 +91,26 @@ export function SalesOrderList({ data, reload, setReload, returnDataIndex, handl
 
           bg={
             status === 'Draft' // default status
-              ? 'error.100'
+              ? 'error.200'
               : status === 'To Deliver and Bill' // show when already create invoice
-              ? 'warning.100'
+              ? 'warning.200'
               : status === 'To Deliver' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
-              ? 'warning.100'
+              ? 'warning.200'
               : status === 'Completed'
-              ? 'success.100'
+              ? 'success.200'
               : status === 'Cancelled'
-              ? 'error.100'
+              ? 'error.200'
               : status === 'Closed'
-              ? 'error.100'
+              ? 'error.200'
               : status === 'On Hold'
-              ? 'error.100'
-              : 'blue.100'
+              ? 'error.200'
+              : 'blue.200'
           }
         >
           <Text
-            color={COLORS.gray}
+            color={'white'}
             fontSize={'xs'}
+            fontWeight={'bold'}
           >
             {status}
           </Text>

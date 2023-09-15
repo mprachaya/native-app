@@ -69,21 +69,22 @@ export function QuotationList({ data, reload, setReload, returnDataIndex, handle
           rounded={6}
           bg={
             status === 'Draft'
-              ? 'error.100'
+              ? 'error.200'
               : status === 'Open'
-              ? 'warning.100'
+              ? 'warning.200'
               : status === 'Ordered'
-              ? 'success.100'
+              ? 'success.200'
               : status === 'Cancelled'
-              ? 'error.100'
+              ? 'error.200'
               : status === 'Expired'
-              ? 'error.100'
+              ? 'error.200'
               : null
           }
         >
           <Text
-            color={COLORS.gray}
+            color={'white'}
             fontSize={'xs'}
+            fontWeight={'bold'}
           >
             {status}
           </Text>

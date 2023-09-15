@@ -8,6 +8,7 @@ import {
   Flex,
   HStack,
   Pressable,
+  Spinner,
   Text,
   VStack,
   View,
@@ -15,7 +16,7 @@ import {
 import React, { useState, useEffect } from 'react';
 import { SearchInput } from './Inputs';
 import FadeTransition from './FadeTransition';
-import { Dimensions } from 'react-native';
+import { Dimensions, Keyboard } from 'react-native';
 
 // import { SearchInput, FadeTransition } from '.';
 
@@ -38,6 +39,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
   const [focus, setOnFocus] = useState(false);
   const [SearchText, setSearchText] = useState('');
   const [data, setData] = useState();
+  const [loadingSearch, setLoadingSearch] = useState(false);
 
   const handleSearch = (dataList, searchText, key) => {
     // console.log(key);
@@ -60,6 +62,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
 
   const clearSearch = () => {
     setSearchText('');
+    setLoadingSearch(true);
     // returnData(false);
     // setOnFocus(false);
   };
@@ -70,30 +73,57 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
     }
   }, [allData]);
 
-  useEffect(() => {
-    if (!SearchText && focus) {
-      if (allData) {
-        console.log('reset ');
-        setData(allData);
-      }
-    } else if (SearchText && focus) {
-      // setOnFocus(true);
-      Object.keys(allData[0])?.map((key) => {
-        if ((key !== 'image' && key === 'name') || key === 'customer' || key === 'status') {
-          const search = handleSearch(allData, SearchText, key);
+  // useEffect(() => {
 
-          if (search) {
-            // console.log('search');
-            returnLength(search.length);
-            setData(search);
-            // console.log('setData', search);
-          } else {
-            // return false;
-          }
+  // }, [SearchText]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      // console.log('toggle');
+
+      if (!SearchText && focus) {
+        if (allData) {
+          // console.log('reset ');
+          setData(allData);
         }
-      });
+      } else if (SearchText && focus) {
+        // setOnFocus(true);
+        setLoadingSearch(true);
+        Object.keys(allData[0])?.map((key) => {
+          if ((key !== 'image' && key === 'name') || key === 'customer' || key === 'status') {
+            const search = handleSearch(allData, SearchText, key);
+
+            if (search) {
+              // console.log('search');
+              returnLength(search.length);
+              setData(search);
+
+              // console.log('setData', search);
+            } else {
+              // return false;
+            }
+          }
+        });
+      }
+
+      // console.log(searchTerm);
+      // Send Axios request here
+    }, 200);
+    if (SearchText) {
+      setOnFocus(true);
+    } else {
+      setOnFocus(false);
     }
+    return () => clearTimeout(delayDebounceFn);
   }, [SearchText]);
+
+  useEffect(() => {
+    if (loadingSearch) {
+      setTimeout(() => {
+        setLoadingSearch(false);
+      }, 300);
+    }
+  }, [loadingSearch]);
 
   useEffect(() => {
     if (focus) {
@@ -117,13 +147,15 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
           // height={'100vh'}
         >
           <SearchInput
-            isFocused={focus}
+            // isFocused={focus}
+
             onChangeText={(val) => setSearchText(val)}
             onFocus={() => {
               // returnData(true);
               setOnFocus(true);
             }}
             onBlur={() => {
+              // console.log('onBlur');
               if (SearchText.length > 0) {
               } else {
                 // returnData(false);
@@ -135,7 +167,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
             clearAction={() => clearSearch()}
           />
         </VStack>
-        {focus && (
+        {focus && !loadingSearch ? (
           <VStack
             mt={4}
             // m={6}
@@ -166,6 +198,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
                       onPress={() => {
                         // returnData(false);
                         setOnFocus(false);
+                        setSearchText('');
                       }}
                       _pressed={{ bg: 'error.800' }}
                     >
@@ -275,6 +308,12 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
               />
             </FadeTransition>
           </VStack>
+        ) : (
+          loadingSearch && (
+            <Box m={'25%'}>
+              <Spinner />
+            </Box>
+          )
         )}
       </Center>
     </ContainerStyled>

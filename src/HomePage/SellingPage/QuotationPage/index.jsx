@@ -361,21 +361,26 @@ function QuotationPage({ route }) {
                       alignItems={'center'}
                       bg={
                         item.name === 'Draft'
-                          ? 'error.100'
+                          ? 'error.200'
                           : item.name === 'Open'
-                          ? 'warning.100'
+                          ? 'warning.200'
                           : item.name === 'Ordered'
-                          ? 'success.100'
+                          ? 'success.200'
                           : item.name === 'Cancelled'
-                          ? 'error.100'
+                          ? 'error.200'
                           : item.name === 'Expired'
-                          ? 'error.100'
+                          ? 'error.200'
                           : null
                       }
                     >
-                      <Text color={COLORS.secondary}>{item.name}</Text>
                       <Text
-                        color={COLORS.primary}
+                        fontWeight={'bold'}
+                        color={'white'}
+                      >
+                        {item.name}
+                      </Text>
+                      <Text
+                        color={COLORS.secondary}
                         fontWeight={'bold'}
                         fontSize={'lg'}
                       >

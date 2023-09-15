@@ -18,6 +18,7 @@ const ContainerStyled = (props) => {
     <View
       style={{ zIndex: 0 }}
       height={SCREEN_HEIGHT}
+      // bg={'blueGray.100'}
       bg={'blueGray.100'}
       {...props}
     >
@@ -61,7 +62,7 @@ function SalesInvoicePage({ route }) {
 
   const FilterName = 'FilterSalesOrder';
   const SortName = 'SortAndroidQuotation';
-  const DetailsName = 'SalesOrderDetails';
+  const DetailsName = 'SalesInvoiceDetails';
   const AddNewName = 'AddNewSalesOrder';
 
   const [tempData, setTempData] = useState(null); // for store filtered Data
@@ -389,23 +390,28 @@ function SalesInvoicePage({ route }) {
                       alignItems={'center'}
                       bg={
                         item.name === 'Draft' // default status
-                          ? 'error.100'
+                          ? 'error.200'
                           : item.name === 'Submitted'
-                          ? 'success.100'
+                          ? 'success.200'
                           : item.name === 'Paid'
-                          ? 'emerald.100'
+                          ? 'emerald.200'
                           : item.name === 'Unpaid'
-                          ? 'warning.100'
+                          ? 'warning.200'
                           : item.name === 'Overdue'
-                          ? 'error.100'
+                          ? 'error.200'
                           : item.name === 'Cancelled'
-                          ? 'error.100'
-                          : 'blue.100'
+                          ? 'error.200'
+                          : 'blue.200'
                       }
                     >
-                      <Text color={COLORS.secondary}>{item.name}</Text>
                       <Text
-                        color={COLORS.primary}
+                        color={'white'}
+                        fontWeight={'bold'}
+                      >
+                        {item.name}
+                      </Text>
+                      <Text
+                        color={COLORS.secondary}
                         fontWeight={'bold'}
                         fontSize={'lg'}
                       >

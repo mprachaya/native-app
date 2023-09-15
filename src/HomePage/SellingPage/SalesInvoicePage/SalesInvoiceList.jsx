@@ -69,23 +69,24 @@ export function SalesInvoiceList({ data, reload, setReload, returnDataIndex, han
           rounded={6}
           bg={
             status === 'Draft' // default status
-              ? 'error.100'
+              ? 'error.200'
               : status === 'Submitted'
-              ? 'success.100'
+              ? 'success.200'
               : status === 'Paid'
-              ? 'emerald.100'
+              ? 'emerald.200'
               : status === 'Unpaid'
-              ? 'warning.100'
+              ? 'warning.200'
               : status === 'Overdue'
-              ? 'error.100'
+              ? 'error.200'
               : status === 'Cancelled'
-              ? 'error.100'
+              ? 'error.200'
               : 'blue.100'
           }
         >
           <Text
-            color={COLORS.gray}
+            color={'white'}
             fontSize={'xs'}
+            fontWeight={'bold'}
           >
             {status}
           </Text>

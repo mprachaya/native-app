@@ -171,7 +171,7 @@ function QRScannerAutofill({ navigation }) {
   }, [scanned]);
 
   useEffect(() => {
-    console.log(state);
+    // console.log(state);
     if (state.items !== undefined) {
       const updateState = Object.values(state.items).map((data, index) => {
         const temp = [...state.items];

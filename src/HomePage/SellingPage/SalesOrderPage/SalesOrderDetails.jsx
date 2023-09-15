@@ -52,32 +52,55 @@ function DetailsPage({ route, navigation }) {
   });
   const [openPrint, setOpenPrint] = useState(false);
 
+  const mapProperties = (inputObject) => {
+    return {
+      doctype: 'Sales Order',
+      customer: inputObject.customer,
+      customer_address: inputObject.customer_address || '',
+      order_type: inputObject.order_type,
+      contact_person: inputObject.contact_person || '',
+      project: inputObject.project,
+      conversion_rate: inputObject.conversion_rate || '0.0',
+      transaction_date: inputObject.transaction_date,
+      delivery_date: inputObject.delivery_date,
+      company: inputObject.company,
+      currency: inputObject.currency,
+      set_warehouse: inputObject.set_warehouse,
+      selling_price_list: inputObject.selling_price_list || '',
+      payment_terms_template: inputObject.payment_terms_template || '',
+      tc_name: inputObject.tc_name || '',
+      sales_partner: inputObject.sales_partner || '',
+      items: Object.values(inputObject.items).map((it) => {
+        return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
+      }),
+    };
+  };
   const handleOpenUpdate = () => {
-    function mapProperties(inputObject) {
-      return {
-        doctype: 'Sales Order',
-        customer: inputObject.customer,
-        customer_address: inputObject.customer_address || '',
-        order_type: inputObject.order_type,
-        contact_person: inputObject.contact_person || '',
-        project: inputObject.project,
-        conversion_rate: inputObject.conversion_rate || '0.0',
-        transaction_date: inputObject.transaction_date,
-        delivery_date: inputObject.delivery_date,
-        company: inputObject.company,
-        currency: inputObject.currency,
-        set_warehouse: inputObject.set_warehouse,
-        selling_price_list: inputObject.selling_price_list || '',
-        payment_terms_template: inputObject.payment_terms_template || '',
-        tc_name: inputObject.tc_name || '',
-        sales_partner: inputObject.sales_partner || '',
-        items: Object.values(inputObject.items).map((it) => {
-          return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
-        }),
-      };
-      // return { doctype: inputObject.doctype };
-      // return { doctype: inputObject.doctype };
-    }
+    // function mapProperties(inputObject) {
+    //   return {
+    //     doctype: 'Sales Order',
+    //     customer: inputObject.customer,
+    //     customer_address: inputObject.customer_address || '',
+    //     order_type: inputObject.order_type,
+    //     contact_person: inputObject.contact_person || '',
+    //     project: inputObject.project,
+    //     conversion_rate: inputObject.conversion_rate || '0.0',
+    //     transaction_date: inputObject.transaction_date,
+    //     delivery_date: inputObject.delivery_date,
+    //     company: inputObject.company,
+    //     currency: inputObject.currency,
+    //     set_warehouse: inputObject.set_warehouse,
+    //     selling_price_list: inputObject.selling_price_list || '',
+    //     payment_terms_template: inputObject.payment_terms_template || '',
+    //     tc_name: inputObject.tc_name || '',
+    //     sales_partner: inputObject.sales_partner || '',
+    //     items: Object.values(inputObject.items).map((it) => {
+    //       return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
+    //     }),
+    //   };
+    // return { doctype: inputObject.doctype };
+    // return { doctype: inputObject.doctype };
+    // };
     const newData = mapProperties(data);
     // console.log('newData', newData);
     navigation.replace('UpdateSalesOrder', { name: data.name, preState: newData, amend: 0, QuotationState: [] });
@@ -399,6 +422,47 @@ function DetailsPage({ route, navigation }) {
     }
     UpdateStatus(status);
   };
+
+  const reformatDefaultSalesInvoice = (salesOrder) => {
+    return (
+      salesOrder !== undefined && {
+        doctype: 'Sales Invoice',
+        //step 1
+        customer: salesOrder.customer,
+        company: salesOrder.company,
+        posting_date: '',
+        due_date: '',
+        contact_person: salesOrder.contact_person || '',
+        customer_address: salesOrder.customer_address || '',
+        //step 2
+        is_return: 0,
+        project: salesOrder.project,
+        cost_center: '',
+        currency: salesOrder.currency,
+        update_stock: '0',
+        selling_price_list: salesOrder.selling_price_list || '',
+        set_warehouse: salesOrder.set_warehouse,
+        payment_terms_template: salesOrder.payment_terms_template || '',
+        tc_name: salesOrder.tc_name || '',
+        sales_partner: salesOrder.sales_partner || '',
+        //step3
+        items: Object.values(salesOrder.items)?.map((it) => {
+          return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty, sales_order: salesOrder.name };
+        }),
+      }
+    );
+  };
+
+  const [defaultInvoiceData, setDefaultInvoiceData] = useState([]);
+
+  useMemo(() => {
+    if (data.items) {
+      const formatData = reformatDefaultSalesInvoice(data);
+      // console.log('formatData:', formatData);
+      setDefaultInvoiceData(formatData);
+    }
+  }, [data]);
+
   const handleShowItemDetails = (data) => {
     navigation.navigate('SalesOrderItemDetails', {
       data: data,
@@ -454,9 +518,9 @@ function DetailsPage({ route, navigation }) {
             {data?.status === 'To Deliver and Bill' && (
               <CreateSelect
                 id={name}
-                // navigateName={'AddNewSalesOrder'}
+                defaultData={defaultInvoiceData}
                 label={'Create'}
-                menus={[{ label: 'Sales Invoice', value: 'Sales Invoice' }]}
+                menus={[{ label: 'Sales Invoice', value: 'AddNewSalesInvoice' }]}
               />
             )}
             {data?.status !== 'Completed' && <StatusButton status={data?.status} />}

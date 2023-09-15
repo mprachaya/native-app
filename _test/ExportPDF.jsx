@@ -78,7 +78,7 @@ function ExportPDF({ open, handleClose, docType, name }) {
   async function getFormat() {
     if (docType) {
       const formatURI = `${baseURL + PRINT_FORMAT_DOCTYPE}?filters=[["doc_type","=","${docType}"]]`;
-      console.log(formatURI);
+      // console.log(formatURI);
 
       axios
         .get(formatURI)
@@ -145,15 +145,15 @@ function ExportPDF({ open, handleClose, docType, name }) {
           <PdfReader
             source={{ base64: pdfDataUri }} // Use the base64 property
             onLoadComplete={(numberOfPages, filePath) => {
-              console.log(`Number of pages: ${numberOfPages}`);
-              console.log(`File path: ${filePath}`);
+              // console.log(`Number of pages: ${numberOfPages}`);
+              // console.log(`File path: ${filePath}`);
             }}
             onPageChanged={(page, numberOfPages) => {
-              console.log(`Current page: ${page}`);
-              console.log(`Number of pages: ${numberOfPages}`);
+              // console.log(`Current page: ${page}`);
+              // console.log(`Number of pages: ${numberOfPages}`);
             }}
             onError={(error) => {
-              console.error('Error:', error);
+              // console.error('Error:', error);
             }}
           />
           <HStack

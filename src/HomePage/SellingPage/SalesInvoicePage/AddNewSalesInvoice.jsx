@@ -77,15 +77,27 @@ const StyledTextField = (props) => {
   );
 };
 // main component
-function AddNewSalesOrder({ navigation, route }) {
+function AddNewSalesInvoice({ navigation, route }) {
   // page name display
-  const title = 'SalesOrder';
+  const title = 'SalesInvoice';
   // navigate step state
   const [stepState, setStepState] = useState(1);
   // max of steps
   const maxStep = 3;
+  const [parentId, setParentId] = useState('');
+  // const [defaultData, setDefaultData] = useState([]);
+  // Check if route.params is defined
+  useEffect(() => {
+    if (route.params) {
+      setParentId(route.params.CreateFrom);
+      // setDefaultData(route.params.defaultData);
+      setState(route.params.defaultData);
+      // console.log('Create From: ', route.params.CreateFrom);
+      // console.log('default Data: ', route.params.defaultData);
+    }
+  }, [route.params]);
 
-  const { QuotationState } = route.params;
+  // const { QuotationState } = route.params;
 
   // state for show / hide selection (dynamically)
   const [openSelection, setOpenSelection] = useState(false);
@@ -94,22 +106,26 @@ function AddNewSalesOrder({ navigation, route }) {
 
   // initial state
   const initialState = {
-    doctype: 'Sales Order',
+    doctype: 'Sales Invoice',
+    //step 1
     customer: '',
     company: '',
-    transaction_date: '',
-    delivery_date: '',
+    posting_date: '',
+    due_date: '',
+    contact_person: '',
+    customer_address: '',
+    //step 2
+    is_return: 0,
     project: '',
-    order_type: 'Sales',
+    cost_center: '',
     currency: 'THB',
-    conversion_rate: 1,
+    update_stock: '0',
     selling_price_list: '',
     set_warehouse: '',
-    customer_address: '',
     payment_terms_template: '',
-    contact_person: '',
     tc_name: '',
     sales_partner: '',
+    //step3
     items: null,
   };
 
@@ -122,30 +138,32 @@ function AddNewSalesOrder({ navigation, route }) {
   // url path for fetching selection data
   const {
     baseURL,
-    CUSTOMER,
-    ADDRESS,
-    CONTACT,
-    CURRENCY,
-    PRICE_LIST,
-    PAYMENT_TERMS_TEMPLATES,
-    TERMS_AND_CONDITIONS,
-    ITEM_QRCODE,
-    SALES_ORDER,
-    COMPANY,
-    PROJECT,
-    WAREHOUSE,
-    SALES_PARTNER,
+    CUSTOMER, //
+    ADDRESS, //
+    CONTACT, //
+    CURRENCY, //
+    PRICE_LIST, //
+    PAYMENT_TERMS_TEMPLATES, //
+    TERMS_AND_CONDITIONS, //
+    ITEM_QRCODE, //
+    SALES_INVOICE, //
+    COMPANY, //
+    PROJECT, //
+    WAREHOUSE, //
+    SALES_PARTNER, //
+    COST_CENTER,
   } = useConfig(true);
   const urlCurrency = baseURL + CURRENCY;
   const urlPriceList = baseURL + PRICE_LIST;
   const urlPaymentTermTemplate = baseURL + PAYMENT_TERMS_TEMPLATES;
   const urlTermAndConditions = baseURL + TERMS_AND_CONDITIONS;
   const urlItemQRCode = baseURL + ITEM_QRCODE;
-  const urlSubmit = baseURL + SALES_ORDER;
+  const urlSubmit = baseURL + SALES_INVOICE;
   const urlCompany = baseURL + COMPANY;
   const urlProject = baseURL + PROJECT;
   const urlWarehouse = baseURL + WAREHOUSE;
   const urlSalesPartner = baseURL + SALES_PARTNER;
+  const urlCostCenter = baseURL + COST_CENTER;
 
   const urlCustomer = baseURL + CUSTOMER;
   // const urlLead = baseURL + LEAD;
@@ -203,10 +221,10 @@ function AddNewSalesOrder({ navigation, route }) {
       if (mm < 10) mm = '0' + mm;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
         return;
       }
-      setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+      setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
     };
     const onChangeAndroidTo = (event, selectedDate) => {
       const currentDate = selectedDate;
@@ -217,10 +235,10 @@ function AddNewSalesOrder({ navigation, route }) {
       if (mm < 10) mm = '0' + mm;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, due_date: formattedToday }));
         return;
       }
-      setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
+      setCtmState((pre) => ({ ...pre, due_date: formattedToday }));
     };
 
     const showAndoirdDatepickerFrom = () => {
@@ -254,10 +272,10 @@ function AddNewSalesOrder({ navigation, route }) {
       // const formattedToday = dd + '-' + mm + '-' + yyyy;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
         return;
       } else {
-        setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
       }
     };
     const onChangeIOSto = (event, selectedDate) => {
@@ -269,10 +287,10 @@ function AddNewSalesOrder({ navigation, route }) {
       if (mm < 10) mm = '0' + mm;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, due_date: formattedToday }));
         return;
       } else {
-        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, due_date: formattedToday }));
       }
     };
 
@@ -435,7 +453,7 @@ function AddNewSalesOrder({ navigation, route }) {
       if (mm2 < 10) mm = '0' + mm2;
       const formattedNextMonth = yyyy2 + '-' + mm2 + '-' + dd2;
 
-      setCtmState((pre) => ({ ...pre, transaction_date: formattedToday, delivery_date: formattedNextMonth }));
+      setCtmState((pre) => ({ ...pre, posting_date: formattedToday, due_date: formattedNextMonth }));
     }, []);
 
     return (
@@ -516,7 +534,7 @@ function AddNewSalesOrder({ navigation, route }) {
                         caretHidden
                         label={'From Date'}
                         // placeholder={'Select Transaction Date'}
-                        value={ctmState.transaction_date}
+                        value={ctmState.posting_date}
                         showSoftInputOnFocus={false} // disable toggle keyboard
                       />
                     </OnPressContainer>
@@ -527,7 +545,7 @@ function AddNewSalesOrder({ navigation, route }) {
                         caretHidden
                         label={'To Date'}
                         placeholder={'Select Valid Date'}
-                        value={ctmState.delivery_date}
+                        value={ctmState.due_date}
                         showSoftInputOnFocus={false} // disable toggle keyboard
                       />
                     </OnPressContainer>
@@ -546,7 +564,7 @@ function AddNewSalesOrder({ navigation, route }) {
                         <HStack>
                           <View w={'container'}>
                             <FormControl justifyContent={'center'}>
-                              <FormControl.Label mx={7}>Transaction Date</FormControl.Label>
+                              <FormControl.Label mx={7}>Posting Date</FormControl.Label>
                             </FormControl>
                             <View
                               mx={12}
@@ -569,7 +587,7 @@ function AddNewSalesOrder({ navigation, route }) {
                   <HStack justifyContent={'center'}>
                     <View w={'container'}>
                       <FormControl justifyContent={'center'}>
-                        <FormControl.Label mx={7}>Delivery Date</FormControl.Label>
+                        <FormControl.Label mx={7}>Due Date</FormControl.Label>
                       </FormControl>
                       <View
                         mx={12}
@@ -778,7 +796,7 @@ function AddNewSalesOrder({ navigation, route }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
-                <View>
+                {/* <View>
                   <FormControl justifyContent={'center'}>
                     <FormControl.Label>Order Type</FormControl.Label>
                   </FormControl>
@@ -817,7 +835,7 @@ function AddNewSalesOrder({ navigation, route }) {
                       value='Shopping Cart'
                     />
                   </Select>
-                </View>
+                </View> */}
                 <OnPressContainer onPress={() => handleOpenDynamicSelection('Currency', 'currency', urlCurrency)}>
                   <StyledTextField
                     // isRequired
@@ -841,12 +859,12 @@ function AddNewSalesOrder({ navigation, route }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
-                <StyledTextField
+                {/* <StyledTextField
                   label={'Exchange Rate'}
                   value={String(ctmState2.conversion_rate)}
                   keyboardType='numeric'
                   handleChange={(val) => setCtmState2((pre) => ({ ...pre, conversion_rate: val }))}
-                />
+                /> */}
                 <OnPressContainer
                   onPress={() => handleOpenDynamicSelection('Set Source Warehouse', 'set_warehouse', urlWarehouse)}
                 >
@@ -1487,7 +1505,7 @@ function AddNewSalesOrder({ navigation, route }) {
     };
     const handleAddAnother = () => {
       setState(initialState);
-      navigation.replace('AddNewSalesOrder', { QuotationState: [] });
+      navigation.replace('AddNewSalesInvoice', { QuotationState: [] });
       // setStepState(1);
     };
 
@@ -1566,12 +1584,12 @@ function AddNewSalesOrder({ navigation, route }) {
           doctype: 'Sales Order',
           customer: inputObject.party_name,
           customer_address: inputObject.customer_address || '',
-          order_type: inputObject.order_type,
+          // order_type: inputObject.order_type,
           contact_person: inputObject.contact_person || '',
           project: '',
-          conversion_rate: 1.0,
-          transaction_date: '',
-          delivery_date: '',
+          // conversion_rate: 1.0,
+          posting_date: '',
+          due_date: '',
           company: inputObject.company,
           currency: inputObject.currency,
           set_warehouse: '',
@@ -1585,12 +1603,12 @@ function AddNewSalesOrder({ navigation, route }) {
         };
         // return { doctype: inputObject.doctype };
       }
-      if (Object.values(QuotationState).length > 0) {
-        const newData = mapProperties(QuotationState);
-        // console.log('newData', newData);
-        setState(newData);
-        console.log(newData);
-      }
+      // if (Object.values(QuotationState).length > 0) {
+      //   const newData = mapProperties(QuotationState);
+      //   // console.log('newData', newData);
+      //   setState(newData);
+      //   console.log(newData);
+      // }
     };
     reformatQuotationState();
     // console.log('QuotationState :', QuotationState);
@@ -1663,4 +1681,4 @@ function AddNewSalesOrder({ navigation, route }) {
   );
 }
 
-export default AddNewSalesOrder;
+export default AddNewSalesInvoice;

@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 export const SearchInput = (props) => (
   <Input
     {...props}
+    // onSubmitEditing={props.onSubmitEditing}
     height={{ base: 9, lg: 10 }}
     rounded={12}
     mx='2'

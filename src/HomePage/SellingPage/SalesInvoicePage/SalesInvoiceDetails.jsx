@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   Center,
@@ -8,7 +7,6 @@ import {
   Divider,
   HStack,
   Image,
-  Modal,
   ScrollView,
   Text,
   VStack,
@@ -16,13 +14,12 @@ import {
 } from 'native-base';
 import React, { useEffect, useMemo, useState } from 'react';
 import { COLORS } from '../../../../constants/theme';
-import { Edit, SaleInvoice } from '../../../../constants/icons';
+import { Edit, SaleOrder } from '../../../../constants/icons';
 import { ConnectionLinks, Loading, CreateSelect } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
 import useUpdate from '../../../../hooks/useUpdate';
 import useConfig from '../../../../config/path';
 import { Alert, ImageBackground, Pressable } from 'react-native';
-import Animated from 'react-native-reanimated';
 import axios from 'axios';
 import ExportPDF from '../../../../_test/ExportPDF';
 import { getDataAPICustom } from '../../../../utils/reformatresponse';
@@ -40,12 +37,12 @@ const ContainerStyled = (props) => {
 };
 
 function DetailsPage({ route, navigation }) {
-  const title = 'SalesOrder';
+  const title = 'SalesInvoice';
   const { name } = route.params;
-  const { baseURL, SALES_ORDER, SALES_INVOICE_BY_SALES_ORDER } = useConfig(true);
+  const { baseURL, SALES_INVOICE, SALES_INVOICE_BY_SALES_INVOICE } = useConfig(true);
   // const heightScrollView = 2000;
   // data fetching with custom hook useFetch
-  const { data, setData, setRefetch, loading, error } = useFetch(baseURL + SALES_ORDER + '/' + name, {
+  const { data, setData, setRefetch, loading, error } = useFetch(baseURL + SALES_INVOICE + '/' + name, {
     headers: {
       // Authorization: config.API_TOKEN,
     },
@@ -188,9 +185,9 @@ function DetailsPage({ route, navigation }) {
         borderColor={
           status === 'Draft' // default status
             ? 'blue.400'
-            : status === 'To Deliver and Bill' // show when already create invoice
+            : status === 'Unpaid' // show when already create invoice
             ? 'error.400'
-            : status === 'To Deliver' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
+            : status === 'Paid' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
             ? 'error.400'
             : status === 'Cancelled'
             ? 'error.400'
@@ -199,22 +196,16 @@ function DetailsPage({ route, navigation }) {
         color={
           status === 'Draft' // default status
             ? 'blue.400'
-            : status === 'To Deliver and Bill' // show when already create invoice
+            : status === 'Unpaid' // show when already create invoice
             ? 'error.400'
-            : status === 'To Deliver' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
+            : status === 'Paid' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
             ? 'error.400'
             : status === 'Cancelled'
             ? 'error.400'
             : null
         }
       >
-        {status === 'Draft'
-          ? 'Submit'
-          : status === 'To Deliver and Bill' || status === 'To Deliver'
-          ? 'Cancel'
-          : status === 'Cancelled'
-          ? 'Amend'
-          : null}
+        {status === 'Draft' ? 'Submit' : status === 'Unpaid' ? 'Cancel' : status === 'Cancelled' ? 'Amend' : null}
       </Text>
     </Button>
   );
@@ -248,17 +239,17 @@ function DetailsPage({ route, navigation }) {
       color={
         status === 'Draft' // default status
           ? 'error.300'
-          : status === 'To Deliver and Bill' // show when already create invoice
+          : status === 'Submitted'
+          ? 'emerald.300'
+          : status === 'Paid'
+          ? 'emerald.300'
+          : status === 'Unpaid'
           ? 'warning.300'
-          : status === 'To Deliver' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
-          ? 'warning.300'
-          : status === 'Completed'
-          ? 'success.300'
+          : status === 'Overdue'
+          ? 'error.300'
           : status === 'Cancelled'
           ? 'error.300'
-          : status === 'Closed'
-          ? 'error.300'
-          : status === 'On Hold'
+          : status === 'Return'
           ? 'error.300'
           : null
       }
@@ -277,7 +268,7 @@ function DetailsPage({ route, navigation }) {
   );
 
   const UpdateStatus = (status) => {
-    const urlUpdateStatus = baseURL + SALES_ORDER + '/' + data.name;
+    const urlUpdateStatus = baseURL + SALES_INVOICE + '/' + data.name;
     // console.log(urlUpdateStatus);
     if (status === 'Draft') {
       Alert.alert(
@@ -295,7 +286,7 @@ function DetailsPage({ route, navigation }) {
                   res.data &&
                     navigation.reset({
                       index: 1,
-                      routes: [{ name: 'SalesOrderDetails', params: { name: data.name } }],
+                      routes: [{ name: 'SalesInvoiceDetails', params: { name: data.name } }],
                     });
                 })
                 .catch((err) => {
@@ -312,7 +303,7 @@ function DetailsPage({ route, navigation }) {
         ],
         { cancelable: false } // Prevents users from dismissing the alert by tapping outside of it
       );
-    } else if (status === 'To Deliver and Bill' || status === 'to Bill' || status === 'To Deliver') {
+    } else if (status === 'Unpaid') {
       Alert.alert(
         'Confirm Cancel',
         `Permanently Cancel \n${data.name}?`,
@@ -324,7 +315,7 @@ function DetailsPage({ route, navigation }) {
                 .put(urlUpdateStatus, { docstatus: 2 })
                 .then((response) => response.data)
                 .then((res) => {
-                  res.data && navigation.replace('SalesOrderDetails', { name: data.name });
+                  res.data && navigation.replace('SalesInvoiceDetails', { name: data.name });
                 })
                 .catch((err) => {
                   console.log('An error occurred. Awkward.. : ', err);
@@ -343,7 +334,7 @@ function DetailsPage({ route, navigation }) {
     } else if (status === 'Cancelled') {
       function mapProperties(inputObject) {
         return {
-          doctype: 'Sales Order',
+          doctype: 'Sales Invoice',
           customer: inputObject.customer,
           customer_address: inputObject.customer_address || '',
           order_type: inputObject.order_type,
@@ -379,19 +370,19 @@ function DetailsPage({ route, navigation }) {
       case 'Draft':
         console.log('status Draft =', status);
         break;
-      case 'Open':
-        console.log('status Open =', status);
+      case 'Unpaid':
+        console.log('status Unpaid =', status);
         break;
-      case 'Ordered':
-        console.log('status Ordered =', status);
+      case 'Paid':
+        console.log('status Paid =', status);
         break;
-      case 'Cancelled':
-        console.log('status Cancelled =', status);
+      case 'Overdue':
+        console.log('status Overdue =', status);
         // do add new with old states
         break;
 
-      case 'Expired':
-        console.log('status Expired =', status);
+      case 'Cancelled':
+        console.log('status Cancelled =', status);
         break;
       // default:
       //   // Handle other cases or set a default color
@@ -400,7 +391,7 @@ function DetailsPage({ route, navigation }) {
     UpdateStatus(status);
   };
   const handleShowItemDetails = (data) => {
-    navigation.navigate('SalesOrderItemDetails', {
+    navigation.navigate('SalesInvoiceItemDetails', {
       data: data,
     });
   };
@@ -408,23 +399,20 @@ function DetailsPage({ route, navigation }) {
   // get connection links
   const [links, setLinks] = useState([]);
 
+  // get sales order from sales invoice item[0]
   useMemo(() => {
-    if (baseURL) {
-      // console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
-      axios
-        .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + name)
-        .then((response) => {
-          // Handle the successful response here
+    if (data.length !== 0) {
+      const _links = Object.values(data?.items).map(
+        (item, index) => index === 0 && { parent: item.sales_order, transaction_date: item.creation.slice(0, 10) }
+      );
+      if (_links[0].parent !== undefined) {
+        console.log(_links);
+        setLinks(_links);
+      }
 
-          // console.log('Response:', getDataAPICustom(response));
-          setLinks(getDataAPICustom(response));
-        })
-        .catch((error) => {
-          // Handle any errors that occur during the request
-          console.error('Error:', error);
-        });
+      // console.log(links);
     }
-  }, [baseURL]);
+  }, [data]);
 
   if (loading) {
     return <Loading loading={loading} />;
@@ -451,15 +439,15 @@ function DetailsPage({ route, navigation }) {
           </HStack>
           <HStack h={10}>
             {/* {data?.status === 'Open' && <CreateSalesOrderButton />} */}
-            {data?.status === 'To Deliver and Bill' && (
+            {data?.status === 'Unpaid' && (
               <CreateSelect
                 id={name}
                 // navigateName={'AddNewSalesOrder'}
                 label={'Create'}
-                menus={[{ label: 'Sales Invoice', value: 'Sales Invoice' }]}
+                menus={[{ label: 'Payment', value: 'Payment' }]}
               />
             )}
-            {data?.status !== 'Completed' && <StatusButton status={data?.status} />}
+            {data?.status !== 'Paid' && <StatusButton status={data?.status} />}
             <PrintAndExport />
             {data?.status === 'Draft' && <EditButton />}
           </HStack>
@@ -500,7 +488,7 @@ function DetailsPage({ route, navigation }) {
                     alignItems={'center'}
                     minHeight={10}
                   >
-                    <DisplayTextLeft>{data.transaction_date}</DisplayTextLeft>
+                    <DisplayTextLeft>{data.posting_date}</DisplayTextLeft>
                     <SubTextLeft>{'Date'}</SubTextLeft>
                   </VStack>
                   <VStack
@@ -524,7 +512,7 @@ function DetailsPage({ route, navigation }) {
                   alignItems={'flex-start'}
                 >
                   <VStack minHeight={10}>
-                    <DisplayTextLeft>{data.delivery_date}</DisplayTextLeft>
+                    <DisplayTextLeft>{data.due_date}</DisplayTextLeft>
                     <SubTextRight>{'Delivery Date'}</SubTextRight>
                   </VStack>
                   <VStack
@@ -543,7 +531,7 @@ function DetailsPage({ route, navigation }) {
                   </VStack>
                 </VStack>
               </HStack>
-              <VStack
+              {/* <VStack
                 mt={6}
                 textAlign={'center'}
                 alignItems='center'
@@ -620,7 +608,7 @@ function DetailsPage({ route, navigation }) {
                 >
                   {'Contact Email'}
                 </Text>
-              </VStack>
+              </VStack> */}
             </VStack>
             <Divider
               w={'300'}
@@ -631,6 +619,21 @@ function DetailsPage({ route, navigation }) {
               space={2}
               alignItems='center'
             >
+              <HStack
+                w={300}
+                space={6}
+                justifyContent='space-between'
+              >
+                <Text fontSize={'xs'}>Is Return</Text>
+                <HStack>
+                  <Checkbox
+                    aria-label='return-check'
+                    isChecked={data.is_return || 0}
+                    _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
+                    // onPress={() => handleDisable()}
+                  />
+                </HStack>
+              </HStack>
               <HStack
                 w={300}
                 space={6}
@@ -695,6 +698,36 @@ function DetailsPage({ route, navigation }) {
                 >
                   {data.selling_price_list ? data.selling_price_list : '-'}
                 </Text>
+              </HStack>
+              <HStack
+                w={300}
+                space={6}
+                justifyContent='space-between'
+              >
+                <Text fontSize={'xs'}>Ignore Pricing Rule</Text>
+                <HStack>
+                  <Checkbox
+                    aria-label='ignore-check'
+                    isChecked={data.ignore_pricing_rule || 0}
+                    _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
+                    // onPress={() => handleDisable()}
+                  />
+                </HStack>
+              </HStack>
+              <HStack
+                w={300}
+                space={6}
+                justifyContent='space-between'
+              >
+                <Text fontSize={'xs'}>Update Stock</Text>
+                <HStack>
+                  <Checkbox
+                    aria-label='update-stock-check'
+                    isChecked={data.update_stock || 0}
+                    _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
+                    // onPress={() => handleDisable()}
+                  />
+                </HStack>
               </HStack>
               <HStack
                 w={300}
@@ -1097,8 +1130,8 @@ function DetailsPage({ route, navigation }) {
                 </Text>
                 <ConnectionLinks
                   links={links}
-                  Icon={<SaleInvoice color={COLORS.secondary} />}
-                  name={'Sales Invoice'}
+                  Icon={<SaleOrder color={COLORS.secondary} />}
+                  name={'Sales Order'}
                 />
               </VStack>
             </VStack>

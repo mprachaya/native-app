@@ -4,6 +4,7 @@ import { ChevronBackWard } from '../constants/icons';
 import { Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import NavHeaderRight from './NavHeaderRight';
+import { COLORS } from '../constants/theme';
 
 function NavHeader({ pageName, pageBackName, activeFunction, openAdd, openSort, openFilter, noHeader }) {
   const Navigation = useNavigation();
@@ -12,7 +13,7 @@ function NavHeader({ pageName, pageBackName, activeFunction, openAdd, openSort, 
     <View
       _android={{ pt: noHeader ? 12 : 0, pb: 3 }}
       _ios={{ pt: 20, pb: 6 }}
-      style={{ backgroundColor: 'white' }}
+      style={{ backgroundColor: COLORS.primary }}
       shadow={1}
     >
       <HStack
@@ -68,8 +69,9 @@ function NavHeader({ pageName, pageBackName, activeFunction, openAdd, openSort, 
               my={2}
             >
               <Text
-                fontWeight={'semibold'}
-                letterSpacing={0.5}
+                color={COLORS.tertiary2}
+                fontWeight={'bold'}
+                letterSpacing={0.75}
                 fontSize={'md'}
               >
                 {pageName}

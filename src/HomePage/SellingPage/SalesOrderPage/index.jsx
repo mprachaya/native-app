@@ -395,25 +395,30 @@ function SalesOrderPage({ route }) {
                       alignItems={'center'}
                       bg={
                         item.name === 'Draft' // default status
-                          ? 'error.100'
+                          ? 'error.200'
                           : item.name === 'To Deliver and Bill' // show when already create invoice
-                          ? 'warning.100'
+                          ? 'warning.200'
                           : item.name === 'To Deliver' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
-                          ? 'warning.100'
+                          ? 'warning.200'
                           : item.name === 'Completed'
-                          ? 'success.100'
+                          ? 'success.200'
                           : item.name === 'Cancelled'
-                          ? 'error.100'
+                          ? 'error.200'
                           : item.name === 'Closed'
-                          ? 'error.100'
+                          ? 'error.200'
                           : item.name === 'On Hold'
-                          ? 'error.100'
-                          : 'blue.100'
+                          ? 'error.200'
+                          : 'blue.200'
                       }
                     >
-                      <Text color={COLORS.secondary}>{item.name}</Text>
                       <Text
-                        color={COLORS.primary}
+                        fontWeight={'bold'}
+                        color={'white'}
+                      >
+                        {item.name}
+                      </Text>
+                      <Text
+                        color={COLORS.secondary}
                         fontWeight={'bold'}
                         fontSize={'lg'}
                       >

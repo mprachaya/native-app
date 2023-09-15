@@ -1,5 +1,5 @@
 import { Center, HStack, ScrollView, View } from 'native-base';
-import { Dimensions, SafeAreaView } from 'react-native';
+import { Dimensions, SafeAreaView, useWindowDimensions } from 'react-native';
 import { COLORS, SPACING } from '../../../constants/theme';
 import MenuIcon from '../../../components/MenuIcon';
 import {
@@ -14,15 +14,16 @@ import {
   SaleInvoice,
   SaleOrder,
 } from '../../../constants/icons';
-
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+import { TabMenu } from '../../../components';
 
 const ContainerStyled = (props) => {
+  const { height, width } = useWindowDimensions();
   return (
     <View
-      height={SCREEN_HEIGHT}
-      bg={'blueGray.100'}
       {...props}
+      _android={{ height: (height * 88) / 100 }}
+      _ios={{ height: { base: (height * 81) / 100, lg: height > width ? (height * 91) / 100 : (height * 88) / 100 } }}
+      bg={'blueGray.100'}
     >
       {props.children}
     </View>
@@ -38,7 +39,7 @@ function SellingPage({ navigation }) {
           <Center w={'full'}>
             <HStack
               w={400}
-              mt={{ base: 6, lg: 12 }}
+              mt={12}
               justifyContent={{ base: 'center', lg: 'space-around' }}
             >
               <MenuIcon
@@ -173,6 +174,7 @@ function SellingPage({ navigation }) {
           </Center>
         </ScrollView>
       </ContainerStyled>
+      <TabMenu />
     </SafeAreaView>
   );
 }

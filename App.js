@@ -40,6 +40,8 @@ import FilterSalesOrder from './src/HomePage/SellingPage/SalesOrderPage/FilterSa
 
 // sales invoice
 import SalesInvoicePage from './src/HomePage/SellingPage/SalesInvoicePage';
+import SalesInvoiceDetailPage from './src/HomePage/SellingPage/SalesInvoicePage/SalesInvoiceDetails';
+import AddNewSalesInvoice from './src/HomePage/SellingPage/SalesInvoicePage/AddNewSalesInvoice';
 
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
@@ -51,7 +53,7 @@ import ExportPDF from './_test/ExportPDF';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  // ignore pass function to useNavigation params
+  // ignore pass function to useNavigation
   LogBox.ignoreLogs(['Non-serializable values were found in the navigation state']);
   // ignore SSR Warning
   LogBox.ignoreLogs(['In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.']);
@@ -418,6 +420,35 @@ export default function App() {
                 header: () => (
                   <NavHeader
                     pageName={'Sales Invoice'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            {/* SalesInvoice Details Page */}
+            <Stack.Screen
+              name='SalesInvoiceDetails'
+              component={SalesInvoiceDetailPage}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Sales Invoice Details'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='AddNewSalesInvoice'
+              component={AddNewSalesInvoice}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Create New Sales Invoice'}
                     noHeader={true}
                   />
                 ),
