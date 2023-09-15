@@ -141,6 +141,7 @@ function SellingPage({ navigation }) {
                 }
               />
               <MenuIcon
+                onPress={() => navigation.navigate('SalesInvoice', { filterData: [] })}
                 menuLabel={'Sale\nInvoice'}
                 Icon={
                   <SaleInvoice

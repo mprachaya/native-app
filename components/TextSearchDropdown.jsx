@@ -43,7 +43,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
     // console.log(key);
     // if (dataList) {
     let tempData = dataList?.filter((item) => {
-      return String(item[key]).toLowerCase().indexOf(searchText.toLowerCase()) > -1;
+      return String(item[key]).toLowerCase().indexOf(String(searchText).toLowerCase()) > -1;
     });
 
     if (tempData.length > 0) {
@@ -60,8 +60,8 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
 
   const clearSearch = () => {
     setSearchText('');
-    returnData(false);
-    setOnFocus(false);
+    // returnData(false);
+    // setOnFocus(false);
   };
 
   useEffect(() => {
@@ -73,18 +73,22 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
   useEffect(() => {
     if (!SearchText && focus) {
       if (allData) {
-        console.log('reset : ', allData);
+        console.log('reset ');
         setData(allData);
       }
     } else if (SearchText && focus) {
-      setOnFocus(true);
+      // setOnFocus(true);
       Object.keys(allData[0])?.map((key) => {
-        if (key !== 'image') {
-          const search = handleSearch(data, SearchText, key);
+        if ((key !== 'image' && key === 'name') || key === 'customer' || key === 'status') {
+          const search = handleSearch(allData, SearchText, key);
+
           if (search) {
-            setData(search);
+            // console.log('search');
             returnLength(search.length);
+            setData(search);
+            // console.log('setData', search);
           } else {
+            // return false;
           }
         }
       });

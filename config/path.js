@@ -31,6 +31,9 @@ export default function useConfig(trigger) {
   const SALES_PARTNER = '/api/resource/Sales Partner';
   const SALES_INVOICE_BY_SALES_ORDER = '/api/method/frappe.sales_order.sales_order_detail?sales_order_id=';
 
+  const SALES_INVOICES = '/api/resource/Sales Invoice?fields=["*"]&limit=500&order_by=creation desc';
+  const SALES_INVOICE = '/api/resource/Sales Invoice';
+
   const DOCTYPE_EXPORT = '/api/method/frappe.utils.print_format.download_pdf';
   // ?doctype=${docType}&name=${name}&format=${format}`
   // ex. const docType = 'Quotation'; const name = 'SAL-QTN-2023-00001'; const format = 'test-qt';
@@ -77,5 +80,7 @@ export default function useConfig(trigger) {
     SALES_ORDERS,
     SALES_PARTNER,
     SALES_INVOICE_BY_SALES_ORDER,
+    SALES_INVOICES,
+    SALES_INVOICE,
   };
 }

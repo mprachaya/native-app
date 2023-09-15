@@ -37,6 +37,10 @@ import SalesOrderDetails from './src/HomePage/SellingPage/SalesOrderPage/SalesOr
 import SalesOrderItemDetails from './src/HomePage/SellingPage/SalesOrderPage/ItemDetails';
 import UpdateSalesOrder from './src/HomePage/SellingPage/SalesOrderPage/UpdateSalesOrder';
 import FilterSalesOrder from './src/HomePage/SellingPage/SalesOrderPage/FilterSalesOrder';
+
+// sales invoice
+import SalesInvoicePage from './src/HomePage/SellingPage/SalesInvoicePage';
+
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
@@ -399,6 +403,21 @@ export default function App() {
                 header: () => (
                   <NavHeader
                     pageName={'Filter Sales Order'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            {/* SalesInvoice Page */}
+            <Stack.Screen
+              name='SalesInvoice'
+              component={SalesInvoicePage}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Sales Invoice'}
                     noHeader={true}
                   />
                 ),
