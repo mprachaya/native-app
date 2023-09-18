@@ -3,12 +3,10 @@ import {
   Box,
   Button,
   Center,
-  Checkbox,
   ChevronLeftIcon,
   Divider,
   HStack,
   Image,
-  Modal,
   ScrollView,
   Text,
   VStack,
@@ -42,15 +40,19 @@ const ContainerStyled = (props) => {
 
 function DetailsPage({ route, navigation }) {
   const title = 'SalesOrder';
+  const connectionTo = 'SalesInvoiceDetails';
   const { name } = route.params;
   const { baseURL, SALES_ORDER, SALES_INVOICE_BY_SALES_ORDER } = useConfig(true);
   // const heightScrollView = 2000;
   // data fetching with custom hook useFetch
-  const { data, setData, setRefetch, loading, error } = useFetch(baseURL + SALES_ORDER + '/' + name, {
-    headers: {
-      // Authorization: config.API_TOKEN,
-    },
-  });
+  const { data, setData, setRefetch, loading, error } = useFetch(
+    baseURL + SALES_ORDER + '/' + (name ? name : route.params.connectName),
+    {
+      headers: {
+        // Authorization: config.API_TOKEN,
+      },
+    }
+  );
   const [openPrint, setOpenPrint] = useState(false);
 
   const mapProperties = (inputObject) => {
@@ -477,7 +479,7 @@ function DetailsPage({ route, navigation }) {
     if (baseURL) {
       // console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
       axios
-        .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + name)
+        .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + data?.name)
         .then((response) => {
           // Handle the successful response here
 
@@ -496,7 +498,7 @@ function DetailsPage({ route, navigation }) {
     if (baseURL) {
       // console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
       axios
-        .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + name)
+        .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + data?.name)
         .then((response) => {
           // Handle the successful response here
 
@@ -1181,6 +1183,7 @@ function DetailsPage({ route, navigation }) {
                 </Text>
                 <ConnectionLinks
                   links={links}
+                  navigateTo={connectionTo}
                   Icon={<SaleInvoice color={COLORS.secondary} />}
                   name={'Sales Invoice'}
                 />

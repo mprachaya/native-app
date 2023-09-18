@@ -1577,17 +1577,18 @@ function AddNewSalesInvoice({ navigation, route }) {
                   {'Back to ' + display_title + ' Page '}
                 </Button>
               )}
-
-              <Button
-                rounded={24}
-                minW={{ base: 'full', lg: 400 }}
-                bg={COLORS.tertiary}
-                _text={{ fontWeight: 'bold' }}
-                _pressed={{ bg: COLORS.tertiary2 }}
-                onPress={() => handleAddAnother()}
-              >
-                {'Add another ' + display_title}
-              </Button>
+              {parentId === undefined && (
+                <Button
+                  rounded={24}
+                  minW={{ base: 'full', lg: 400 }}
+                  bg={COLORS.tertiary}
+                  _text={{ fontWeight: 'bold' }}
+                  _pressed={{ bg: COLORS.tertiary2 }}
+                  onPress={() => handleAddAnother()}
+                >
+                  {'Add another ' + display_title}
+                </Button>
+              )}
             </VStack>
           </VStack>
         </Container>

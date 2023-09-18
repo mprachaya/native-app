@@ -38,16 +38,27 @@ const ContainerStyled = (props) => {
 
 function DetailsPage({ route, navigation }) {
   const title = 'SalesInvoice';
-  const { name } = route.params;
+  const { name } = route.params; // for sales invoice page
+  const [linkName, setLinkName] = useState(''); // for connection link
+  const connectionTo = 'SalesOrderDetails';
   const { baseURL, SALES_INVOICE, SALES_INVOICE_BY_SALES_INVOICE } = useConfig(true);
   // const heightScrollView = 2000;
   // data fetching with custom hook useFetch
-  const { data, setData, setRefetch, loading, error } = useFetch(baseURL + SALES_INVOICE + '/' + name, {
-    headers: {
-      // Authorization: config.API_TOKEN,
-    },
-  });
+  const { data, setData, setRefetch, loading, error } = useFetch(
+    baseURL + SALES_INVOICE + '/' + (name ? name : route.params.connectName),
+    {
+      headers: {
+        // Authorization: config.API_TOKEN,
+      },
+    }
+  );
   const [openPrint, setOpenPrint] = useState(false);
+
+  useEffect(() => {
+    if (route.params.connectionName) {
+      setLinkName(route.params.connectionName);
+    }
+  }, [route]);
 
   const handleOpenUpdate = () => {
     function mapProperties(inputObject) {
@@ -92,7 +103,11 @@ function DetailsPage({ route, navigation }) {
       onPress={() => {
         // handleClose();
         // navigation.pop();
-        navigation.replace(title, { filterData: [] });
+        if (route.params.connectName) {
+          navigation.goBack();
+        } else {
+          navigation.replace(title, { filterData: [] });
+        }
       }}
     >
       <ChevronLeftIcon />
@@ -1130,6 +1145,7 @@ function DetailsPage({ route, navigation }) {
                 </Text>
                 <ConnectionLinks
                   links={links}
+                  navigateTo={connectionTo}
                   Icon={<SaleOrder color={COLORS.secondary} />}
                   name={'Sales Order'}
                 />

@@ -4,7 +4,7 @@ import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../..
 import { COLORS } from '../../../../constants/theme';
 import { SalesOrderList } from './SalesOrderList';
 import { config } from '../../../../config';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
@@ -258,6 +258,14 @@ function SalesOrderPage({ route }) {
     // console.log(filterData);
     // console.log(filterData);
   }, [salesOrderData, toggleFilter]);
+
+  const isFocused = useIsFocused();
+
+  useMemo(() => {
+    if (baseURL) {
+      refetchData();
+    }
+  }, [isFocused]);
 
   // hot loading when data still not available
   if (loading) {

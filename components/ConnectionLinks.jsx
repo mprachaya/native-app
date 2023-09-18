@@ -1,8 +1,11 @@
 import { Box, Button, ChevronRightIcon, HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { COLORS } from '../constants/theme';
+import { useNavigation } from '@react-navigation/native';
 
-export default function ConnectionLinks({ Icon, name, links }) {
+export default function ConnectionLinks({ Icon, name, links, navigateTo }) {
+  const navigation = useNavigation();
+
   return links !== undefined ? (
     <VStack
       m={0}
@@ -60,6 +63,7 @@ export default function ConnectionLinks({ Icon, name, links }) {
               </Text>
             </VStack>
             <Button
+              onPress={() => navigation.navigate(navigateTo, { connectName: link.parent })}
               _pressed={{ background: 'white' }}
               variant={'unstyled'}
               my={2}
