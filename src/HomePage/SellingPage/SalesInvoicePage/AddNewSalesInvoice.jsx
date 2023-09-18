@@ -91,13 +91,11 @@ function AddNewSalesInvoice({ navigation, route }) {
   // const [defaultData, setDefaultData] = useState([]);
   // Check if route.params is defined
   useEffect(() => {
-    if (route.params) {
-      setParentId(route.params.CreateFrom);
-      // setDefaultData(route.params.defaultData);
-      setState(route.params.defaultData);
-      // console.log('Create From: ', route.params.CreateFrom);
-      // console.log('default Data: ', route.params.defaultData);
-    }
+    if (route.params?.CreateFrom) setParentId(route.params.CreateFrom);
+    // setDefaultData(route.params.defaultData);
+    // console.log('Create From: ', route.params.CreateFrom);
+    // console.log('default Data: ', route.params.defaultData);
+    if (route.params?.defaultData) setState(route.params.defaultData);
   }, [route.params]);
 
   // const { QuotationState } = route.params;
@@ -129,7 +127,9 @@ function AddNewSalesInvoice({ navigation, route }) {
     tc_name: '',
     sales_partner: '',
     //step3
-    items: null,
+    // items: null,
+    // for testing
+    items: [{ item_code: 'M42 HSS-001', qty: 20, rate: 200 }],
   };
 
   // main state
@@ -803,13 +803,14 @@ function AddNewSalesInvoice({ navigation, route }) {
                     <HStack>
                       <Checkbox
                         ml={6}
+                        isDisabled
                         aria-label='return-check'
                         isChecked={ctmState2.is_return || 0}
                         _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
-                        onPress={() => {
-                          setCtmState2((pre) => ({ ...pre, is_return: !ctmState2.is_return }));
-                          setState((pre) => ({ ...pre, is_return: !ctmState2.is_return }));
-                        }}
+                        // onPress={() => {
+                        //   setCtmState2((pre) => ({ ...pre, is_return: !ctmState2.is_return }));
+                        //   setState((pre) => ({ ...pre, is_return: !ctmState2.is_return }));
+                        // }}
                       />
                     </HStack>
                   </HStack>
@@ -1508,7 +1509,7 @@ function AddNewSalesInvoice({ navigation, route }) {
     };
     const handleAddAnother = () => {
       setState(initialState);
-      navigation.replace('AddNewSalesInvoice', { QuotationState: [] });
+      navigation.replace('AddNewSalesInvoice');
       // setStepState(1);
     };
 
@@ -1554,7 +1555,7 @@ function AddNewSalesInvoice({ navigation, route }) {
               mt={{ base: 16, lg: 24 }}
               space={6}
             >
-              {parentId !== undefined ? (
+              {parentId !== '' ? (
                 <Button
                   rounded={24}
                   minW={{ base: 'full', lg: 400 }}
@@ -1577,7 +1578,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                   {'Back to ' + display_title + ' Page '}
                 </Button>
               )}
-              {parentId === undefined && (
+              {parentId === '' && (
                 <Button
                   rounded={24}
                   minW={{ base: 'full', lg: 400 }}
@@ -1596,7 +1597,7 @@ function AddNewSalesInvoice({ navigation, route }) {
     );
   };
   useMemo(() => {
-    const reformatQuotationState = () => {
+    const reformatData = () => {
       function mapProperties(inputObject) {
         return {
           doctype: 'Sales Order',
@@ -1621,16 +1622,17 @@ function AddNewSalesInvoice({ navigation, route }) {
         };
         // return { doctype: inputObject.doctype };
       }
-      // if (Object.values(QuotationState).length > 0) {
-      //   const newData = mapProperties(QuotationState);
-      //   // console.log('newData', newData);
-      //   setState(newData);
-      //   console.log(newData);
-      // }
+      if (route.params?.defaultData) {
+        const newData = mapProperties(route.params?.defaultData);
+        // console.log('newData', newData);
+        setState(newData);
+        console.log(newData);
+      } else {
+        setState(initialState);
+      }
     };
-    reformatQuotationState();
-    // console.log('QuotationState :', QuotationState);
-  }, []);
+    reformatData();
+  }, [route.params]);
 
   // log when state having changed
   useMemo(() => {
