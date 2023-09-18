@@ -439,7 +439,7 @@ function DetailsPage({ route, navigation }) {
         project: salesOrder.project,
         cost_center: '',
         currency: salesOrder.currency,
-        update_stock: '0',
+        update_stock: 1,
         selling_price_list: salesOrder.selling_price_list || '',
         set_warehouse: salesOrder.set_warehouse,
         payment_terms_template: salesOrder.payment_terms_template || '',

@@ -3,6 +3,7 @@ import {
   Button,
   Center,
   CheckIcon,
+  Checkbox,
   ChevronLeftIcon,
   Container,
   DeleteIcon,
@@ -116,10 +117,10 @@ function AddNewSalesInvoice({ navigation, route }) {
     customer_address: '',
     //step 2
     is_return: 0,
+    update_stock: 1,
     project: '',
     cost_center: '',
     currency: 'THB',
-    update_stock: '0',
     selling_price_list: '',
     set_warehouse: '',
     payment_terms_template: '',
@@ -327,8 +328,9 @@ function AddNewSalesInvoice({ navigation, route }) {
 
     const handleBackFirstPage = () => {
       // handleClose();
-      navigation.pop();
-      navigation.replace(title, { filterData: [] });
+      // navigation.pop();
+      navigation.goBack();
+      // navigation.replace(title, { filterData: [] });
       setState(initialState);
     };
 
@@ -405,9 +407,9 @@ function AddNewSalesInvoice({ navigation, route }) {
     );
 
     useMemo(() => {
-      if (ctmState.customer !== undefined) {
+      if (ctmState?.customer !== undefined || ctmState?.customer !== '') {
         axios
-          .get(urlCustomer + '/' + ctmState.customer)
+          .get(urlCustomer + '/' + ctmState?.customer)
           .then((response) => response.data)
           .then((res) => {
             // console.log(res.data);
@@ -423,7 +425,7 @@ function AddNewSalesInvoice({ navigation, route }) {
             // console.log(err);
           });
       }
-      console.log(ctmState);
+      // console.log(ctmState);
     }, [ctmState]);
     // set Default value of to Date Object (+ 1 month)
     useMemo(() => {
@@ -487,7 +489,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                   caretHidden
                   isRequired={nullState.company}
                   label={'Company*'}
-                  value={ctmState.company}
+                  value={ctmState?.company}
                   showSoftInputOnFocus={false} // disable toggle keyboard
                 />
               </OnPressContainer>
@@ -497,7 +499,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                     caretHidden
                     isRequired={nullState.customer}
                     label={'Customer*'}
-                    value={ctmState.customer}
+                    value={ctmState?.customer}
                     showSoftInputOnFocus={false} // disable toggle keyboard
                   />
                 </OnPressContainer>
@@ -534,7 +536,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                         caretHidden
                         label={'From Date'}
                         // placeholder={'Select Transaction Date'}
-                        value={ctmState.posting_date}
+                        value={ctmState?.posting_date}
                         showSoftInputOnFocus={false} // disable toggle keyboard
                       />
                     </OnPressContainer>
@@ -545,7 +547,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                         caretHidden
                         label={'To Date'}
                         placeholder={'Select Valid Date'}
-                        value={ctmState.due_date}
+                        value={ctmState?.due_date}
                         showSoftInputOnFocus={false} // disable toggle keyboard
                       />
                     </OnPressContainer>
@@ -606,7 +608,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                 </React.Fragment>
               )}
 
-              {ctmState.customer !== undefined && (
+              {ctmState?.customer !== undefined && (
                 <React.Fragment>
                   <OnPressContainer
                     onPress={() => {
@@ -785,7 +787,46 @@ function AddNewSalesInvoice({ navigation, route }) {
         >
           <ScrollView>
             <VStack h={1000}>
-              <VStack space={2}>
+              <VStack
+                space={2}
+                mt={6}
+              >
+                <HStack
+                  w={'container'}
+                  space={6}
+                  justifyContent='space-between'
+                >
+                  <HStack w={'1/3'}>
+                    <Text fontSize={'xs'}>Is Return</Text>
+                    <HStack>
+                      <Checkbox
+                        ml={6}
+                        aria-label='return-check'
+                        isChecked={ctmState2.is_return || 0}
+                        _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
+                        onPress={() => {
+                          setCtmState2((pre) => ({ ...pre, is_return: !ctmState2.is_return }));
+                          setState((pre) => ({ ...pre, is_return: !ctmState2.is_return }));
+                        }}
+                      />
+                    </HStack>
+                  </HStack>
+                  <HStack w={'1/2'}>
+                    <Text fontSize={'xs'}>Update Stock</Text>
+                    <HStack>
+                      <Checkbox
+                        ml={6}
+                        aria-label='update-stock-check'
+                        isChecked={ctmState2.update_stock || 0}
+                        _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
+                        onPress={() => {
+                          setCtmState2((pre) => ({ ...pre, update_stock: !ctmState2.update_stock }));
+                          setState((pre) => ({ ...pre, update_stock: !ctmState2.update_stock }));
+                        }}
+                      />
+                    </HStack>
+                  </HStack>
+                </HStack>
                 <OnPressContainer onPress={() => handleOpenDynamicSelection('Project', 'project', urlProject)}>
                   <StyledTextField
                     // isRequired
@@ -796,46 +837,18 @@ function AddNewSalesInvoice({ navigation, route }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
-                {/* <View>
-                  <FormControl justifyContent={'center'}>
-                    <FormControl.Label>Order Type</FormControl.Label>
-                  </FormControl>
-                  <Select
-                    isDisabled
-                    dropdownIcon={true}
-                    selectedValue={ctmState2.order_type}
-                    w={{ base: 'full', lg: 400 }}
-                    fontSize={18}
-                    borderWidth={2}
-                    borderColor={'gray.200'}
-                    accessibilityLabel='Order To'
-                    placeholder='Choose Order Type'
-                    _selectedItem={{
-                      bg: 'blueGray.200',
-                      endIcon: <CheckIcon color={'blueGray.400'} />,
-                    }}
-                    onValueChange={(itemValue) => {
-                      setCtmState2((pre) => ({
-                        ...pre,
-                        order_type: itemValue,
-                      }));
-                    }}
-                  >
-                    <Select.Item
-                      label='Sales'
-                      value='Sales'
-                    />
-
-                    <Select.Item
-                      label='Maintenance'
-                      value='Maintenance'
-                    />
-                    <Select.Item
-                      label='Shopping Cart'
-                      value='Shopping Cart'
-                    />
-                  </Select>
-                </View> */}
+                <OnPressContainer
+                  onPress={() => handleOpenDynamicSelection('Cost Center', 'cost_center', urlCostCenter)}
+                >
+                  <StyledTextField
+                    // isRequired
+                    caretHidden
+                    value={ctmState2.cost_center}
+                    label={'Cost Center'}
+                    name={'cost_center'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
                 <OnPressContainer onPress={() => handleOpenDynamicSelection('Currency', 'currency', urlCurrency)}>
                   <StyledTextField
                     // isRequired
@@ -968,21 +981,27 @@ function AddNewSalesInvoice({ navigation, route }) {
           const { amount, ...newObj } = obj;
           return newObj;
         });
+        const stateWithParent = Object.values(stateNoAmount).map((obj) => ({
+          ...obj,
+          sales_order: parentId,
+        }));
+        console.log('stateWithParent: ', stateWithParent);
         cloneState.items = Object.values(stateNoAmount);
         // console.log(cloneState);
         // console.log(urlSubmit);
         // console.log(cloneState);
-        axios
-          .post(urlSubmit, cloneState)
-          .then(
-            (response) =>
-              // console.log('Response:', response.data);
-              response.data && setStepState(4)
-          )
-          .catch((err) => {
-            alert('An error occurred. Awkward.. : ' + err);
-            // alert('Status Error: ' + err);
-          });
+
+        // axios
+        //   .post(urlSubmit, cloneState)
+        //   .then(
+        //     (response) =>
+        //       // console.log('Response:', response.data);
+        //       response.data && setStepState(4)
+        //   )
+        //   .catch((err) => {
+        //     alert('An error occurred. Awkward.. : ' + err);
+        //     // alert('Status Error: ' + err);
+        //   });
       }
     };
 
@@ -1140,21 +1159,6 @@ function AddNewSalesInvoice({ navigation, route }) {
     };
     useMemo(() => {
       getBarCodeScannerPermissions();
-      // axios
-      //   .get(urlGetItemsQuotation, {
-      //     headers: {
-      //       Authorization: '',
-      //     },
-      //   })
-      //   .then((response) => {
-      //     // console.log(response.data.message.data);
-      //     // setItems(response.data.message.data);
-      //     setItems((pre) => ({ ...pre, items: response.data.message.data }));
-      //     // setItemLength(response.data.message.data.length);
-      //   })
-      //   .catch((error) => {
-      //     alert(error);
-      //   });
     }, []);
 
     useMemo(() => {
@@ -1162,12 +1166,9 @@ function AddNewSalesInvoice({ navigation, route }) {
       if (!hasPermission && scanned) {
         getBarCodeScannerPermissions();
       }
-      // console.log(permission !== null && permission.granted);
     }, [scanned]);
 
     useMemo(() => {
-      // console.log(items);
-      // console.log('testssss:', items.items);
       if (items?.items !== null) {
         const updateState = Object.values(items?.items).map((data, index) => {
           const temp = { ...items.items };
@@ -1175,12 +1176,8 @@ function AddNewSalesInvoice({ navigation, route }) {
           temp[index].amount = (parseFloat(temp[index]?.qty) * parseFloat(temp[index]?.rate)).toFixed(2);
           return temp;
         });
-        // console.log('Add Amount', ...updateState);
-        setStateWithAmount(...updateState);
 
-        // Object.values(state.items)?.map((element) => {
-        //   delete element.amount;
-        // });
+        setStateWithAmount(...updateState);
       } else {
         setStateWithAmount(items);
       }
@@ -1245,7 +1242,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                 {items.items !== null &&
                   Object.values(stateWithAmount)?.map((data, index) => (
                     <VStack
-                      key={data?.item_code}
+                      key={data?.item_code + data?.qty + data?.rate}
                       bg={COLORS.white}
                       rounded={20}
                       space={2}
@@ -1287,11 +1284,6 @@ function AddNewSalesInvoice({ navigation, route }) {
                                 (ele) => ele.item_code !== data.item_code
                               );
                               console.log('cloneState', cloneState);
-                              // const ModiState = cloneState
-                              //   ? Object.values(cloneState).map((d, i) => {
-                              //       return { [i]: { item_code: d.item_code, qty: d.qty, rate: d.rate } };
-                              //     })
-                              //   : null;
 
                               ModiState = Object.values([cloneState]);
 

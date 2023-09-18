@@ -63,7 +63,7 @@ function SalesInvoicePage({ route }) {
   const FilterName = 'FilterSalesOrder';
   const SortName = 'SortAndroidQuotation';
   const DetailsName = 'SalesInvoiceDetails';
-  const AddNewName = 'AddNewSalesOrder';
+  const AddNewName = 'AddNewSalesInvoice';
 
   const [tempData, setTempData] = useState(null); // for store filtered Data
   // data fetching with custom hook useFetch
@@ -306,11 +306,14 @@ function SalesInvoicePage({ route }) {
               rounded={12}
               variant={'unstyled'}
               onPress={() => {
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Selling' }],
-                });
+                navigation.goBack();
               }}
+              // onPress={() => {
+              //   navigation.reset({
+              //     index: 0,
+              //     routes: [{ name: 'Selling' }],
+              //   });
+              // }}
               _pressed={{ bg: 'blueGray.200' }}
             >
               <ChevronLeftIcon />

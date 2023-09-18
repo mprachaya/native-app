@@ -181,7 +181,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     });
 
     // date now for android
-    const [dateAndroidNow] = useState(new Date());
+    const [dateAndroidNow, setDateAndroidNow] = useState(new Date());
     const [dateAndroidNextMount, setAndroidNextMount] = useState(new Date()); // add 1 mount
     const onChangeAndroidFrom = (event, selectedDate) => {
       const currentDate = selectedDate;
@@ -404,7 +404,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     // set Default value of to Date Object (+ 1 month)
     useMemo(() => {
       setCtmState((pre) => ({ ...pre, transaction_date: preState.transaction_date, valid_till: preState.valid_till }));
-      dateAndroidNow(new Date(preState.transaction_date));
+      setDateAndroidNow(new Date(preState.transaction_date));
       setAndroidNextMount(new Date(preState.valid_till));
       setDateIOS(new Date(preState.transaction_date));
       setDateIOSNextMonth(new Date(preState.valid_till));

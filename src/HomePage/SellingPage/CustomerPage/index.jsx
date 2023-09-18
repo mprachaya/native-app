@@ -208,7 +208,10 @@ function CustomerPage({ route }) {
               ml={{ base: 6, lg: 0 }}
               rounded={12}
               variant={'unstyled'}
-              onPress={() => navigation.goBack()}
+              // onPress={() => navigation.replace('Selling')}
+              onPress={() => {
+                navigation.goBack();
+              }}
               _pressed={{ bg: 'blueGray.200' }}
             >
               <ChevronLeftIcon />

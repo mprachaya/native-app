@@ -33,7 +33,7 @@ export default function useConfig(trigger) {
 
   const SALES_INVOICES = '/api/resource/Sales Invoice?fields=["*"]&limit=500&order_by=creation desc';
   const SALES_INVOICE = '/api/resource/Sales Invoice';
-  const COST_CENTER = '/api/resource/COST CENTER';
+  const COST_CENTER = '/api/resource/Cost Center';
 
   const DOCTYPE_EXPORT = '/api/method/frappe.utils.print_format.download_pdf';
   // ?doctype=${docType}&name=${name}&format=${format}`
