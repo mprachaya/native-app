@@ -139,13 +139,13 @@ function CustomerPage({ route }) {
     handleBack();
   }, [navigation]);
 
-  useMemo(() => {
-    console.log('filterActive ', filterActive);
-  }, [filterActive]);
+  // useMemo(() => {
+  //   console.log('filterActive ', filterActive);
+  // }, [filterActive]);
 
-  useMemo(() => {
-    console.log('sortActive ', sortActive);
-  }, [sortActive]);
+  // useMemo(() => {
+  //   console.log('sortActive ', sortActive);
+  // }, [sortActive]);
 
   useMemo(() => {
     if (toggleFilter === undefined) {

@@ -31,7 +31,7 @@ export default function useFetch(url, header) {
             .catch((err) => {
               setLoading(false);
               setError('An error occurred. Awkward..');
-              console.log(err);
+              // console.log(err);
             });
           return () => {
             source.cancel();

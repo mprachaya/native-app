@@ -23,6 +23,7 @@ import { Alert, ImageBackground, Pressable } from 'react-native';
 import axios from 'axios';
 import ExportPDF from '../../../../_test/ExportPDF';
 import { getDataAPICustom } from '../../../../utils/reformatresponse';
+import { useIsFocused } from '@react-navigation/native';
 // import Export from '../../../../assets/icons/export.png';
 // wrap components
 const ContainerStyled = (props) => {
@@ -415,19 +416,90 @@ function DetailsPage({ route, navigation }) {
   const [links, setLinks] = useState([]);
 
   // get sales order from sales invoice item[0]
+  // useMemo(() => {
+  //   if (data.length !== 0) {
+  //     const _links = Object.values(data?.items).map(
+  //       (item, index) => index === 0 && { parent: item.sales_order, transaction_date: item.creation.slice(0, 10) }
+  //     );
+  //     if (_links[0].parent !== undefined) {
+  //       console.log(_links);
+  //       setLinks(_links);
+  //     }
+
+  //     // console.log(links);
+  //   }
+  // }, [data]);
+
+  // for update is_return
+  const [items, setItems] = useState([]);
+
+  useMemo(() => {
+    if (data) {
+      setItems(data.items);
+      // console.log('setItems:', data.items);
+    }
+  }, [data]);
+
+  useMemo(() => {
+    console.log('items: ', items);
+  }, [items]);
+
+  const UpdateIsReturn = () => {
+    console.log(Object.values(items).map((item) => item));
+    if (items !== undefined) {
+      // console.log('items: ', data?.items);
+      const cloneItems = Object.values(items).map((item) => ({
+        item_code: item.item_code,
+        qty: parseInt(-item.qty),
+      }));
+      console.log(cloneItems);
+      // console.log(
+      //   Object.values(data?.items).map((item) => ({
+      //     item_code: item.item_code,
+      //     qty: parseInt(-item.qty),
+      //   }))
+      // );
+      const arrayItems = Object.values(cloneItems);
+      // console.log({ is_return: !data?.is_return, items: arrayItems });
+      // const dataUpdateIsReturn = {
+      //   is_return: !data?.is_return === true ? '1' : '0',
+      //   ...cloneItems,
+      // };
+      // console.log(dataUpdateIsReturn);
+      // axios
+      //   .put(baseURL + SALES_INVOICE + '/' + (name ? name : route.params.connectName), {
+      //     is_return: !data?.is_return === true ? '1' : '0',
+      //     items: arrayItems,
+      //   })
+      //   .then((response) => response.data)
+      //   .then((res) => {
+      //     res.data && console.log('ok');
+      //     // setData((pre) => ({ ...pre, is_return: !data?.is_return === true ? '1' : '0' }));
+      //     // console.log(res.data);
+      //   })
+      //   .catch((err) => {
+      //     //  console.log('An error occurred. Awkward.. : ', err);
+      //     alert('Status Error: ' + err);
+      //   });
+    }
+  };
+
+  const isFocused = useIsFocused();
+
   useMemo(() => {
     if (data.length !== 0) {
-      const _links = Object.values(data?.items).map(
+      const _links = Object.values(data?.items).filter(
         (item, index) => index === 0 && { parent: item.sales_order, transaction_date: item.creation.slice(0, 10) }
       );
-      if (_links[0].parent !== undefined) {
-        console.log(_links);
+      if (_links[0].parent !== '' && _links[0].parent !== undefined) {
+        // console.log('links=', _links);
         setLinks(_links);
       }
 
       // console.log(links);
+      console.log('data: ', data);
     }
-  }, [data]);
+  }, [data, isFocused]);
 
   if (loading) {
     return <Loading loading={loading} />;
@@ -645,7 +717,8 @@ function DetailsPage({ route, navigation }) {
                     aria-label='return-check'
                     isChecked={data.is_return || 0}
                     _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
-                    // onPress={() => handleDisable()}
+                    onPress={UpdateIsReturn}
+                    // }
                   />
                 </HStack>
               </HStack>
@@ -1116,6 +1189,7 @@ function DetailsPage({ route, navigation }) {
                       <VStack
                         mt={1}
                         mr={12}
+                        maxW={'48'}
                       >
                         <Text fontSize={'xs'}>#{index + 1}.</Text>
                         <Text fontSize={'xs'}>

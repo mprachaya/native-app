@@ -475,23 +475,24 @@ function DetailsPage({ route, navigation }) {
   // get connection links
   const [links, setLinks] = useState([]);
 
-  useMemo(() => {
-    if (baseURL) {
-      // console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
-      axios
-        .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + data?.name)
-        .then((response) => {
-          // Handle the successful response here
+  // useMemo(() => {
+  //   if (baseURL) {
+  //     // console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
+  //     axios
+  //       .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + data?.name)
+  //       .then((response) => {
+  //         // Handle the successful response here
 
-          // console.log('Response:', getDataAPICustom(response));
-          setLinks(getDataAPICustom(response));
-        })
-        .catch((error) => {
-          // Handle any errors that occur during the request
-          console.error('Error:', error);
-        });
-    }
-  }, [baseURL]);
+  //         // console.log('Response:', getDataAPICustom(response));
+  //         setLinks(getDataAPICustom(response));
+  //         // console.log(response.data.message);
+  //       })
+  //       .catch((error) => {
+  //         // Handle any errors that occur during the request
+  //         console.error('Error:', error);
+  //       });
+  //   }
+  // }, [baseURL]);
   const isFocused = useIsFocused();
 
   useMemo(() => {
@@ -507,10 +508,10 @@ function DetailsPage({ route, navigation }) {
         })
         .catch((error) => {
           // Handle any errors that occur during the request
-          console.error('Error:', error);
+          // console.error('Error:', error);
         });
     }
-  }, [isFocused]);
+  }, [baseURL, data, isFocused]);
 
   if (loading) {
     return <Loading loading={loading} />;
@@ -1154,6 +1155,7 @@ function DetailsPage({ route, navigation }) {
                       <VStack
                         mt={1}
                         mr={12}
+                        maxW={'48'}
                       >
                         <Text fontSize={'xs'}>#{index + 1}.</Text>
                         <Text fontSize={'xs'}>

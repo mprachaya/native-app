@@ -239,13 +239,13 @@ function SalesOrderPage({ route }) {
     }
   }, [salesOrderData]);
 
-  useMemo(() => {
-    console.log('filterActive ', filterActive);
-  }, [filterActive]);
+  // useMemo(() => {
+  //   console.log('filterActive ', filterActive);
+  // }, [filterActive]);
 
-  useMemo(() => {
-    console.log('sortActive ', sortActive);
-  }, [sortActive]);
+  // useMemo(() => {
+  //   console.log('sortActive ', sortActive);
+  // }, [sortActive]);
 
   useMemo(() => {
     if (toggleFilter === undefined) {
@@ -262,9 +262,7 @@ function SalesOrderPage({ route }) {
   const isFocused = useIsFocused();
 
   useMemo(() => {
-    if (baseURL) {
-      refetchData();
-    }
+    refetchData();
   }, [isFocused]);
 
   // hot loading when data still not available

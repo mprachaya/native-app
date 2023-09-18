@@ -149,7 +149,7 @@ function QuotationPage({ route }) {
       const newObjFilter = Object.fromEntries(Object.entries(filterData)?.filter(([key, value]) => value !== ''));
       // console.log('FilterState: ', Object.values(newObjFilter).length);
       // filtering
-      console.log('newObjFilter', newObjFilter);
+      // console.log('newObjFilter', newObjFilter);
       const filterResult = dataTemp.filter((item) => {
         if (Object.keys(newObjFilter).length > 0) {
           for (let key in newObjFilter) {
@@ -179,7 +179,7 @@ function QuotationPage({ route }) {
             return itemDate === newObjFilter.transaction_date;
           }
         });
-        console.log('filterFromDate', filterFromDate);
+        // console.log('filterFromDate', filterFromDate);
         setTempData(filterFromDate);
       } else if (filterResult.length > 0) setTempData(filterResult);
       else {
@@ -205,13 +205,13 @@ function QuotationPage({ route }) {
     }
   }, [quotationData]);
 
-  useMemo(() => {
-    console.log('filterActive ', filterActive);
-  }, [filterActive]);
+  // useMemo(() => {
+  //   console.log('filterActive ', filterActive);
+  // }, [filterActive]);
 
-  useMemo(() => {
-    console.log('sortActive ', sortActive);
-  }, [sortActive]);
+  // useMemo(() => {
+  //   console.log('sortActive ', sortActive);
+  // }, [sortActive]);
 
   useMemo(() => {
     if (toggleFilter === undefined) {
