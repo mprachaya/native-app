@@ -15,7 +15,7 @@ export default function StaticSelect({ label, menus, id, defaultData }) {
     <View position={'relative'}>
       <Select
         selectedValue={selectValue}
-        style={{ display: selectValue !== '' && 'none' }}
+        style={{ display: selectValue !== '' ? 'none' : 'flex' }}
         dropdownIcon={true}
         textAlign={'center'}
         borderWidth={0}

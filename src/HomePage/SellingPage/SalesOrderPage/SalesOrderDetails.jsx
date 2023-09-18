@@ -26,6 +26,7 @@ import Animated from 'react-native-reanimated';
 import axios from 'axios';
 import ExportPDF from '../../../../_test/ExportPDF';
 import { getDataAPICustom } from '../../../../utils/reformatresponse';
+import { useIsFocused } from '@react-navigation/native';
 // import Export from '../../../../assets/icons/export.png';
 // wrap components
 const ContainerStyled = (props) => {
@@ -489,6 +490,25 @@ function DetailsPage({ route, navigation }) {
         });
     }
   }, [baseURL]);
+  const isFocused = useIsFocused();
+
+  useMemo(() => {
+    if (baseURL) {
+      // console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
+      axios
+        .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + name)
+        .then((response) => {
+          // Handle the successful response here
+
+          // console.log('Response:', getDataAPICustom(response));
+          setLinks(getDataAPICustom(response));
+        })
+        .catch((error) => {
+          // Handle any errors that occur during the request
+          console.error('Error:', error);
+        });
+    }
+  }, [isFocused]);
 
   if (loading) {
     return <Loading loading={loading} />;

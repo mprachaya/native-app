@@ -80,6 +80,8 @@ const StyledTextField = (props) => {
 // main component
 function AddNewSalesInvoice({ navigation, route }) {
   // page name display
+  const display_title = 'Sales Invoice';
+  //for navigation
   const title = 'SalesInvoice';
   // navigate step state
   const [stepState, setStepState] = useState(1);
@@ -985,23 +987,23 @@ function AddNewSalesInvoice({ navigation, route }) {
           ...obj,
           sales_order: parentId,
         }));
-        console.log('stateWithParent: ', stateWithParent);
-        cloneState.items = Object.values(stateNoAmount);
+        // console.log('stateWithParent: ', stateWithParent);
+        cloneState.items = Object.values(stateWithParent);
         // console.log(cloneState);
         // console.log(urlSubmit);
         // console.log(cloneState);
-
-        // axios
-        //   .post(urlSubmit, cloneState)
-        //   .then(
-        //     (response) =>
-        //       // console.log('Response:', response.data);
-        //       response.data && setStepState(4)
-        //   )
-        //   .catch((err) => {
-        //     alert('An error occurred. Awkward.. : ' + err);
-        //     // alert('Status Error: ' + err);
-        //   });
+        console.log(cloneState);
+        axios
+          .post(urlSubmit, cloneState)
+          .then(
+            (response) =>
+              // console.log('Response:', response.data);
+              response.data && setStepState(4)
+          )
+          .catch((err) => {
+            alert('An error occurred. Awkward.. : ' + err);
+            // alert('Status Error: ' + err);
+          });
       }
     };
 
@@ -1492,8 +1494,17 @@ function AddNewSalesInvoice({ navigation, route }) {
     const handleBack = () => {
       // setState(initialState);
       // refetchData();
-      navigation.pop();
-      navigation.replace(title, { filterData: [] });
+      // if (parentId !== undefined) {
+      //   navigation.replace(title, { filterData: [] });
+      // } else {
+      if (parentId !== undefined) {
+        navigation.pop();
+      } else {
+        navigation.pop();
+        navigation.replace(title, { filterData: [] });
+      }
+
+      // }
     };
     const handleAddAnother = () => {
       setState(initialState);
@@ -1536,23 +1547,37 @@ function AddNewSalesInvoice({ navigation, route }) {
               textWeight={'bold'}
               fontSize={24}
             >
-              {'Add Sales Order\nSuccess!'}
+              {'Add ' + display_title + '\nSuccess!'}
             </Text>
 
             <VStack
               mt={{ base: 16, lg: 24 }}
               space={6}
             >
-              <Button
-                rounded={24}
-                minW={{ base: 'full', lg: 400 }}
-                bg={COLORS.white}
-                _text={{ color: COLORS.gray }}
-                _pressed={{ bg: 'blueGray.200' }}
-                onPress={() => handleBack()}
-              >
-                Back to Sales Order Page
-              </Button>
+              {parentId !== undefined ? (
+                <Button
+                  rounded={24}
+                  minW={{ base: 'full', lg: 400 }}
+                  bg={COLORS.white}
+                  _text={{ color: COLORS.gray }}
+                  _pressed={{ bg: 'blueGray.200' }}
+                  onPress={() => handleBack()}
+                >
+                  {'Back '}
+                </Button>
+              ) : (
+                <Button
+                  rounded={24}
+                  minW={{ base: 'full', lg: 400 }}
+                  bg={COLORS.white}
+                  _text={{ color: COLORS.gray }}
+                  _pressed={{ bg: 'blueGray.200' }}
+                  onPress={() => handleBack()}
+                >
+                  {'Back to ' + display_title + ' Page '}
+                </Button>
+              )}
+
               <Button
                 rounded={24}
                 minW={{ base: 'full', lg: 400 }}
@@ -1561,7 +1586,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                 _pressed={{ bg: COLORS.tertiary2 }}
                 onPress={() => handleAddAnother()}
               >
-                Add another Sales Order
+                {'Add another ' + display_title}
               </Button>
             </VStack>
           </VStack>
