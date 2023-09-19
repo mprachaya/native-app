@@ -1012,17 +1012,19 @@ function AddNewSalesInvoice({ navigation, route }) {
         // console.log(urlSubmit);
         // console.log(cloneState);
         console.log(cloneState);
-        axios
-          .post(urlSubmit, cloneState)
-          .then(
-            (response) =>
-              // console.log('Response:', response.data);
-              response.data && setStepState(4)
-          )
-          .catch((err) => {
-            alert('An error occurred. Awkward.. : ' + err);
-            // alert('Status Error: ' + err);
-          });
+        if (cloneState) {
+          axios
+            .post(urlSubmit, cloneState)
+            .then(
+              (response) =>
+                // console.log('Response:', response.data);
+                response.data && setStepState(4)
+            )
+            .catch((err) => {
+              alert('An error occurred. Awkward.. : ' + err);
+              // alert('Status Error: ' + err);
+            });
+        }
       }
     };
 
@@ -1204,10 +1206,6 @@ function AddNewSalesInvoice({ navigation, route }) {
       }
     }, [items]);
 
-    // React.useEffect(() => {
-    //   console.log('State With Amount', stateWithAmount);
-    // }, [stateWithAmount]);
-
     return (
       <React.Fragment>
         <HStack
@@ -1263,7 +1261,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                 {items.items !== null &&
                   Object.values(stateWithAmount)?.map((data, index) => (
                     <VStack
-                      key={data?.item_code + data?.qty + data?.rate}
+                      key={data?.item_code}
                       bg={COLORS.white}
                       rounded={20}
                       space={2}
@@ -1367,7 +1365,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                             onBlur={() => {
                               if (data?.qty === '' || data?.qty === undefined) {
                                 const updatedItems = items.items;
-                                updatedItems[index].qty = '1';
+                                updatedItems[index].qty = 1;
                                 setItems((pre) => ({
                                   ...pre,
                                   items: updatedItems,
@@ -1375,12 +1373,22 @@ function AddNewSalesInvoice({ navigation, route }) {
                               }
                             }}
                             onChangeText={(value) => {
-                              const updatedItems = items.items;
-                              updatedItems[index].qty = value;
-                              setItems((pre) => ({
-                                ...pre,
-                                items: updatedItems,
-                              }));
+                              if (value === '') {
+                                const updatedItems = items.items;
+                                updatedItems[index].qty = 1;
+
+                                setItems((pre) => ({
+                                  ...pre,
+                                  items: updatedItems,
+                                }));
+                              } else {
+                                const updatedItems = items.items;
+                                updatedItems[index].qty = parseFloat(value);
+                                setItems((pre) => ({
+                                  ...pre,
+                                  items: updatedItems,
+                                }));
+                              }
                             }}
                           />
                         </HStack>
@@ -1421,7 +1429,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                             }}
                             onChangeText={(value) => {
                               const updatedItems = items.items;
-                              updatedItems[index].rate = value;
+                              updatedItems[index].rate = parseFloat(value);
                               setItems((pre) => ({
                                 ...pre,
                                 items: updatedItems,
@@ -1672,7 +1680,7 @@ function AddNewSalesInvoice({ navigation, route }) {
             </Text>
           )} */}
           {/* display when step = 1 and do not have any selection displayed */}
-          {stepState === 1 && !openSelection && !openCustomerType && (
+          {stepState === 1 && !openSelection && (
             <FirstStep
               state={state}
               setState={setState}

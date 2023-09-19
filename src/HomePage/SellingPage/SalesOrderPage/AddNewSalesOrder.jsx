@@ -1350,6 +1350,14 @@ function AddNewSalesOrder({ navigation, route }) {
                                 ...pre,
                                 items: updatedItems,
                               }));
+                              if (value === '') {
+                                const updatedItems = items.items;
+                                updatedItems[index].qty = '1';
+                                setItems((pre) => ({
+                                  ...pre,
+                                  items: updatedItems,
+                                }));
+                              }
                             }}
                           />
                         </HStack>

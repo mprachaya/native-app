@@ -174,8 +174,8 @@ function SellingPage({ navigation }) {
             </HStack>
           </Center>
         </ScrollView>
-        <TabMenu />
       </ContainerStyled>
+      <TabMenu />
     </SafeAreaView>
   );
 }
