@@ -42,7 +42,7 @@ export default function ConnectionLinks({ Icon, name, links, navigateTo }) {
 
       {Object.values(links)?.map((link, index) => (
         <HStack
-          key={link.parent}
+          key={index}
           bg={COLORS.lightWhite}
           justifyContent={'start'}
           mt={2}

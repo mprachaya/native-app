@@ -415,50 +415,25 @@ function DetailsPage({ route, navigation }) {
   // get connection links
   const [links, setLinks] = useState([]);
 
-  // get sales order from sales invoice item[0]
-  // useMemo(() => {
-  //   if (data.length !== 0) {
-  //     const _links = Object.values(data?.items).map(
-  //       (item, index) => index === 0 && { parent: item.sales_order, transaction_date: item.creation.slice(0, 10) }
-  //     );
-  //     if (_links[0].parent !== undefined) {
-  //       console.log(_links);
-  //       setLinks(_links);
-  //     }
-
-  //     // console.log(links);
-  //   }
-  // }, [data]);
-
-  // for update is_return
-  // const [dataitems, setItems] = useState(null);
-
-  // useMemo(() => {
-  //   if (!loading && data !== undefined) {
-  //     setItems(data.items);
-  //     console.log('setItem here!', data.items);
-  //     // console.log('setItems:', data.items);
-  //   }
-  // }, [loading, data]);
-
-  // useMemo(() => {
-  //   console.log('items: ', dataitems);
-  // }, [dataitems]);
-
   const isFocused = useIsFocused();
 
   useMemo(() => {
     if (data.length !== 0) {
-      const _links = Object.values(data?.items).filter(
-        (item, index) => index === 0 && { parent: item.sales_order, transaction_date: item.creation.slice(0, 10) }
-      );
-      if (_links[0].parent !== '' && _links[0].parent !== undefined) {
-        // console.log('links=', _links);
-        setLinks(_links);
+      const _links = Object.values(data?.items).filter((item, index) => item.sales_order !== undefined);
+      if (_links.length !== 0) {
+        console.log('has connection (Sales Order)');
+        // console.log(_links)
+        const LinkCreated = [
+          {
+            parent: _links[0].sales_order,
+            transaction_date: _links[0].creation.slice(0, 10),
+          },
+        ];
+        setLinks(LinkCreated);
+        // console.log('link:', LinkCreated);
+      } else {
+        console.log('has no connection (Sales Order)');
       }
-
-      // console.log(links);
-      console.log('data items: ', data.items);
     }
   }, [data, isFocused]);
 
@@ -471,19 +446,16 @@ function DetailsPage({ route, navigation }) {
         qty: -parseInt(item.qty),
       }));
       // console.log(cloneItems);
-
       const arrayItems = Object.values(cloneItems);
 
-      // console.log({ is_return: !data?.is_return === true ? '0' : '1', items: arrayItems });
       axios
         .put(baseURL + SALES_INVOICE + '/' + (name ? name : route.params.connectName), {
-          is_return: !data?.is_return === true,
+          is_return: !data?.is_return,
           items: arrayItems,
         })
         .then((response) => response.data)
         .then((res) => {
           res.data && setRefetch(true);
-          // setData((pre) => ({ ...pre, is_return: !data?.is_return === true ? '1' : '0' }));
           // console.log(res.data);
         })
         .catch((err) => {
@@ -492,7 +464,8 @@ function DetailsPage({ route, navigation }) {
         });
     } else {
       setRefetch(true);
-      console.log(data);
+
+      // console.log(data);
     }
   };
 
@@ -608,89 +581,11 @@ function DetailsPage({ route, navigation }) {
                     alignItems={'flex-start'}
                     minHeight={16}
                   >
-                    <DisplayTextRight>{data.contact_display}</DisplayTextRight>
+                    <DisplayTextRight>{data.contact_display ? data.contact_display : '-'}</DisplayTextRight>
                     <SubTextRight>{'Contact'}</SubTextRight>
                   </VStack>
                 </VStack>
               </HStack>
-              {/* <VStack
-                mt={6}
-                textAlign={'center'}
-                alignItems='center'
-                justifyContent={'center'}
-              >
-                <VStack maxW={300}>
-                  <Text
-                    textAlign={'center'}
-                    fontSize={'xs'}
-                  >
-                    {data.customer_address}
-                  </Text>
-                  <Text
-                    mt={1}
-                    fontSize={'xs'}
-                    textAlign={'center'}
-                    color={COLORS.gray}
-                  >
-                    {'Customer Address'}
-                  </Text>
-                </VStack>
-                <VStack
-                  maxW={300}
-                  mt={6}
-                >
-                  <Text
-                    textAlign={'center'}
-                    fontSize={'xs'}
-                  >
-                    {data.address_display ? `${data.address_display.replaceAll(/<\/?[^>]+(>|$)/gi, '')}` : '-'}
-                  </Text>
-                  <Text
-                    mt={1}
-                    fontSize={'xs'}
-                    textAlign={'center'}
-                    color={COLORS.gray}
-                  >
-                    {'Address'}
-                  </Text>
-                </VStack>
-              </VStack>
-              <VStack
-                mt={6}
-                alignItems='center'
-              >
-                <Text
-                  fontWeight={'bold'}
-                  fontSize={'xs'}
-                >
-                  {data.contact_mobile ? data.contact_mobile : '-'}
-                </Text>
-                <Text
-                  fontSize={'xs'}
-                  textAlign={'center'}
-                  color={COLORS.gray}
-                >
-                  {'Contact Mobile'}
-                </Text>
-              </VStack>
-              <VStack
-                mt={6}
-                alignItems='center'
-              >
-                <Text
-                  fontWeight={'bold'}
-                  fontSize={'xs'}
-                >
-                  {data.contact_email ? data.contact_email : '-'}
-                </Text>
-                <Text
-                  fontSize={'xs'}
-                  textAlign={'center'}
-                  color={COLORS.gray}
-                >
-                  {'Contact Email'}
-                </Text>
-              </VStack> */}
             </VStack>
             <Divider
               w={'300'}
@@ -1225,7 +1120,7 @@ function DetailsPage({ route, navigation }) {
         <ExportPDF
           open={openPrint}
           handleClose={() => setOpenPrint(false)}
-          docType={'Sales Order'}
+          docType={'Sales Invoice'}
           name={name}
           // format={'test-qt'}
         />

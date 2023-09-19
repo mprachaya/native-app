@@ -21,8 +21,9 @@ const ContainerStyled = (props) => {
   return (
     <View
       {...props}
-      _android={{ height: (height * 88) / 100 }}
-      _ios={{ height: { base: (height * 81) / 100, lg: height > width ? (height * 91) / 100 : (height * 88) / 100 } }}
+      height={'full'}
+      // _android={{ height: (height * 81) / 100 }}
+      // _ios={{ height: { base: (height * 78) / 100, lg: height > width ? (height * 91) / 100 : (height * 88) / 100 } }}
       bg={'blueGray.100'}
     >
       {props.children}
@@ -173,8 +174,8 @@ function SellingPage({ navigation }) {
             </HStack>
           </Center>
         </ScrollView>
+        <TabMenu />
       </ContainerStyled>
-      <TabMenu />
     </SafeAreaView>
   );
 }
