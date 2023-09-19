@@ -674,11 +674,17 @@ function AddNewSalesInvoice({ navigation, route }) {
       let check = [];
       requiredState.forEach((st_name) => {
         if (!ctmState2[st_name]) {
-          check.push(st_name);
+          // check update_stock if true required set_warehouse
+          if (st_name === 'set_warehouse' && !ctmState2.update_stock) {
+          } else {
+            check.push(st_name);
+          }
         }
       });
       // if have any length of check mean required state is still not filled yet
+
       if (check.length !== 0) {
+        console.log('check:', check);
       } else {
         // if filled go to next step
         setStepState((post) => post + 1);
@@ -823,8 +829,17 @@ function AddNewSalesInvoice({ navigation, route }) {
                         isChecked={ctmState2.update_stock || 0}
                         _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
                         onPress={() => {
-                          setCtmState2((pre) => ({ ...pre, update_stock: !ctmState2.update_stock }));
-                          setState((pre) => ({ ...pre, update_stock: !ctmState2.update_stock }));
+                          if (!ctmState2.update_stock === true) {
+                            setCtmState2((pre) => ({
+                              ...pre,
+                              update_stock: !ctmState2.update_stock,
+                              set_warehouse: '',
+                            }));
+                          } else {
+                            setCtmState2((pre) => ({ ...pre, update_stock: !ctmState2.update_stock }));
+                          }
+
+                          // setState((pre) => ({ ...pre, update_stock: !ctmState2.update_stock }));
                         }}
                       />
                     </HStack>
@@ -881,18 +896,21 @@ function AddNewSalesInvoice({ navigation, route }) {
                   keyboardType='numeric'
                   handleChange={(val) => setCtmState2((pre) => ({ ...pre, conversion_rate: val }))}
                 /> */}
-                <OnPressContainer
-                  onPress={() => handleOpenDynamicSelection('Set Source Warehouse', 'set_warehouse', urlWarehouse)}
-                >
-                  <StyledTextField
-                    isRequired={nullState.set_warehouse}
-                    caretHidden
-                    value={ctmState2.set_warehouse}
-                    label={'Set Source Warehouse'}
-                    name={'set_warehouse'}
-                    showSoftInputOnFocus={false}
-                  />
-                </OnPressContainer>
+                {ctmState2.update_stock && (
+                  <OnPressContainer
+                    onPress={() => handleOpenDynamicSelection('Set Source Warehouse', 'set_warehouse', urlWarehouse)}
+                  >
+                    <StyledTextField
+                      isRequired={nullState.set_warehouse && ctmState2.update_stock}
+                      caretHidden
+                      value={ctmState2.set_warehouse}
+                      label={'Set Source Warehouse'}
+                      name={'set_warehouse'}
+                      showSoftInputOnFocus={false}
+                    />
+                  </OnPressContainer>
+                )}
+
                 {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
                 {/* tc_name: null,
               <OnPressContainer
