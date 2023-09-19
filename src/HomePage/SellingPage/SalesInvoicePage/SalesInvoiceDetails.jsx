@@ -308,15 +308,15 @@ function DetailsPage({ route, navigation }) {
                 .then((response) => response.data)
                 .then((res) => {
                   //  navigation.replace('SalesOrderDetails', { name: data.name });
-                  res.data &&
-                    navigation.reset({
-                      index: 1,
-                      routes: [{ name: 'SalesInvoiceDetails', params: { name: data.name } }],
-                    });
+                  res.data && setRefetch(true);
+                  // navigation.reset({
+                  //   index: 1,
+                  //   routes: [{ name: 'SalesInvoiceDetails', params: { name: data.name } }],
+                  // });
                 })
                 .catch((err) => {
-                  console.log('An error occurred. Awkward.. : ', err);
-                  alert('Status Error: ' + err);
+                  // console.log('An error occurred. Awkward.. : ', err.response);
+                  alert('Status Error: ' + err.response.data.exception);
                 });
             },
           },
@@ -340,7 +340,7 @@ function DetailsPage({ route, navigation }) {
                 .put(urlUpdateStatus, { docstatus: 2 })
                 .then((response) => response.data)
                 .then((res) => {
-                  res.data && navigation.replace('SalesInvoiceDetails', { name: data.name });
+                  res.data && res.data && setRefetch(true);
                 })
                 .catch((err) => {
                   console.log('An error occurred. Awkward.. : ', err);
@@ -506,15 +506,19 @@ function DetailsPage({ route, navigation }) {
           </HStack>
           <HStack h={10}>
             {/* {data?.status === 'Open' && <CreateSalesOrderButton />} */}
-            {data?.status === 'Unpaid' && (
+
+            {/* Create button show when submited */}
+            {/* {data?.status === 'Unpaid' && 
+            (
               <CreateSelect
                 id={name}
                 // navigateName={'AddNewSalesOrder'}
                 label={'Create'}
                 menus={[{ label: 'Payment', value: 'Payment' }]}
               />
-            )}
-            {data?.status !== 'Paid' && <StatusButton status={data?.status} />}
+            )
+            } */}
+            {data?.status !== 'Paid' && data?.status !== 'Cancelled' && <StatusButton status={data?.status} />}
             <PrintAndExport />
             {data?.status === 'Draft' && <EditButton />}
           </HStack>

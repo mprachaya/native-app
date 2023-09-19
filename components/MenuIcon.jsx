@@ -3,7 +3,7 @@ import React from 'react';
 import { COLORS } from '../constants/theme';
 import TextStyled from './TextStyled';
 
-function MenuIcon({ Icon, menuLabel, onPress }) {
+function MenuIcon({ Icon, menuLabel, onPress, active }) {
   return (
     <View
       width={'24'}
@@ -15,7 +15,7 @@ function MenuIcon({ Icon, menuLabel, onPress }) {
       >
         <VStack>
           <Circle
-            background={'white'}
+            background={!active ? 'white' : COLORS.primary}
             size={'md'}
           >
             {Icon}

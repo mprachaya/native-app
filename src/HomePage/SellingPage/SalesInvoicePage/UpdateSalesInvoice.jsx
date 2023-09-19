@@ -1725,6 +1725,7 @@ function UpdateSalesInvoice({ navigation, route }) {
           {/* {stepState === 3 && !openSelection && !openCustomerType && <SuccessMessage setState={setState} />} */}
           {openSelection && (
             <DynamicSelectPage
+              isRequired={true}
               title={titleSelection} // for change dynamic title
               url={urlSelected} // for change dynamic data in selection
               open={openSelection} // state for show/hide selection

@@ -33,6 +33,7 @@ const ContainerStyled = (props) => {
 
 function SellingPage({ navigation }) {
   const iconColor = COLORS.primary;
+  const iconActive = COLORS.tertiary;
   return (
     <SafeAreaView>
       <ContainerStyled>
@@ -66,13 +67,14 @@ function SellingPage({ navigation }) {
                 }
               />
               <MenuIcon
+                active={true}
                 onPress={() => navigation.navigate('Customer', { filterData: [] })}
                 menuLabel={'Customer'}
                 Icon={
                   <Customer
                     width={24}
                     height={24}
-                    color={iconColor}
+                    color={iconActive}
                   />
                 }
               />
@@ -121,35 +123,38 @@ function SellingPage({ navigation }) {
               justifyContent={{ base: 'center', lg: 'space-around' }}
             >
               <MenuIcon
+                active={true}
                 onPress={() => navigation.navigate('Quotation', { filterData: [] })}
                 menuLabel={'Quotation'}
                 Icon={
                   <Quotation
                     width={24}
                     height={24}
-                    color={iconColor}
+                    color={iconActive}
                   />
                 }
               />
               <MenuIcon
+                active={true}
                 onPress={() => navigation.navigate('SalesOrder', { filterData: [] })}
                 menuLabel={'Sales Order'}
                 Icon={
                   <SaleOrder
                     width={24}
                     height={24}
-                    color={iconColor}
+                    color={iconActive}
                   />
                 }
               />
               <MenuIcon
+                active={true}
                 onPress={() => navigation.navigate('SalesInvoice', { filterData: [] })}
                 menuLabel={'Sale\nInvoice'}
                 Icon={
                   <SaleInvoice
                     width={24}
                     height={24}
-                    color={iconColor}
+                    color={iconActive}
                   />
                 }
               />
