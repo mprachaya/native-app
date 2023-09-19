@@ -453,7 +453,39 @@ function UpdateSalesOrder({ navigation, route }) {
         setCtmState((pre) => ({ ...pre, transaction_date: formattedToday, delivery_date: formattedNextMonth }));
       }
     }, []);
+    // toggle when back from second step and then read date in to calendar
+    useEffect(() => {
+      if (state.transaction_date && state.delivery_date) {
+        const plusMonth = new Date(state.delivery_date);
+        plusMonth.setMonth(plusMonth.getMonth());
+        setAndroidNextMount(() => plusMonth);
+        setDateIOSNextMonth(() => plusMonth);
 
+        const dateNow = new Date(state.transaction_date);
+        dateNow.setMonth(dateNow.getMonth());
+        setDateIOS(dateNow);
+
+        const currentDate = dateNow;
+
+        const yyyy = currentDate.getFullYear();
+        let mm = currentDate.getMonth() + 1; // Months start at 0!
+        let dd = currentDate.getDate();
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        const formattedToday = yyyy + '-' + mm + '-' + dd;
+
+        const nextDate = plusMonth;
+        const yyyy2 = plusMonth.getFullYear();
+        let mm2 = nextDate.getMonth() + 1; // Months start at 0!
+        let dd2 = nextDate.getDate();
+        if (dd2 < 10) dd = '0' + dd2;
+        if (mm2 < 10) mm = '0' + mm2;
+        const formattedNextMonth = yyyy2 + '-' + mm2 + '-' + dd2;
+
+        setDateIOS(new Date(formattedToday));
+        setDateIOSNextMonth(new Date(formattedNextMonth));
+      }
+    }, [state]);
     // read date from pres tate (when came from edit details)
 
     return (
@@ -565,7 +597,7 @@ function UpdateSalesOrder({ navigation, route }) {
                         <HStack>
                           <View w={'container'}>
                             <FormControl justifyContent={'center'}>
-                              <FormControl.Label mx={7}>Transaction Date</FormControl.Label>
+                              <FormControl.Label ml={12}>Transaction Date</FormControl.Label>
                             </FormControl>
                             <View
                               mx={12}
@@ -589,7 +621,7 @@ function UpdateSalesOrder({ navigation, route }) {
                   <HStack justifyContent={'center'}>
                     <View w={'container'}>
                       <FormControl justifyContent={'center'}>
-                        <FormControl.Label mx={7}>Delivery Date</FormControl.Label>
+                        <FormControl.Label ml={12}>Delivery Date</FormControl.Label>
                       </FormControl>
                       <View
                         mx={12}

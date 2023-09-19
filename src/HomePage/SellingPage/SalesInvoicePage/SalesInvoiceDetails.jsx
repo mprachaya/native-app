@@ -64,22 +64,24 @@ function DetailsPage({ route, navigation }) {
   const handleOpenUpdate = () => {
     function mapProperties(inputObject) {
       return {
-        doctype: 'Sales Order',
+        doctype: 'Sales Invoice',
         customer: inputObject.customer,
         customer_address: inputObject.customer_address || '',
         // order_type: inputObject.order_type,
         contact_person: inputObject.contact_person || '',
-        project: '',
+        project: inputObject.project || '',
         // conversion_rate: 1.0,
         posting_date: inputObject.posting_date,
         due_date: inputObject.due_date,
         company: inputObject.company,
         currency: inputObject.currency,
-        set_warehouse: '',
+        cost_center: inputObject.cost_center || '',
+        update_stock: inputObject.update_stock || '0',
+        set_warehouse: inputObject.set_warehouse || '',
         selling_price_list: inputObject.selling_price_list || '',
         payment_terms_template: inputObject.payment_terms_template || '',
         tc_name: inputObject.tc_name || '',
-        sales_partner: '',
+        sales_partner: inputObject.sales_partner || '',
         items: Object.values(inputObject.items).map((it) => {
           return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
         }),
@@ -90,11 +92,12 @@ function DetailsPage({ route, navigation }) {
     const newData = mapProperties(data);
     // console.log('newData', newData);
     const sales_order = Object.values(links).map((link) => link.parent);
+    let removeBlanketSO = String(sales_order).replace(/\[|\]/g, '');
     navigation.navigate('UpdateSalesInvoice', {
       name: data.name,
       preState: newData,
       amend: 0,
-      CreateFrom: sales_order !== undefined ? sales_order : undefined,
+      CreateFrom: removeBlanketSO !== undefined ? removeBlanketSO : undefined,
     });
   };
 
@@ -441,6 +444,10 @@ function DetailsPage({ route, navigation }) {
       }
     }
   }, [data, isFocused]);
+  // refetch when back to page
+  useMemo(() => {
+    setRefetch(true);
+  }, [isFocused]);
 
   const UpdateIsReturn = () => {
     if (data.items !== undefined) {
@@ -573,7 +580,7 @@ function DetailsPage({ route, navigation }) {
                 >
                   <VStack minHeight={10}>
                     <DisplayTextLeft>{data.due_date}</DisplayTextLeft>
-                    <SubTextRight>{'Delivery Date'}</SubTextRight>
+                    <SubTextRight>{'Due Date'}</SubTextRight>
                   </VStack>
                   <VStack
                     alignItems={'flex-start'}
@@ -635,12 +642,12 @@ function DetailsPage({ route, navigation }) {
                 space={6}
                 justifyContent='space-between'
               >
-                <Text fontSize={'xs'}>Order Type</Text>
+                <Text fontSize={'xs'}>Cost Center</Text>
                 <Text
                   fontWeight='bold'
                   _ios={{ fontSize: 'xs', textAlign: 'right', maxWidth: 100 }}
                 >
-                  {data.order_type ? data.order_type : '-'}
+                  {data.cost_center ? data.cost_center : '-'}
                 </Text>
               </HStack>
               <HStack
@@ -653,7 +660,7 @@ function DetailsPage({ route, navigation }) {
                   fontWeight='bold'
                   _ios={{ fontSize: 'xs', textAlign: 'right', maxWidth: 100 }}
                 >
-                  {data.currency ? data.currency : '-'}
+                  {data.party_account_currency ? data.party_account_currency : '-'}
                 </Text>
               </HStack>
               <HStack

@@ -101,6 +101,9 @@ function UpdateSalesInvoice({ navigation, route }) {
       console.log('preState', route.params?.preState);
       setPreState(route.params?.preState);
     }
+    if (route.params?.name) {
+      setName(route.params?.name);
+    }
   }, [route.params]);
 
   // state for show / hide selection (dynamically)
@@ -130,13 +133,15 @@ function UpdateSalesInvoice({ navigation, route }) {
     tc_name: '',
     sales_partner: '',
     //step3
-    // items: null,
+    items: null,
     // for testing
-    items: [{ item_code: 'M42 HSS-001', qty: 20, rate: 200 }],
+    // items: [{ item_code: 'M42 HSS-001', qty: 20, rate: 200 }],
   };
 
   // main state
   const [state, setState] = useState(initialState);
+  // for update id
+  const [name, setName] = useState('');
   // for handle selection title (dynamic)
   const [titleSelection, setTitleSelection] = useState('');
   // for handle dynamic url selection
@@ -430,6 +435,7 @@ function UpdateSalesInvoice({ navigation, route }) {
             // console.log(err);
           });
       }
+
       // console.log(ctmState);
     }, [ctmState]);
     // set Default value of to Date Object (+ 1 month)
@@ -476,6 +482,40 @@ function UpdateSalesInvoice({ navigation, route }) {
       }
     }, [preState]);
 
+    // toggle when back from second step and then read date in to calendar
+    useEffect(() => {
+      if (state.posting_date && state.due_date) {
+        const plusMonth = new Date(state.due_date);
+        plusMonth.setMonth(plusMonth.getMonth());
+        setAndroidNextMount(() => plusMonth);
+        setDateIOSNextMonth(() => plusMonth);
+
+        const dateNow = new Date(state.posting_date);
+        dateNow.setMonth(dateNow.getMonth());
+        setDateIOS(dateNow);
+
+        const currentDate = dateNow;
+
+        const yyyy = currentDate.getFullYear();
+        let mm = currentDate.getMonth() + 1; // Months start at 0!
+        let dd = currentDate.getDate();
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        const formattedToday = yyyy + '-' + mm + '-' + dd;
+
+        const nextDate = plusMonth;
+        const yyyy2 = plusMonth.getFullYear();
+        let mm2 = nextDate.getMonth() + 1; // Months start at 0!
+        let dd2 = nextDate.getDate();
+        if (dd2 < 10) dd = '0' + dd2;
+        if (mm2 < 10) mm = '0' + mm2;
+        const formattedNextMonth = yyyy2 + '-' + mm2 + '-' + dd2;
+
+        setDateIOS(new Date(formattedToday));
+        setDateIOSNextMonth(new Date(formattedNextMonth));
+      }
+    }, [state]);
+
     return (
       <React.Fragment>
         <HStack
@@ -515,6 +555,7 @@ function UpdateSalesInvoice({ navigation, route }) {
                 <OnPressContainer onPress={() => handleOpenDynamicSelection('Customer', 'customer', urlCustomer)}>
                   <StyledTextField
                     caretHidden
+                    isDisabled
                     isRequired={nullState.customer}
                     label={'Customer*'}
                     value={ctmState?.customer}
@@ -546,7 +587,7 @@ function UpdateSalesInvoice({ navigation, route }) {
                 {/* </OnPressContainer> */}
               </VStack>
               {/* for Android */}
-              {Platform.OS === 'android' && (
+              {/* {Platform.OS === 'android' && (
                 <VStack space={4}>
                   <View w={'container'}>
                     <OnPressContainer onPress={() => showAndoirdDatepickerFrom()}>
@@ -571,7 +612,7 @@ function UpdateSalesInvoice({ navigation, route }) {
                     </OnPressContainer>
                   </View>
                 </VStack>
-              )}
+              )} */}
               {/* for IOS */}
               {Platform.OS === 'ios' && (
                 <React.Fragment>
@@ -592,7 +633,7 @@ function UpdateSalesInvoice({ navigation, route }) {
                             >
                               <RNDateTimePicker
                                 display='inline'
-                                // disabled={!checkState}
+                                disabled={preState !== ''}
                                 is24Hour={true}
                                 mode='date'
                                 value={dateIOS}
@@ -615,6 +656,7 @@ function UpdateSalesInvoice({ navigation, route }) {
                       >
                         <RNDateTimePicker
                           display='inline'
+                          disabled={preState !== ''}
                           is24Hour={true}
                           mode='date'
                           value={dateIOSNextMonth}
@@ -865,6 +907,7 @@ function UpdateSalesInvoice({ navigation, route }) {
                   <StyledTextField
                     // isRequired
                     caretHidden
+                    isDisabled
                     value={ctmState2.project}
                     label={'Project'}
                     name={'project'}
@@ -886,6 +929,7 @@ function UpdateSalesInvoice({ navigation, route }) {
                 <OnPressContainer onPress={() => handleOpenDynamicSelection('Currency', 'currency', urlCurrency)}>
                   <StyledTextField
                     // isRequired
+                    isDisabled
                     caretHidden
                     value={ctmState2.currency}
                     label={'Currency'}
@@ -1018,26 +1062,24 @@ function UpdateSalesInvoice({ navigation, route }) {
           const { amount, ...newObj } = obj;
           return newObj;
         });
+
         const stateWithParent = Object.values(stateNoAmount).map((obj) => ({
           ...obj,
           sales_order: parentId,
         }));
         // console.log('stateWithParent: ', stateWithParent);
         cloneState.items = Object.values(stateWithParent);
-        // console.log(cloneState);
-        // console.log(urlSubmit);
-        // console.log(cloneState);
+
         console.log(cloneState);
         if (cloneState) {
           axios
-            .post(urlSubmit, cloneState)
-            .then(
-              (response) =>
-                // console.log('Response:', response.data);
-                response.data && setStepState(4)
-            )
+            .put(urlSubmit + '/' + name, cloneState)
+            .then((response) => {
+              console.log('Sales Invoice Updated:', response.data);
+              setStepState(4);
+            })
             .catch((err) => {
-              alert('An error occurred. Awkward.. : ' + err);
+              console.log('An error occurred. Awkward.. : ', err.message);
               // alert('Status Error: ' + err);
             });
         }
@@ -1400,7 +1442,7 @@ function UpdateSalesInvoice({ navigation, route }) {
                                 }));
                               } else {
                                 const updatedItems = items.items;
-                                updatedItems[index].qty = parseFloat(value);
+                                updatedItems[index].qty = value;
                                 setItems((pre) => ({
                                   ...pre,
                                   items: updatedItems,
@@ -1541,20 +1583,20 @@ function UpdateSalesInvoice({ navigation, route }) {
       // if (parentId !== undefined) {
       //   navigation.replace(title, { filterData: [] });
       // } else {
-      if (parentId !== undefined) {
-        navigation.pop();
-      } else {
-        navigation.pop();
-        navigation.replace(title, { filterData: [] });
-      }
+      // if (parentId !== undefined) {
+      //   navigation.pop();
+      // } else {
+      navigation.pop();
+      // navigation.replace(title, { filterData: [] });
+      // }
 
       // }
     };
-    const handleAddAnother = () => {
-      setState(initialState);
-      navigation.replace('AddNewSalesInvoice');
-      // setStepState(1);
-    };
+    // const handleAddAnother = () => {
+    //   setState(initialState);
+    //   navigation.replace('AddNewSalesInvoice');
+    //   // setStepState(1);
+    // };
 
     return (
       <FadeTransition animated={stepState === 4 && true}>
@@ -1591,7 +1633,7 @@ function UpdateSalesInvoice({ navigation, route }) {
               textWeight={'bold'}
               fontSize={24}
             >
-              {'Add ' + display_title + '\nSuccess!'}
+              {'Update ' + display_title + '\nSuccess!'}
             </Text>
 
             <VStack
@@ -1621,7 +1663,7 @@ function UpdateSalesInvoice({ navigation, route }) {
                   {'Back to ' + display_title + ' Page '}
                 </Button>
               )}
-              {parentId === '' && (
+              {/* {parentId === '' && (
                 <Button
                   rounded={24}
                   minW={{ base: 'full', lg: 400 }}
@@ -1632,50 +1674,13 @@ function UpdateSalesInvoice({ navigation, route }) {
                 >
                   {'Add another ' + display_title}
                 </Button>
-              )}
+              )} */}
             </VStack>
           </VStack>
         </Container>
       </FadeTransition>
     );
   };
-  useMemo(() => {
-    const reformatData = () => {
-      function mapProperties(inputObject) {
-        return {
-          doctype: 'Sales Order',
-          customer: inputObject.party_name,
-          customer_address: inputObject.customer_address || '',
-          // order_type: inputObject.order_type,
-          contact_person: inputObject.contact_person || '',
-          project: '',
-          // conversion_rate: 1.0,
-          posting_date: '',
-          due_date: '',
-          company: inputObject.company,
-          currency: inputObject.currency,
-          set_warehouse: '',
-          selling_price_list: inputObject.selling_price_list || '',
-          payment_terms_template: inputObject.payment_terms_template || '',
-          tc_name: inputObject.tc_name || '',
-          sales_partner: '',
-          items: Object.values(inputObject.items).map((it) => {
-            return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
-          }),
-        };
-        // return { doctype: inputObject.doctype };
-      }
-      if (route.params?.defaultData) {
-        const newData = mapProperties(route.params?.defaultData);
-        // console.log('newData', newData);
-        setState(newData);
-        console.log(newData);
-      } else {
-        setState(initialState);
-      }
-    };
-    reformatData();
-  }, [route.params]);
 
   // log when state having changed
   useMemo(() => {

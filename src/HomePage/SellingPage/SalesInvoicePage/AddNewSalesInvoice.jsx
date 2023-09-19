@@ -127,9 +127,9 @@ function AddNewSalesInvoice({ navigation, route }) {
     tc_name: '',
     sales_partner: '',
     //step3
-    // items: null,
+    items: null,
     // for testing
-    items: [{ item_code: 'M42 HSS-001', qty: 20, rate: 200 }],
+    // items: [{ item_code: 'M42 HSS-001', qty: 20, rate: 200 }],
   };
 
   // main state
@@ -459,6 +459,40 @@ function AddNewSalesInvoice({ navigation, route }) {
 
       setCtmState((pre) => ({ ...pre, posting_date: formattedToday, due_date: formattedNextMonth }));
     }, []);
+
+    // toggle when back from second step and then read date in to calendar
+    useEffect(() => {
+      if (state.posting_date && state.due_date) {
+        const plusMonth = new Date(state.due_date);
+        plusMonth.setMonth(plusMonth.getMonth());
+        setAndroidNextMount(() => plusMonth);
+        setDateIOSNextMonth(() => plusMonth);
+
+        const dateNow = new Date(state.posting_date);
+        dateNow.setMonth(dateNow.getMonth());
+        setDateIOS(dateNow);
+
+        const currentDate = dateNow;
+
+        const yyyy = currentDate.getFullYear();
+        let mm = currentDate.getMonth() + 1; // Months start at 0!
+        let dd = currentDate.getDate();
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        const formattedToday = yyyy + '-' + mm + '-' + dd;
+
+        const nextDate = plusMonth;
+        const yyyy2 = plusMonth.getFullYear();
+        let mm2 = nextDate.getMonth() + 1; // Months start at 0!
+        let dd2 = nextDate.getDate();
+        if (dd2 < 10) dd = '0' + dd2;
+        if (mm2 < 10) mm = '0' + mm2;
+        const formattedNextMonth = yyyy2 + '-' + mm2 + '-' + dd2;
+
+        setDateIOS(new Date(formattedToday));
+        setDateIOSNextMonth(new Date(formattedNextMonth));
+      }
+    }, [state]);
 
     return (
       <React.Fragment>
@@ -977,24 +1011,10 @@ function AddNewSalesInvoice({ navigation, route }) {
     const [showAlert, setShowAlert] = useState(false);
 
     const handleForward = () => {
-      // before go to next step check all required state
-      // check then make input error style
-      // handleCheckRequired();
-      // if column required is not filled push property name into check array
       let checkNull = stateWithAmount.items === null;
-      // requiredState.forEach((st_name) => {
-      //   if (!ctmState2[st_name]) {
-      //     check.push(st_name);
-      //   }
-      // });
-      // if have any length of check mean required state is still not filled yet
       if (checkNull) {
         alert('Please Add Items');
       } else {
-        // if filled go to next step
-        // handleSubmit(stateWithAmount);
-        // setState((pre) => ({ ...pre, items: stateWithAmount }));
-        // console.log('items =', items);
         const cloneState = { ...state };
 
         const stateNoAmount = Object.values(stateWithAmount)?.map((obj) => {
