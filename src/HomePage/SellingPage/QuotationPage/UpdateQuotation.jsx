@@ -1215,6 +1215,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
             <ScrollView>
               <View w={'96'}>
                 {items.items !== null &&
+                  stateWithAmount !== undefined &&
                   Object.values(stateWithAmount)?.map((data, index) => (
                     <VStack
                       key={data?.name}

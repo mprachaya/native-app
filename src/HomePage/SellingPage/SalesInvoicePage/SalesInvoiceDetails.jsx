@@ -67,19 +67,19 @@ function DetailsPage({ route, navigation }) {
         doctype: 'Sales Order',
         customer: inputObject.customer,
         customer_address: inputObject.customer_address || '',
-        order_type: inputObject.order_type,
+        // order_type: inputObject.order_type,
         contact_person: inputObject.contact_person || '',
-        project: inputObject.project,
-        conversion_rate: inputObject.conversion_rate || '0.0',
-        transaction_date: inputObject.transaction_date,
-        delivery_date: inputObject.delivery_date,
+        project: '',
+        // conversion_rate: 1.0,
+        posting_date: inputObject.posting_date,
+        due_date: inputObject.due_date,
         company: inputObject.company,
         currency: inputObject.currency,
-        set_warehouse: inputObject.set_warehouse,
+        set_warehouse: '',
         selling_price_list: inputObject.selling_price_list || '',
         payment_terms_template: inputObject.payment_terms_template || '',
         tc_name: inputObject.tc_name || '',
-        sales_partner: inputObject.sales_partner || '',
+        sales_partner: '',
         items: Object.values(inputObject.items).map((it) => {
           return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
         }),
@@ -89,7 +89,13 @@ function DetailsPage({ route, navigation }) {
     }
     const newData = mapProperties(data);
     // console.log('newData', newData);
-    navigation.replace('UpdateSalesOrder', { name: data.name, preState: newData, amend: 0, QuotationState: [] });
+    const sales_order = Object.values(links).map((link) => link.parent);
+    navigation.navigate('UpdateSalesInvoice', {
+      name: data.name,
+      preState: newData,
+      amend: 0,
+      CreateFrom: sales_order !== undefined ? sales_order : undefined,
+    });
   };
 
   const BackButton = () => (
@@ -156,29 +162,29 @@ function DetailsPage({ route, navigation }) {
       </Text>
     </Button>
   );
-  const CreateSalesOrderButton = () => (
-    <Button
-      mr={2}
-      px={3.5}
-      rounded={'xl'}
-      variant={'outline'}
-      background={COLORS.lightWhite}
-      _pressed={{ background: COLORS.white }}
-      _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
-      onPress={() => navigation.navigate('AddNewSalesOrder', { QuotationState: data })}
-    >
-      <Text
-        textAlign='left'
-        maxWidth={24}
-        fontWeight={'bold'}
-        fontSize={'sm'}
-        letterSpacing={1}
-        color={'blue.400'}
-      >
-        Create
-      </Text>
-    </Button>
-  );
+  // const CreateSalesOrderButton = () => (
+  //   <Button
+  //     mr={2}
+  //     px={3.5}
+  //     rounded={'xl'}
+  //     variant={'outline'}
+  //     background={COLORS.lightWhite}
+  //     _pressed={{ background: COLORS.white }}
+  //     _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
+  //     onPress={() => navigation.navigate('AddNewSalesOrder', { QuotationState: data })}
+  //   >
+  //     <Text
+  //       textAlign='left'
+  //       maxWidth={24}
+  //       fontWeight={'bold'}
+  //       fontSize={'sm'}
+  //       letterSpacing={1}
+  //       color={'blue.400'}
+  //     >
+  //       Create
+  //     </Text>
+  //   </Button>
+  // );
   const StatusButton = ({ status }) => (
     <Button
       mr={2}
@@ -348,36 +354,35 @@ function DetailsPage({ route, navigation }) {
         { cancelable: false } // Prevents users from dismissing the alert by tapping outside of it
       );
     } else if (status === 'Cancelled') {
-      function mapProperties(inputObject) {
-        return {
-          doctype: 'Sales Invoice',
-          customer: inputObject.customer,
-          customer_address: inputObject.customer_address || '',
-          order_type: inputObject.order_type,
-          contact_person: inputObject.contact_person || '',
-          project: inputObject.project,
-          conversion_rate: inputObject.conversion_rate,
-          transaction_date: inputObject.transaction_date,
-          delivery_date: inputObject.delivery_date,
-          company: inputObject.company,
-          currency: inputObject.currency,
-          set_warehouse: inputObject.set_warehouse,
-          selling_price_list: inputObject.selling_price_list || '',
-          payment_terms_template: inputObject.payment_terms_template || '',
-          tc_name: inputObject.tc_name || '',
-          sales_partner: inputObject.sales_partner || '',
-          items: Object.values(inputObject.items).map((it) => {
-            return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
-          }),
-        };
-        // return { doctype: inputObject.doctype };
-        // return { doctype: inputObject.doctype };
-      }
-      const newData = mapProperties(data);
-      navigation.replace('UpdateSalesOrder', { name: data.name, preState: newData, amend: 1, QuotationState: [] });
+      // function mapProperties(inputObject) {
+      //   return {
+      //     doctype: 'Sales Invoice',
+      //     customer: inputObject.customer,
+      //     customer_address: inputObject.customer_address || '',
+      //     order_type: inputObject.order_type,
+      //     contact_person: inputObject.contact_person || '',
+      //     project: inputObject.project,
+      //     conversion_rate: inputObject.conversion_rate,
+      //     transaction_date: inputObject.transaction_date,
+      //     delivery_date: inputObject.delivery_date,
+      //     company: inputObject.company,
+      //     currency: inputObject.currency,
+      //     set_warehouse: inputObject.set_warehouse,
+      //     selling_price_list: inputObject.selling_price_list || '',
+      //     payment_terms_template: inputObject.payment_terms_template || '',
+      //     tc_name: inputObject.tc_name || '',
+      //     sales_partner: inputObject.sales_partner || '',
+      //     items: Object.values(inputObject.items).map((it) => {
+      //       return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
+      //     }),
+      //   };
+      // return { doctype: inputObject.doctype };
+      // return { doctype: inputObject.doctype };
+      // }
+      // const newData = mapProperties(data);
+      // navigation.replace('UpdateSalesOrder', { name: data.name, preState: newData, amend: 1, QuotationState: [] });
     } else if (status === 'Expired') {
     } else if (status === 'Ordered') {
-    } else if (state === 'Expired') {
     }
   };
 

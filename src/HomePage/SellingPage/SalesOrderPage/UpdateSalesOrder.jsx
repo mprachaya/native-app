@@ -1265,9 +1265,10 @@ function UpdateSalesOrder({ navigation, route }) {
             <ScrollView>
               <View w={'96'}>
                 {items.items !== null &&
+                  stateWithAmount !== undefined &&
                   Object.values(stateWithAmount)?.map((data, index) => (
                     <VStack
-                      key={index}
+                      key={data?.item_code}
                       bg={COLORS.white}
                       rounded={20}
                       space={2}

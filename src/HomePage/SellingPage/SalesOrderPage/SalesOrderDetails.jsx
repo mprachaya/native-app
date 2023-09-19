@@ -106,7 +106,7 @@ function DetailsPage({ route, navigation }) {
     // };
     const newData = mapProperties(data);
     // console.log('newData', newData);
-    navigation.replace('UpdateSalesOrder', { name: data.name, preState: newData, amend: 0, QuotationState: [] });
+    navigation.navigate('UpdateSalesOrder', { name: data.name, preState: newData, amend: 0, QuotationState: [] });
   };
 
   const BackButton = () => (

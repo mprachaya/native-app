@@ -568,7 +568,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                         <HStack>
                           <View w={'container'}>
                             <FormControl justifyContent={'center'}>
-                              <FormControl.Label mx={7}>Posting Date</FormControl.Label>
+                              <FormControl.Label ml={12}>Posting Date</FormControl.Label>
                             </FormControl>
                             <View
                               mx={12}
@@ -591,7 +591,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                   <HStack justifyContent={'center'}>
                     <View w={'container'}>
                       <FormControl justifyContent={'center'}>
-                        <FormControl.Label mx={7}>Due Date</FormControl.Label>
+                        <FormControl.Label ml={12}>Due Date</FormControl.Label>
                       </FormControl>
                       <View
                         mx={12}

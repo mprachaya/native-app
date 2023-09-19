@@ -43,7 +43,7 @@ import SalesInvoicePage from './src/HomePage/SellingPage/SalesInvoicePage';
 import SalesInvoiceDetailPage from './src/HomePage/SellingPage/SalesInvoicePage/SalesInvoiceDetails';
 import AddNewSalesInvoice from './src/HomePage/SellingPage/SalesInvoicePage/AddNewSalesInvoice';
 import SalesInvoiceItemDetails from './src/HomePage/SellingPage/SalesInvoicePage/ItemDetails';
-
+import UpdateSalesInvoice from './src/HomePage/SellingPage/SalesInvoicePage/UpdateSalesInvoice';
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
@@ -464,6 +464,20 @@ export default function App() {
                 header: () => (
                   <NavHeader
                     pageName={'Item Details'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='UpdateSalesInvoice'
+              component={UpdateSalesInvoice}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Edit Sales Invoice'}
                     noHeader={true}
                   />
                 ),

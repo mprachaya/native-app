@@ -3,6 +3,7 @@ import {
   Button,
   Center,
   CheckIcon,
+  Checkbox,
   ChevronLeftIcon,
   Container,
   DeleteIcon,
@@ -77,15 +78,30 @@ const StyledTextField = (props) => {
   );
 };
 // main component
-function UpdateSalesOrder({ navigation, route }) {
+function UpdateSalesInvoice({ navigation, route }) {
   // page name display
-  const title = 'SalesOrder';
+  const display_title = 'Sales Invoice';
+  //for navigation
+  const title = 'SalesInvoice';
   // navigate step state
   const [stepState, setStepState] = useState(1);
   // max of steps
   const maxStep = 3;
-
-  const { QuotationState, name, preState, amend } = route.params;
+  const [parentId, setParentId] = useState('');
+  const [preState, setPreState] = useState('');
+  // const [defaultData, setDefaultData] = useState([]);
+  // Check if route.params is defined
+  useEffect(() => {
+    if (route.params?.CreateFrom) {
+      setParentId(route.params.CreateFrom);
+      console.log('CreateFrom', route.params?.CreateFrom);
+    }
+    if (route.params?.preState) {
+      setState(route.params.preState);
+      console.log('preState', route.params?.preState);
+      setPreState(route.params?.preState);
+    }
+  }, [route.params]);
 
   // state for show / hide selection (dynamically)
   const [openSelection, setOpenSelection] = useState(false);
@@ -94,27 +110,33 @@ function UpdateSalesOrder({ navigation, route }) {
 
   // initial state
   const initialState = {
-    doctype: 'Sales Order',
+    doctype: 'Sales Invoice',
+    //step 1
     customer: '',
     company: '',
-    transaction_date: '',
-    delivery_date: '',
+    posting_date: '',
+    due_date: '',
+    contact_person: '',
+    customer_address: '',
+    //step 2
+    is_return: 0,
+    update_stock: 1,
     project: '',
-    order_type: 'Sales',
+    cost_center: '',
     currency: 'THB',
-    conversion_rate: 1,
     selling_price_list: '',
     set_warehouse: '',
-    customer_address: '',
     payment_terms_template: '',
-    contact_person: '',
     tc_name: '',
     sales_partner: '',
-    items: null,
+    //step3
+    // items: null,
+    // for testing
+    items: [{ item_code: 'M42 HSS-001', qty: 20, rate: 200 }],
   };
 
   // main state
-  const [state, setState] = useState(preState);
+  const [state, setState] = useState(initialState);
   // for handle selection title (dynamic)
   const [titleSelection, setTitleSelection] = useState('');
   // for handle dynamic url selection
@@ -122,30 +144,32 @@ function UpdateSalesOrder({ navigation, route }) {
   // url path for fetching selection data
   const {
     baseURL,
-    CUSTOMER,
-    ADDRESS,
-    CONTACT,
-    CURRENCY,
-    PRICE_LIST,
-    PAYMENT_TERMS_TEMPLATES,
-    TERMS_AND_CONDITIONS,
-    ITEM_QRCODE,
-    SALES_ORDER,
-    COMPANY,
-    PROJECT,
-    WAREHOUSE,
-    SALES_PARTNER,
+    CUSTOMER, //
+    ADDRESS, //
+    CONTACT, //
+    CURRENCY, //
+    PRICE_LIST, //
+    PAYMENT_TERMS_TEMPLATES, //
+    TERMS_AND_CONDITIONS, //
+    ITEM_QRCODE, //
+    SALES_INVOICE, //
+    COMPANY, //
+    PROJECT, //
+    WAREHOUSE, //
+    SALES_PARTNER, //
+    COST_CENTER,
   } = useConfig(true);
   const urlCurrency = baseURL + CURRENCY;
   const urlPriceList = baseURL + PRICE_LIST;
   const urlPaymentTermTemplate = baseURL + PAYMENT_TERMS_TEMPLATES;
   const urlTermAndConditions = baseURL + TERMS_AND_CONDITIONS;
   const urlItemQRCode = baseURL + ITEM_QRCODE;
-  const urlSubmit = baseURL + SALES_ORDER;
+  const urlSubmit = baseURL + SALES_INVOICE;
   const urlCompany = baseURL + COMPANY;
   const urlProject = baseURL + PROJECT;
   const urlWarehouse = baseURL + WAREHOUSE;
   const urlSalesPartner = baseURL + SALES_PARTNER;
+  const urlCostCenter = baseURL + COST_CENTER;
 
   const urlCustomer = baseURL + CUSTOMER;
   // const urlLead = baseURL + LEAD;
@@ -192,7 +216,7 @@ function UpdateSalesOrder({ navigation, route }) {
     });
 
     // date now for android
-    const [dateAndroidNow, setDateAndroidNow] = useState(new Date());
+    const [dateAndroidNow] = useState(new Date());
     const [dateAndroidNextMount, setAndroidNextMount] = useState(new Date()); // add 1 mount
     const onChangeAndroidFrom = (event, selectedDate) => {
       const currentDate = selectedDate;
@@ -203,10 +227,10 @@ function UpdateSalesOrder({ navigation, route }) {
       if (mm < 10) mm = '0' + mm;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
         return;
       }
-      setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+      setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
     };
     const onChangeAndroidTo = (event, selectedDate) => {
       const currentDate = selectedDate;
@@ -217,10 +241,10 @@ function UpdateSalesOrder({ navigation, route }) {
       if (mm < 10) mm = '0' + mm;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, due_date: formattedToday }));
         return;
       }
-      setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
+      setCtmState((pre) => ({ ...pre, due_date: formattedToday }));
     };
 
     const showAndoirdDatepickerFrom = () => {
@@ -254,10 +278,10 @@ function UpdateSalesOrder({ navigation, route }) {
       // const formattedToday = dd + '-' + mm + '-' + yyyy;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
         return;
       } else {
-        setCtmState((pre) => ({ ...pre, transaction_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
       }
     };
     const onChangeIOSto = (event, selectedDate) => {
@@ -269,10 +293,10 @@ function UpdateSalesOrder({ navigation, route }) {
       if (mm < 10) mm = '0' + mm;
       const formattedToday = yyyy + '-' + mm + '-' + dd;
       if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, due_date: formattedToday }));
         return;
       } else {
-        setCtmState((pre) => ({ ...pre, delivery_date: formattedToday }));
+        setCtmState((pre) => ({ ...pre, due_date: formattedToday }));
       }
     };
 
@@ -302,19 +326,16 @@ function UpdateSalesOrder({ navigation, route }) {
       if (check.length !== 0) {
       } else {
         // if filled go to next step
-        if (Date.parse(ctmState.delivery_date) < Date.parse(ctmState.transaction_date)) {
-          alert('Delivery Date should be after Transaction Date');
-        } else {
-          setStepState((post) => post + 1);
-          setState(ctmState);
-        }
+        setStepState((post) => post + 1);
+        setState(ctmState);
       }
     };
 
     const handleBackFirstPage = () => {
       // handleClose();
+      // navigation.pop();
       navigation.pop();
-      navigation.replace(title, { filterData: [] });
+      // navigation.replace(title, { filterData: [] });
       setState(initialState);
     };
 
@@ -391,9 +412,9 @@ function UpdateSalesOrder({ navigation, route }) {
     );
 
     useMemo(() => {
-      if (ctmState.customer !== undefined) {
+      if (ctmState?.customer !== undefined || ctmState?.customer !== '') {
         axios
-          .get(urlCustomer + '/' + ctmState.customer)
+          .get(urlCustomer + '/' + ctmState?.customer)
           .then((response) => response.data)
           .then((res) => {
             // console.log(res.data);
@@ -409,7 +430,7 @@ function UpdateSalesOrder({ navigation, route }) {
             // console.log(err);
           });
       }
-      console.log(ctmState);
+      // console.log(ctmState);
     }, [ctmState]);
     // set Default value of to Date Object (+ 1 month)
     useMemo(() => {
@@ -438,23 +459,22 @@ function UpdateSalesOrder({ navigation, route }) {
       if (dd2 < 10) dd = '0' + dd2;
       if (mm2 < 10) mm = '0' + mm2;
       const formattedNextMonth = yyyy2 + '-' + mm2 + '-' + dd2;
-
-      if (preState) {
+      if (preState.posting_date && preState.due_date) {
         setCtmState((pre) => ({
           ...pre,
-          transaction_date: preState.transaction_date,
-          valid_till: preState.delivery_date,
+          posting_date: preState.posting_date,
+          due_date: preState.due_date,
         }));
-        setDateAndroidNow(new Date(preState.transaction_date));
-        setAndroidNextMount(new Date(preState.delivery_date));
-        setDateIOS(new Date(preState.transaction_date));
-        setDateIOSNextMonth(new Date(preState.delivery_date));
+        //  setDateAndroidNow(new Date(preState.transaction_date));
+        //  setAndroidNextMount(new Date(preState.delivery_date));
+        setDateIOS(new Date(preState.posting_date));
+        setDateIOSNextMonth(new Date(preState.due_date));
       } else {
-        setCtmState((pre) => ({ ...pre, transaction_date: formattedToday, delivery_date: formattedNextMonth }));
+        setCtmState((pre) => ({ ...pre, posting_date: formattedToday, due_date: formattedNextMonth }));
+        setDateIOS(new Date(formattedToday));
+        setDateIOSNextMonth(new Date(formattedNextMonth));
       }
-    }, []);
-
-    // read date from pres tate (when came from edit details)
+    }, [preState]);
 
     return (
       <React.Fragment>
@@ -487,7 +507,7 @@ function UpdateSalesOrder({ navigation, route }) {
                   caretHidden
                   isRequired={nullState.company}
                   label={'Company*'}
-                  value={ctmState.company}
+                  value={ctmState?.company}
                   showSoftInputOnFocus={false} // disable toggle keyboard
                 />
               </OnPressContainer>
@@ -497,7 +517,7 @@ function UpdateSalesOrder({ navigation, route }) {
                     caretHidden
                     isRequired={nullState.customer}
                     label={'Customer*'}
-                    value={ctmState.customer}
+                    value={ctmState?.customer}
                     showSoftInputOnFocus={false} // disable toggle keyboard
                   />
                 </OnPressContainer>
@@ -534,8 +554,7 @@ function UpdateSalesOrder({ navigation, route }) {
                         caretHidden
                         label={'From Date'}
                         // placeholder={'Select Transaction Date'}
-                        isDisabled
-                        value={ctmState.transaction_date}
+                        value={ctmState?.posting_date}
                         showSoftInputOnFocus={false} // disable toggle keyboard
                       />
                     </OnPressContainer>
@@ -546,7 +565,7 @@ function UpdateSalesOrder({ navigation, route }) {
                         caretHidden
                         label={'To Date'}
                         placeholder={'Select Valid Date'}
-                        value={ctmState.delivery_date}
+                        value={ctmState?.due_date}
                         showSoftInputOnFocus={false} // disable toggle keyboard
                       />
                     </OnPressContainer>
@@ -565,7 +584,7 @@ function UpdateSalesOrder({ navigation, route }) {
                         <HStack>
                           <View w={'container'}>
                             <FormControl justifyContent={'center'}>
-                              <FormControl.Label mx={7}>Transaction Date</FormControl.Label>
+                              <FormControl.Label ml={12}>Posting Date</FormControl.Label>
                             </FormControl>
                             <View
                               mx={12}
@@ -573,7 +592,6 @@ function UpdateSalesOrder({ navigation, route }) {
                             >
                               <RNDateTimePicker
                                 display='inline'
-                                disabled
                                 // disabled={!checkState}
                                 is24Hour={true}
                                 mode='date'
@@ -589,7 +607,7 @@ function UpdateSalesOrder({ navigation, route }) {
                   <HStack justifyContent={'center'}>
                     <View w={'container'}>
                       <FormControl justifyContent={'center'}>
-                        <FormControl.Label mx={7}>Delivery Date</FormControl.Label>
+                        <FormControl.Label ml={12}>Due Date</FormControl.Label>
                       </FormControl>
                       <View
                         mx={12}
@@ -608,39 +626,39 @@ function UpdateSalesOrder({ navigation, route }) {
                 </React.Fragment>
               )}
 
-              {/* {ctmState.customer !== undefined && ( */}
-              <React.Fragment>
-                <OnPressContainer
-                  onPress={() => {
-                    ctmState.customer === ''
-                      ? alert('Please select Customer')
-                      : handleOpenDynamicSelection('Address', 'customer_address', urlAddress + filterAddress);
-                  }}
-                >
-                  <StyledTextField
-                    caretHidden
-                    label={'Address'}
-                    name={'customer_address'}
-                    value={ctmState.customer_address}
-                    showSoftInputOnFocus={false} // disable toggle keyboard
-                  />
-                </OnPressContainer>
+              {ctmState?.customer !== undefined && (
+                <React.Fragment>
+                  <OnPressContainer
+                    onPress={() => {
+                      ctmState.customer === ''
+                        ? alert('Please select Customer')
+                        : handleOpenDynamicSelection('Address', 'customer_address', urlAddress + filterAddress);
+                    }}
+                  >
+                    <StyledTextField
+                      caretHidden
+                      label={'Address'}
+                      name={'customer_address'}
+                      value={ctmState.customer_address}
+                      showSoftInputOnFocus={false} // disable toggle keyboard
+                    />
+                  </OnPressContainer>
 
-                <OnPressContainer
-                  onPress={() => {
-                    handleOpenDynamicSelection('Contact Person', 'contact_person', urlContact + filterContact);
-                  }}
-                >
-                  <StyledTextField
-                    caretHidden
-                    label={'Contact Person'}
-                    name={'contact_person'}
-                    value={ctmState.contact_person}
-                    showSoftInputOnFocus={false} // disable toggle keyboard
-                  />
-                </OnPressContainer>
-              </React.Fragment>
-              {/* )} */}
+                  <OnPressContainer
+                    onPress={() => {
+                      handleOpenDynamicSelection('Contact Person', 'contact_person', urlContact + filterContact);
+                    }}
+                  >
+                    <StyledTextField
+                      caretHidden
+                      label={'Contact Person'}
+                      name={'contact_person'}
+                      value={ctmState.contact_person}
+                      showSoftInputOnFocus={false} // disable toggle keyboard
+                    />
+                  </OnPressContainer>
+                </React.Fragment>
+              )}
             </VStack>
           </ScrollView>
         </VStack>
@@ -672,11 +690,17 @@ function UpdateSalesOrder({ navigation, route }) {
       let check = [];
       requiredState.forEach((st_name) => {
         if (!ctmState2[st_name]) {
-          check.push(st_name);
+          // check update_stock if true required set_warehouse
+          if (st_name === 'set_warehouse' && !ctmState2.update_stock) {
+          } else {
+            check.push(st_name);
+          }
         }
       });
       // if have any length of check mean required state is still not filled yet
+
       if (check.length !== 0) {
+        console.log('check:', check);
       } else {
         // if filled go to next step
         setStepState((post) => post + 1);
@@ -787,7 +811,56 @@ function UpdateSalesOrder({ navigation, route }) {
         >
           <ScrollView>
             <VStack h={1000}>
-              <VStack space={2}>
+              <VStack
+                space={2}
+                mt={6}
+              >
+                <HStack
+                  w={'container'}
+                  space={6}
+                  justifyContent='space-between'
+                >
+                  <HStack w={'1/3'}>
+                    <Text fontSize={'xs'}>Is Return</Text>
+                    <HStack>
+                      <Checkbox
+                        ml={6}
+                        isDisabled
+                        aria-label='return-check'
+                        isChecked={ctmState2.is_return || 0}
+                        _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
+                        // onPress={() => {
+                        //   setCtmState2((pre) => ({ ...pre, is_return: !ctmState2.is_return }));
+                        //   setState((pre) => ({ ...pre, is_return: !ctmState2.is_return }));
+                        // }}
+                      />
+                    </HStack>
+                  </HStack>
+                  <HStack w={'1/2'}>
+                    <Text fontSize={'xs'}>Update Stock</Text>
+                    <HStack>
+                      <Checkbox
+                        ml={6}
+                        aria-label='update-stock-check'
+                        isChecked={ctmState2.update_stock || 0}
+                        _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
+                        onPress={() => {
+                          if (!ctmState2.update_stock === true) {
+                            setCtmState2((pre) => ({
+                              ...pre,
+                              update_stock: !ctmState2.update_stock,
+                              set_warehouse: '',
+                            }));
+                          } else {
+                            setCtmState2((pre) => ({ ...pre, update_stock: !ctmState2.update_stock }));
+                          }
+
+                          // setState((pre) => ({ ...pre, update_stock: !ctmState2.update_stock }));
+                        }}
+                      />
+                    </HStack>
+                  </HStack>
+                </HStack>
                 <OnPressContainer onPress={() => handleOpenDynamicSelection('Project', 'project', urlProject)}>
                   <StyledTextField
                     // isRequired
@@ -798,46 +871,18 @@ function UpdateSalesOrder({ navigation, route }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
-                <View>
-                  <FormControl justifyContent={'center'}>
-                    <FormControl.Label>Order Type</FormControl.Label>
-                  </FormControl>
-                  <Select
-                    isDisabled
-                    dropdownIcon={true}
-                    selectedValue={ctmState2.order_type}
-                    w={{ base: 'full', lg: 400 }}
-                    fontSize={18}
-                    borderWidth={2}
-                    borderColor={'gray.200'}
-                    accessibilityLabel='Order To'
-                    placeholder='Choose Order Type'
-                    _selectedItem={{
-                      bg: 'blueGray.200',
-                      endIcon: <CheckIcon color={'blueGray.400'} />,
-                    }}
-                    onValueChange={(itemValue) => {
-                      setCtmState2((pre) => ({
-                        ...pre,
-                        order_type: itemValue,
-                      }));
-                    }}
-                  >
-                    <Select.Item
-                      label='Sales'
-                      value='Sales'
-                    />
-
-                    <Select.Item
-                      label='Maintenance'
-                      value='Maintenance'
-                    />
-                    <Select.Item
-                      label='Shopping Cart'
-                      value='Shopping Cart'
-                    />
-                  </Select>
-                </View>
+                <OnPressContainer
+                  onPress={() => handleOpenDynamicSelection('Cost Center', 'cost_center', urlCostCenter)}
+                >
+                  <StyledTextField
+                    // isRequired
+                    caretHidden
+                    value={ctmState2.cost_center}
+                    label={'Cost Center'}
+                    name={'cost_center'}
+                    showSoftInputOnFocus={false}
+                  />
+                </OnPressContainer>
                 <OnPressContainer onPress={() => handleOpenDynamicSelection('Currency', 'currency', urlCurrency)}>
                   <StyledTextField
                     // isRequired
@@ -861,24 +906,27 @@ function UpdateSalesOrder({ navigation, route }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
-                <StyledTextField
+                {/* <StyledTextField
                   label={'Exchange Rate'}
                   value={String(ctmState2.conversion_rate)}
                   keyboardType='numeric'
                   handleChange={(val) => setCtmState2((pre) => ({ ...pre, conversion_rate: val }))}
-                />
-                <OnPressContainer
-                  onPress={() => handleOpenDynamicSelection('Set Source Warehouse', 'set_warehouse', urlWarehouse)}
-                >
-                  <StyledTextField
-                    isRequired={nullState.set_warehouse}
-                    caretHidden
-                    value={ctmState2.set_warehouse}
-                    label={'Set Source Warehouse'}
-                    name={'set_warehouse'}
-                    showSoftInputOnFocus={false}
-                  />
-                </OnPressContainer>
+                /> */}
+                {ctmState2.update_stock && (
+                  <OnPressContainer
+                    onPress={() => handleOpenDynamicSelection('Set Source Warehouse', 'set_warehouse', urlWarehouse)}
+                  >
+                    <StyledTextField
+                      isRequired={nullState.set_warehouse && ctmState2.update_stock}
+                      caretHidden
+                      value={ctmState2.set_warehouse}
+                      label={'Set Source Warehouse'}
+                      name={'set_warehouse'}
+                      showSoftInputOnFocus={false}
+                    />
+                  </OnPressContainer>
+                )}
+
                 {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
                 {/* tc_name: null,
               <OnPressContainer
@@ -970,44 +1018,32 @@ function UpdateSalesOrder({ navigation, route }) {
           const { amount, ...newObj } = obj;
           return newObj;
         });
-        cloneState.items = Object.values(stateNoAmount);
+        const stateWithParent = Object.values(stateNoAmount).map((obj) => ({
+          ...obj,
+          sales_order: parentId,
+        }));
+        // console.log('stateWithParent: ', stateWithParent);
+        cloneState.items = Object.values(stateWithParent);
+        // console.log(cloneState);
+        // console.log(urlSubmit);
+        // console.log(cloneState);
         console.log(cloneState);
-        console.log(urlSubmit);
-        // when status === amend
-        if (amend === 1) {
-          axios
-            .delete(`${urlSubmit}/${name}`)
-            .then((response) => {
-              console.log('Quotation deleted successfully:', response.data);
-            })
-            .catch((error) => {
-              console.error('Error deleting quotation:', error);
-            });
+        if (cloneState) {
           axios
             .post(urlSubmit, cloneState)
-            .then((response) => console.log('Insert Amend!:', response.data))
+            .then(
+              (response) =>
+                // console.log('Response:', response.data);
+                response.data && setStepState(4)
+            )
             .catch((err) => {
-              console.log('An error occurred. Awkward.. : ', err.message);
+              alert('An error occurred. Awkward.. : ' + err);
               // alert('Status Error: ' + err);
-            })
-            .finally(() => {
-              setStepState(4);
-            });
-        } else {
-          // normal update
-          axios
-            .put(urlSubmit + '/' + name, cloneState)
-            .then((response) => console.log('Update Normal!:', response.data))
-            .catch((err) => {
-              console.log('An error occurred. Awkward.. : ', err.message);
-              // alert('Status Error: ' + err);
-            })
-            .finally(() => {
-              setStepState(4);
             });
         }
       }
     };
+
     const handleBack = () => {
       navigation.goBack();
       setState(initialState);
@@ -1162,21 +1198,6 @@ function UpdateSalesOrder({ navigation, route }) {
     };
     useMemo(() => {
       getBarCodeScannerPermissions();
-      // axios
-      //   .get(urlGetItemsQuotation, {
-      //     headers: {
-      //       Authorization: '',
-      //     },
-      //   })
-      //   .then((response) => {
-      //     // console.log(response.data.message.data);
-      //     // setItems(response.data.message.data);
-      //     setItems((pre) => ({ ...pre, items: response.data.message.data }));
-      //     // setItemLength(response.data.message.data.length);
-      //   })
-      //   .catch((error) => {
-      //     alert(error);
-      //   });
     }, []);
 
     useMemo(() => {
@@ -1184,12 +1205,9 @@ function UpdateSalesOrder({ navigation, route }) {
       if (!hasPermission && scanned) {
         getBarCodeScannerPermissions();
       }
-      // console.log(permission !== null && permission.granted);
     }, [scanned]);
 
     useMemo(() => {
-      // console.log(items);
-      // console.log('testssss:', items.items);
       if (items?.items !== null) {
         const updateState = Object.values(items?.items).map((data, index) => {
           const temp = { ...items.items };
@@ -1197,20 +1215,12 @@ function UpdateSalesOrder({ navigation, route }) {
           temp[index].amount = (parseFloat(temp[index]?.qty) * parseFloat(temp[index]?.rate)).toFixed(2);
           return temp;
         });
-        // console.log('Add Amount', ...updateState);
-        setStateWithAmount(...updateState);
 
-        // Object.values(state.items)?.map((element) => {
-        //   delete element.amount;
-        // });
+        setStateWithAmount(...updateState);
       } else {
         setStateWithAmount(items);
       }
     }, [items]);
-
-    // React.useEffect(() => {
-    //   console.log('State With Amount', stateWithAmount);
-    // }, [stateWithAmount]);
 
     return (
       <React.Fragment>
@@ -1265,9 +1275,10 @@ function UpdateSalesOrder({ navigation, route }) {
             <ScrollView>
               <View w={'96'}>
                 {items.items !== null &&
+                  stateWithAmount !== undefined &&
                   Object.values(stateWithAmount)?.map((data, index) => (
                     <VStack
-                      key={index}
+                      key={data?.item_code}
                       bg={COLORS.white}
                       rounded={20}
                       space={2}
@@ -1309,11 +1320,6 @@ function UpdateSalesOrder({ navigation, route }) {
                                 (ele) => ele.item_code !== data.item_code
                               );
                               console.log('cloneState', cloneState);
-                              // const ModiState = cloneState
-                              //   ? Object.values(cloneState).map((d, i) => {
-                              //       return { [i]: { item_code: d.item_code, qty: d.qty, rate: d.rate } };
-                              //     })
-                              //   : null;
 
                               ModiState = Object.values([cloneState]);
 
@@ -1376,7 +1382,7 @@ function UpdateSalesOrder({ navigation, route }) {
                             onBlur={() => {
                               if (data?.qty === '' || data?.qty === undefined) {
                                 const updatedItems = items.items;
-                                updatedItems[index].qty = '1';
+                                updatedItems[index].qty = 1;
                                 setItems((pre) => ({
                                   ...pre,
                                   items: updatedItems,
@@ -1384,12 +1390,22 @@ function UpdateSalesOrder({ navigation, route }) {
                               }
                             }}
                             onChangeText={(value) => {
-                              const updatedItems = items.items;
-                              updatedItems[index].qty = value;
-                              setItems((pre) => ({
-                                ...pre,
-                                items: updatedItems,
-                              }));
+                              if (value === '') {
+                                const updatedItems = items.items;
+                                updatedItems[index].qty = 1;
+
+                                setItems((pre) => ({
+                                  ...pre,
+                                  items: updatedItems,
+                                }));
+                              } else {
+                                const updatedItems = items.items;
+                                updatedItems[index].qty = parseFloat(value);
+                                setItems((pre) => ({
+                                  ...pre,
+                                  items: updatedItems,
+                                }));
+                              }
                             }}
                           />
                         </HStack>
@@ -1430,7 +1446,7 @@ function UpdateSalesOrder({ navigation, route }) {
                             }}
                             onChangeText={(value) => {
                               const updatedItems = items.items;
-                              updatedItems[index].rate = value;
+                              updatedItems[index].rate = parseFloat(value);
                               setItems((pre) => ({
                                 ...pre,
                                 items: updatedItems,
@@ -1522,12 +1538,21 @@ function UpdateSalesOrder({ navigation, route }) {
     const handleBack = () => {
       // setState(initialState);
       // refetchData();
-      navigation.pop();
-      navigation.replace(title, { filterData: [] });
+      // if (parentId !== undefined) {
+      //   navigation.replace(title, { filterData: [] });
+      // } else {
+      if (parentId !== undefined) {
+        navigation.pop();
+      } else {
+        navigation.pop();
+        navigation.replace(title, { filterData: [] });
+      }
+
+      // }
     };
     const handleAddAnother = () => {
       setState(initialState);
-      navigation.replace('UpdateSalesOrder', { QuotationState: [] });
+      navigation.replace('AddNewSalesInvoice');
       // setStepState(1);
     };
 
@@ -1566,106 +1591,91 @@ function UpdateSalesOrder({ navigation, route }) {
               textWeight={'bold'}
               fontSize={24}
             >
-              {'Update Sales Order\nSuccess!'}
+              {'Add ' + display_title + '\nSuccess!'}
             </Text>
 
             <VStack
               mt={{ base: 16, lg: 24 }}
               space={6}
             >
-              <Button
-                rounded={24}
-                minW={{ base: 'full', lg: 400 }}
-                bg={COLORS.white}
-                _text={{ color: COLORS.gray }}
-                _pressed={{ bg: 'blueGray.200' }}
-                onPress={() => handleBack()}
-              >
-                Back to Sales Order Page
-              </Button>
-              {/* <Button
-                rounded={24}
-                minW={{ base: 'full', lg: 400 }}
-                bg={COLORS.tertiary}
-                _text={{ fontWeight: 'bold' }}
-                _pressed={{ bg: COLORS.tertiary2 }}
-                onPress={() => handleAddAnother()}
-              >
-                Add another Sales Order
-              </Button> */}
+              {parentId !== '' ? (
+                <Button
+                  rounded={24}
+                  minW={{ base: 'full', lg: 400 }}
+                  bg={COLORS.white}
+                  _text={{ color: COLORS.gray }}
+                  _pressed={{ bg: 'blueGray.200' }}
+                  onPress={() => handleBack()}
+                >
+                  {'Back '}
+                </Button>
+              ) : (
+                <Button
+                  rounded={24}
+                  minW={{ base: 'full', lg: 400 }}
+                  bg={COLORS.white}
+                  _text={{ color: COLORS.gray }}
+                  _pressed={{ bg: 'blueGray.200' }}
+                  onPress={() => handleBack()}
+                >
+                  {'Back to ' + display_title + ' Page '}
+                </Button>
+              )}
+              {parentId === '' && (
+                <Button
+                  rounded={24}
+                  minW={{ base: 'full', lg: 400 }}
+                  bg={COLORS.tertiary}
+                  _text={{ fontWeight: 'bold' }}
+                  _pressed={{ bg: COLORS.tertiary2 }}
+                  onPress={() => handleAddAnother()}
+                >
+                  {'Add another ' + display_title}
+                </Button>
+              )}
             </VStack>
           </VStack>
         </Container>
       </FadeTransition>
     );
   };
-  // useMemo(() => {
-  //   const reformatQuotationState = () => {
-  //     function mapProperties(inputObject) {
-  //       if (QuotationState) {
-  //         return {
-  //           doctype: 'Sales Order',
-  //           customer: inputObject.party_name,
-  //           customer_address: inputObject.customer_address || '',
-  //           order_type: inputObject.order_type,
-  //           contact_person: inputObject.contact_person || '',
-  //           project: '',
-  //           conversion_rate: inputObject.conversion_rate || '0.0',
-  //           transaction_date: inputObject.transaction_date,
-  //           delivery_date: '',
-  //           company: inputObject.company,
-  //           currency: inputObject.currency,
-  //           set_warehouse: inputObject.set_warehouse || '',
-  //           selling_price_list: inputObject.selling_price_list || '',
-  //           payment_terms_template: inputObject.payment_terms_template || '',
-  //           tc_name: inputObject.tc_name || '',
-  //           sales_partner: inputObject.sales_partner || '',
-  //           items: Object.values(inputObject.items).map((it) => {
-  //             return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
-  //           }),
-  //         };
-  //       } else {
-  //         return {
-  //           doctype: 'Sales Order',
-  //           customer: inputObject.customer,
-  //           customer_address: inputObject.customer_address || '',
-  //           order_type: inputObject.order_type,
-  //           contact_person: inputObject.contact_person || '',
-  //           project: inputObject.project || '',
-  //           conversion_rate: inputObject.conversion_rate || '0.0',
-  //           transaction_date: inputObject.transaction_date,
-  //           delivery_date: QuotationState ? inputObject.valid_till : inputObject.delivery_date,
-  //           company: inputObject.company,
-  //           currency: inputObject.currency,
-  //           set_warehouse: inputObject.set_warehouse || '',
-  //           selling_price_list: inputObject.selling_price_list || '',
-  //           payment_terms_template: inputObject.payment_terms_template || '',
-  //           tc_name: inputObject.tc_name || '',
-  //           sales_partner: inputObject.sales_partner || '',
-  //           items: Object.values(inputObject.items).map((it) => {
-  //             return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
-  //           }),
-  //         };
-  //       }
-
-  //       // return { doctype: inputObject.doctype };
-  //     }
-  //     if (Object.values(QuotationState).length > 0) {
-  //       const newData = mapProperties(QuotationState);
-  //       // console.log('newData', newData);
-  //       setState(newData);
-
-  //       // console.log('Quotation  state reformatted');
-  //     } else {
-  //       const newData = mapProperties(preState);
-  //       // console.log('newData', newData);
-  //       setState(newData);
-  //       // console.log('Pre state reformatted');
-  //     }
-  //   };
-  //   reformatQuotationState();
-  //   // console.log('QuotationState :', QuotationState);
-  // }, []);
+  useMemo(() => {
+    const reformatData = () => {
+      function mapProperties(inputObject) {
+        return {
+          doctype: 'Sales Order',
+          customer: inputObject.party_name,
+          customer_address: inputObject.customer_address || '',
+          // order_type: inputObject.order_type,
+          contact_person: inputObject.contact_person || '',
+          project: '',
+          // conversion_rate: 1.0,
+          posting_date: '',
+          due_date: '',
+          company: inputObject.company,
+          currency: inputObject.currency,
+          set_warehouse: '',
+          selling_price_list: inputObject.selling_price_list || '',
+          payment_terms_template: inputObject.payment_terms_template || '',
+          tc_name: inputObject.tc_name || '',
+          sales_partner: '',
+          items: Object.values(inputObject.items).map((it) => {
+            return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
+          }),
+        };
+        // return { doctype: inputObject.doctype };
+      }
+      if (route.params?.defaultData) {
+        const newData = mapProperties(route.params?.defaultData);
+        // console.log('newData', newData);
+        setState(newData);
+        console.log(newData);
+      } else {
+        setState(initialState);
+      }
+    };
+    reformatData();
+  }, [route.params]);
 
   // log when state having changed
   useMemo(() => {
@@ -1687,7 +1697,7 @@ function UpdateSalesOrder({ navigation, route }) {
             </Text>
           )} */}
           {/* display when step = 1 and do not have any selection displayed */}
-          {stepState === 1 && !openSelection && !openCustomerType && (
+          {stepState === 1 && !openSelection && (
             <FirstStep
               state={state}
               setState={setState}
@@ -1734,4 +1744,4 @@ function UpdateSalesOrder({ navigation, route }) {
   );
 }
 
-export default UpdateSalesOrder;
+export default UpdateSalesInvoice;
