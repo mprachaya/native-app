@@ -166,7 +166,7 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property, isRe
           <VStack
             position={'absolute'}
             left={{ base: 4, lg: 80 }}
-            top={2}
+            top={4}
           >
             <Button
               m={2}
@@ -196,7 +196,7 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property, isRe
             )}
           </VStack>
           <HStack
-            mt={{ base: '18%', lg: 20 }}
+            mt={{ base: '20%', lg: 20 }}
             ml={{ base: 32, lg: 0 }}
             mr={{ base: 6, lg: 0 }}
             justifyContent={'center'}
