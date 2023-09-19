@@ -431,58 +431,19 @@ function DetailsPage({ route, navigation }) {
   // }, [data]);
 
   // for update is_return
-  const [items, setItems] = useState([]);
+  // const [dataitems, setItems] = useState(null);
 
-  useMemo(() => {
-    if (data) {
-      setItems(data.items);
-      // console.log('setItems:', data.items);
-    }
-  }, [data]);
+  // useMemo(() => {
+  //   if (!loading && data !== undefined) {
+  //     setItems(data.items);
+  //     console.log('setItem here!', data.items);
+  //     // console.log('setItems:', data.items);
+  //   }
+  // }, [loading, data]);
 
-  useMemo(() => {
-    console.log('items: ', items);
-  }, [items]);
-
-  const UpdateIsReturn = () => {
-    console.log(Object.values(items).map((item) => item));
-    if (items !== undefined) {
-      // console.log('items: ', data?.items);
-      const cloneItems = Object.values(items).map((item) => ({
-        item_code: item.item_code,
-        qty: parseInt(-item.qty),
-      }));
-      console.log(cloneItems);
-      // console.log(
-      //   Object.values(data?.items).map((item) => ({
-      //     item_code: item.item_code,
-      //     qty: parseInt(-item.qty),
-      //   }))
-      // );
-      const arrayItems = Object.values(cloneItems);
-      // console.log({ is_return: !data?.is_return, items: arrayItems });
-      // const dataUpdateIsReturn = {
-      //   is_return: !data?.is_return === true ? '1' : '0',
-      //   ...cloneItems,
-      // };
-      // console.log(dataUpdateIsReturn);
-      // axios
-      //   .put(baseURL + SALES_INVOICE + '/' + (name ? name : route.params.connectName), {
-      //     is_return: !data?.is_return === true ? '1' : '0',
-      //     items: arrayItems,
-      //   })
-      //   .then((response) => response.data)
-      //   .then((res) => {
-      //     res.data && console.log('ok');
-      //     // setData((pre) => ({ ...pre, is_return: !data?.is_return === true ? '1' : '0' }));
-      //     // console.log(res.data);
-      //   })
-      //   .catch((err) => {
-      //     //  console.log('An error occurred. Awkward.. : ', err);
-      //     alert('Status Error: ' + err);
-      //   });
-    }
-  };
+  // useMemo(() => {
+  //   console.log('items: ', dataitems);
+  // }, [dataitems]);
 
   const isFocused = useIsFocused();
 
@@ -497,9 +458,43 @@ function DetailsPage({ route, navigation }) {
       }
 
       // console.log(links);
-      console.log('data: ', data);
+      console.log('data items: ', data.items);
     }
   }, [data, isFocused]);
+
+  const UpdateIsReturn = () => {
+    if (data.items !== undefined) {
+      // console.log('items: ', data?.items);
+      const cloneItems = Object.values(data?.items).map((item) => ({
+        item_code: item.item_code,
+        rate: item.rate,
+        qty: -parseInt(item.qty),
+      }));
+      // console.log(cloneItems);
+
+      const arrayItems = Object.values(cloneItems);
+
+      // console.log({ is_return: !data?.is_return === true ? '0' : '1', items: arrayItems });
+      axios
+        .put(baseURL + SALES_INVOICE + '/' + (name ? name : route.params.connectName), {
+          is_return: !data?.is_return === true,
+          items: arrayItems,
+        })
+        .then((response) => response.data)
+        .then((res) => {
+          res.data && setRefetch(true);
+          // setData((pre) => ({ ...pre, is_return: !data?.is_return === true ? '1' : '0' }));
+          // console.log(res.data);
+        })
+        .catch((err) => {
+          //  console.log('An error occurred. Awkward.. : ', err);
+          alert('Status Error: ' + err);
+        });
+    } else {
+      setRefetch(true);
+      console.log(data);
+    }
+  };
 
   if (loading) {
     return <Loading loading={loading} />;
