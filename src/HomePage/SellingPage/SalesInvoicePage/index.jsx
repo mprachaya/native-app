@@ -60,8 +60,7 @@ function SalesInvoicePage({ route }) {
   const [sortByState, setSortByState] = useState(initialsSortBy);
   const [sortTypeState, setSortTypeState] = useState(initialsSortType);
 
-  const FilterName = 'FilterSalesOrder';
-  const SortName = 'SortAndroidQuotation';
+  const FilterName = 'FilterSalesInvoice';
   const DetailsName = 'SalesInvoiceDetails';
   const AddNewName = 'AddNewSalesInvoice';
 
@@ -85,9 +84,9 @@ function SalesInvoicePage({ route }) {
     return qtt.status === 'Draft';
   }).length;
 
-  var countSubmitted = salesInvoiceData.filter((qtt) => {
-    return qtt.status === 'Submitted';
-  }).length;
+  // var countSubmitted = salesInvoiceData.filter((qtt) => {
+  //   return qtt.status === 'Submitted';
+  // }).length;
 
   var countPaid = salesInvoiceData.filter((qtt) => {
     return qtt.status === 'Paid';
@@ -111,10 +110,10 @@ function SalesInvoicePage({ route }) {
       name: 'Draft',
       count: countDraft,
     },
-    {
-      name: 'Submitted',
-      count: countSubmitted,
-    },
+    // {
+    //   name: 'Submitted',
+    //   count: countSubmitted,
+    // },
     {
       name: 'Paid',
       count: countPaid,
@@ -171,7 +170,7 @@ function SalesInvoicePage({ route }) {
             if (
               item[key] === '' ||
               // (!newObjFilter[key].includes(item[key]) &&
-              (newObjFilter[key] !== item[key] && key !== 'transaction_date_from' && key !== 'transaction_date_to')
+              (newObjFilter[key] !== item[key] && key !== 'from_date' && key !== 'to_date')
             ) {
               return false;
               // console.log(filterData[key]);
@@ -181,32 +180,25 @@ function SalesInvoicePage({ route }) {
         return true;
       });
       // console.log('filterResult', filterResult);
-      if (newObjFilter.transaction_date_from !== undefined || newObjFilter.delivery_date_from !== undefined) {
-        const filterFromDate =
-          newObjFilter.posting_date && newObjFilter.delivery_date_from
-            ? Object.values(filterResult)?.filter((item) => {
-                return (
-                  item.posting_date >= newObjFilter.transaction_date_from &&
-                  item.posting_date <= newObjFilter.transaction_date_to &&
-                  item.delivery_date >= newObjFilter.delivery_date_from &&
-                  item.delivery_date <= newObjFilter.delivery_date_to
-                );
-              })
-            : newObjFilter.posting_date
-            ? Object.values(filterResult)?.filter((item) => {
-                return (
-                  item.posting_date >= newObjFilter.transaction_date_from &&
-                  item.posting_date <= newObjFilter.transaction_date_to
-                );
-              })
-            : newObjFilter.delivery_date_from
-            ? Object.values(filterResult)?.filter((item) => {
-                return (
-                  item.delivery_date >= newObjFilter.delivery_date_from &&
-                  item.delivery_date <= newObjFilter.delivery_date_to
-                );
-              })
-            : null;
+      if (newObjFilter.from_date !== undefined && newObjFilter.to_date !== undefined) {
+        const filterFromDate = Object.values(filterResult)?.filter((item) => {
+          return item.posting_date >= newObjFilter.from_date && item.posting_date <= newObjFilter.to_date;
+        });
+        // : newObjFilter.posting_date
+        // ? Object.values(filterResult)?.filter((item) => {
+        //     return (
+        //       item.posting_date >= newObjFilter.transaction_date_from &&
+        //       item.posting_date <= newObjFilter.transaction_date_to
+        //     );
+        //   })
+        // : newObjFilter.delivery_date_from
+        // ? Object.values(filterResult)?.filter((item) => {
+        //     return (
+        //       item.delivery_date >= newObjFilter.delivery_date_from &&
+        //       item.delivery_date <= newObjFilter.delivery_date_to
+        //     );
+        //   })
+        // : null;
         // console.log('filterFromDate', filterFromDate);
         setTempData(filterFromDate);
       } else if (filterResult.length > 0) {
@@ -394,9 +386,9 @@ function SalesInvoicePage({ route }) {
                       bg={
                         item.name === 'Draft' // default status
                           ? 'error.200'
-                          : item.name === 'Submitted'
-                          ? 'success.200'
-                          : item.name === 'Paid'
+                          : // : item.name === 'Submitted'
+                          // ? 'success.200'
+                          item.name === 'Paid'
                           ? 'emerald.200'
                           : item.name === 'Unpaid'
                           ? 'warning.200'

@@ -44,6 +44,8 @@ import SalesInvoiceDetailPage from './src/HomePage/SellingPage/SalesInvoicePage/
 import AddNewSalesInvoice from './src/HomePage/SellingPage/SalesInvoicePage/AddNewSalesInvoice';
 import SalesInvoiceItemDetails from './src/HomePage/SellingPage/SalesInvoicePage/ItemDetails';
 import UpdateSalesInvoice from './src/HomePage/SellingPage/SalesInvoicePage/UpdateSalesInvoice';
+import FilterSalesInvoice from './src/HomePage/SellingPage/SalesInvoicePage/FilterSalesInvoice';
+
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
@@ -478,6 +480,20 @@ export default function App() {
                 header: () => (
                   <NavHeader
                     pageName={'Edit Sales Invoice'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='FilterSalesInvoice'
+              component={FilterSalesInvoice}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Filter Sales Invoice'}
                     noHeader={true}
                   />
                 ),

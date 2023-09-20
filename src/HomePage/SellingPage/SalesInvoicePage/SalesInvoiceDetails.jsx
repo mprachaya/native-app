@@ -518,8 +518,11 @@ function DetailsPage({ route, navigation }) {
               />
             )
             } */}
-            {data?.status !== 'Paid' && data?.status !== 'Cancelled' && <StatusButton status={data?.status} />}
-            <PrintAndExport />
+            {data?.status !== 'Paid' && data?.status !== 'Cancelled' && data?.status !== 'Overdue' && (
+              <StatusButton status={data?.status} />
+            )}
+            {data?.status !== 'Cancelled' && data?.status !== 'Overdue' && <PrintAndExport />}
+
             {data?.status === 'Draft' && <EditButton />}
           </HStack>
         </HStack>
@@ -620,6 +623,7 @@ function DetailsPage({ route, navigation }) {
                 <Text fontSize={'xs'}>Is Return</Text>
                 <HStack>
                   <Checkbox
+                    isDisabled={data?.status === 'Cancelled'}
                     aria-label='return-check'
                     isChecked={data.is_return || 0}
                     _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
