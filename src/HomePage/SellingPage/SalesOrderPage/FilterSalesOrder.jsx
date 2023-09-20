@@ -106,6 +106,7 @@ function FilterSalesOrder({ route, navigation }) {
     plusMonth.setMonth(plusMonth.getMonth() + 1);
     // setAndroidNextMount(() => plusMonth);
     setDateIOSNextMonth(() => plusMonth);
+    setDeliveryDateIOSNextMonth(() => plusMonth);
 
     // const dateNow = new Date();
     // dateNow.setMonth(dateNow.getMonth());
@@ -116,7 +117,7 @@ function FilterSalesOrder({ route, navigation }) {
     if (checkedToDateState) {
       const currentDate = new Date();
       const yyyy = currentDate.getFullYear();
-      let mm = currentDate.getMonth() + 1; // Months start at 0!
+      let mm = currentDate.getMonth() + 2; // Months start at 0!
       let dd = currentDate.getDate();
       if (dd < 10) dd = '0' + dd;
       if (mm < 10) mm = '0' + mm;
@@ -129,7 +130,7 @@ function FilterSalesOrder({ route, navigation }) {
     if (checkedFromDateState) {
       const currentDate = new Date();
       const yyyy = currentDate.getFullYear();
-      let mm = currentDate.getMonth(); // Months start at 0!
+      let mm = currentDate.getMonth() + 1; // Months start at 0!
       let dd = currentDate.getDate();
       if (dd < 10) dd = '0' + dd;
       if (mm < 10) mm = '0' + mm;
@@ -142,7 +143,7 @@ function FilterSalesOrder({ route, navigation }) {
     if (checkedDeliveryFromDateState) {
       const currentDate = new Date();
       const yyyy = currentDate.getFullYear();
-      let mm = currentDate.getMonth() + 1; // Months start at 0!
+      let mm = currentDate.getMonth() + 2; // Months start at 0!
       let dd = currentDate.getDate();
       if (dd < 10) dd = '0' + dd;
       if (mm < 10) mm = '0' + mm;
@@ -155,7 +156,7 @@ function FilterSalesOrder({ route, navigation }) {
     if (checkedDeliveryToDateState) {
       const currentDate = new Date();
       const yyyy = currentDate.getFullYear();
-      let mm = currentDate.getMonth(); // Months start at 0!
+      let mm = currentDate.getMonth() + 1; // Months start at 0!
       let dd = currentDate.getDate();
       if (dd < 10) dd = '0' + dd;
       if (mm < 10) mm = '0' + mm;
@@ -172,15 +173,15 @@ function FilterSalesOrder({ route, navigation }) {
       if (storeFilter.transaction_date_from) {
         setCheckedFromDateState(true);
         setCheckedToDateState(true);
-        setDateIOS(new Date(storeFilter.transaction_date_from));
-        setDateIOSNextMonth(new Date(storeFilter.transaction_date_to));
+        // setDateIOS(new Date(storeFilter.transaction_date_from));
+        // setDateIOSNextMonth(new Date(storeFilter.transaction_date_to));
       }
       // set Filter Date from storeFilter
       if (storeFilter.delivery_date_from) {
         setCheckedDeliveryFromDateState(true);
         setCheckedDeliveryToDateState(true);
-        setDeliveryDateIOS(new Date(storeFilter.delivery_date_from));
-        setDeliveryDateIOSNextMonth(new Date(storeFilter.delivery_date_to));
+        // setDeliveryDateIOS(new Date(storeFilter.delivery_date_from));
+        // setDeliveryDateIOSNextMonth(new Date(storeFilter.delivery_date_to));
       }
     }
   }, [storeFilter]);
