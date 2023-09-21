@@ -41,7 +41,7 @@ function DetailsPage({ route, navigation }) {
   // const [linkName, setLinkName] = useState(''); // for connection link
   const connectionSalesOrderTo = 'SalesOrderDetails'; // fior Sales Order Connection
   const connectionToSalesInvoice = 'SalesInvoiceDetails'; // fior Sales Invoice
-  const { baseURL, PAYMENT_ENTRY, SALES_INVOICE_BY_PAYMENT_ENTRY } = useConfig(true);
+  const { baseURL, PAYMENT_ENTRY, SALES_INVOICE_BY_PAYMENT_ENTRY, PAYMENT_ENTRY_UPDATE_DOCSTATUS } = useConfig(true);
   // const heightScrollView = 2000;
   // data fetching with custom hook useFetch
   const { data, setData, setRefetch, loading, error } = useFetch(
@@ -248,66 +248,67 @@ function DetailsPage({ route, navigation }) {
   );
 
   const UpdateStatus = (status) => {
-    // const urlUpdateStatus = baseURL + PAYMENT_ENTRY + '/' + data.name;
-    // // console.log(urlUpdateStatus);
-    // if (status === 'Draft') {
-    //   Alert.alert(
-    //     'Confirm Submit',
-    //     `Permanently Submit \n${data.name}?`,
-    //     [
-    //       {
-    //         text: 'Confirm',
-    //         onPress: () => {
-    //           axios
-    //             .put(urlUpdateStatus, { docstatus: 1 })
-    //             .then((response) => response.data)
-    //             .then((res) => {
-    //               //  navigation.replace('SalesOrderDetails', { name: data.name });
-    //               res.data && setRefetch(true);
-    //             })
-    //             .catch((err) => {
-    //               // console.log('An error occurred. Awkward.. : ', err.response);
-    //               alert('Status Error: ' + err.response.data.exception);
-    //             });
-    //         },
-    //       },
-    //       {
-    //         text: 'Cancel',
-    //         // onPress: () => console.log('Cancel Pressed'),
-    //         style: 'cancel', // This makes the button appear differently (e.g., grayed out)
-    //       },
-    //     ],
-    //     { cancelable: false } // Prevents users from dismissing the alert by tapping outside of it
-    //   );
-    // } else if (status === 'Unpaid') {
-    //   Alert.alert(
-    //     'Confirm Cancel',
-    //     `Permanently Cancel \n${data.name}?`,
-    //     [
-    //       {
-    //         text: 'Confirm',
-    //         onPress: () => {
-    //           axios
-    //             .put(urlUpdateStatus, { docstatus: 2 })
-    //             .then((response) => response.data)
-    //             .then((res) => {
-    //               res.data && res.data && setRefetch(true);
-    //             })
-    //             .catch((err) => {
-    //               console.log('An error occurred. Awkward.. : ', err);
-    //               alert('Status Error: ' + err);
-    //             });
-    //         },
-    //       },
-    //       {
-    //         text: 'Cancel',
-    //         // onPress: () => console.log('Cancel Pressed'),
-    //         style: 'cancel', // This makes the button appear differently (e.g., grayed out)
-    //       },
-    //     ],
-    //     { cancelable: false } // Prevents users from dismissing the alert by tapping outside of it
-    //   );
-    // } else if (status === 'Cancelled') {
+    const urlUpdateStatus = baseURL + PAYMENT_ENTRY_UPDATE_DOCSTATUS + '/' + data.name;
+    // console.log(urlUpdateStatus);
+    if (status === 'Draft') {
+      Alert.alert(
+        'Confirm Submit',
+        `Permanently Submit \n${data.name}?`,
+        [
+          {
+            text: 'Confirm',
+            onPress: () => {
+              axios
+                .put(urlUpdateStatus, { docstatus: 1 })
+                .then((response) => response.data)
+                .then((res) => {
+                  //  navigation.replace('SalesOrderDetails', { name: data.name });
+                  res.data && setRefetch(true);
+                })
+                .catch((err) => {
+                  // console.log('An error occurred. Awkward.. : ', err.response);
+                  alert('Status Error: ' + err.response.data.exception);
+                });
+            },
+          },
+          {
+            text: 'Cancel',
+            // onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel', // This makes the button appear differently (e.g., grayed out)
+          },
+        ],
+        { cancelable: false } // Prevents users from dismissing the alert by tapping outside of it
+      );
+    } else if (status === 'Submitted') {
+      Alert.alert(
+        'Confirm Cancel',
+        `Permanently Cancel \n${data.name}?`,
+        [
+          {
+            text: 'Confirm',
+            onPress: () => {
+              axios
+                .put(urlUpdateStatus, { docstatus: 2 })
+                .then((response) => response.data)
+                .then((res) => {
+                  res.data && res.data && setRefetch(true);
+                })
+                .catch((err) => {
+                  console.log('An error occurred. Awkward.. : ', err);
+                  alert('Status Error: ' + err);
+                });
+            },
+          },
+          {
+            text: 'Cancel',
+            // onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel', // This makes the button appear differently (e.g., grayed out)
+          },
+        ],
+        { cancelable: false } // Prevents users from dismissing the alert by tapping outside of it
+      );
+    }
+    // else if (status === 'Cancelled') {
     //   // function mapProperties(inputObject) {
     //   //   return {
     //   //     doctype: 'Sales Invoice',

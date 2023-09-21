@@ -118,11 +118,11 @@ function LoginFrappeURL({ navigation }) {
             _pressed={{ bg: COLORS.secondary }}
             onPress={() =>
               authenticate(state.url, state.usr, state.pwd, () =>
-                navigation.replace('SalesInvoice', { filterData: [] })
+                navigation.replace('PaymentEntry', { filterData: [] })
               )
             }
           >
-            {'Login -> Sales Invoice'}
+            {'Login -> Payment Entry'}
           </Button>
         </FormControl>
       </VStack>
