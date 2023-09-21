@@ -204,7 +204,7 @@ export function PaymentEntryList({ data, reload, setReload, returnDataIndex, han
           renderItem={({ item }) => (
             <Item
               name={item.name}
-              title={item.name}
+              title={item.party}
               type={item.payment_type}
               status={item.status}
               date={item.posting_date}
@@ -222,7 +222,7 @@ export function PaymentEntryList({ data, reload, setReload, returnDataIndex, han
           renderItem={({ item }) => (
             <Item
               name={item.name}
-              title={item.name}
+              title={item.party}
               type={item.payment_type}
               status={item.status}
               date={item.posting_date}

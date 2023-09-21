@@ -109,7 +109,7 @@ function DetailsPage({ route, navigation }) {
         if (route.params.connectName) {
           navigation.goBack();
         } else {
-          navigation.replace(title, { filterData: [] });
+          navigation.pop();
         }
       }}
     >

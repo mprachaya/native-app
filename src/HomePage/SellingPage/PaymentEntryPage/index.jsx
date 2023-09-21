@@ -4,7 +4,7 @@ import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../..
 import { COLORS } from '../../../../constants/theme';
 import { PaymentEntryList } from './PaymentEntryList';
 import { config } from '../../../../config';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
@@ -47,9 +47,9 @@ function PaymentEntryPage({ route }) {
   const dataColumn = ['party', 'status', 'name', 'posting_date'];
 
   const initialsSortBy = {
-    Creation: false,
-    Modified: false,
-    Name: false,
+    creation: false,
+    modified: false,
+    name: false,
   };
 
   const initialsSortType = {
@@ -112,7 +112,7 @@ function PaymentEntryPage({ route }) {
   ];
 
   const handleClickDetails = (name) => {
-    navigation.replace(DetailsName, {
+    navigation.navigate(DetailsName, {
       name: name,
     });
   };
@@ -199,10 +199,20 @@ function PaymentEntryPage({ route }) {
     }
     checkFilter();
     checkSort();
-
-    // console.log(filterData);
-    // console.log(filterData);
   }, [paymentEntryData, toggleFilter]);
+
+  const isFocused = useIsFocused();
+  const [doOnce, setDoOnce] = useState(true);
+
+  useMemo(() => {
+    if (doOnce) {
+      refetchData(true);
+    } else {
+      setDoOnce(false);
+    }
+  }, [isFocused]);
+
+  // hot loa
 
   // hot loading when data still not available
   if (loading) {
@@ -380,7 +390,6 @@ function PaymentEntryPage({ route }) {
         </VStack>
       </Center>
       {/* {Platform.OS === 'ios' && ( */}
-
       <SortModal
         open={openState.sort}
         setOpen={setOpenState}

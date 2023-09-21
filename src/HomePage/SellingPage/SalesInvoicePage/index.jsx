@@ -4,7 +4,7 @@ import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../..
 import { COLORS } from '../../../../constants/theme';
 import { SalesInvoiceList } from './SalesInvoiceList';
 import { config } from '../../../../config';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
@@ -47,9 +47,9 @@ function SalesInvoicePage({ route }) {
   const dataColumn = ['customer_name', 'status', 'name', 'posting_date'];
 
   const initialsSortBy = {
-    Creation: false,
-    Modified: false,
-    Name: false,
+    creation: false,
+    modified: false,
+    name: false,
   };
 
   const initialsSortType = {
@@ -129,7 +129,7 @@ function SalesInvoicePage({ route }) {
   ];
 
   const handleClickDetails = (name) => {
-    navigation.replace(DetailsName, {
+    navigation.navigate(DetailsName, {
       name: name,
     });
   };
@@ -220,6 +220,16 @@ function SalesInvoicePage({ route }) {
     // console.log(filterData);
     // console.log(filterData);
   }, [salesInvoiceData, toggleFilter]);
+  const isFocused = useIsFocused();
+  const [doOnce, setDoOnce] = useState(true);
+
+  useMemo(() => {
+    if (doOnce) {
+      refetchData(true);
+    } else {
+      setDoOnce(false);
+    }
+  }, [isFocused]);
 
   // hot loading when data still not available
   if (loading) {

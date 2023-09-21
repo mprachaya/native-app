@@ -29,9 +29,9 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
   );
 
   const initialsSortBy = {
-    Creation: false,
-    Modified: false,
-    Name: false,
+    creation: false,
+    modified: false,
+    name: false,
   };
 
   const initialsSortType = {
@@ -40,9 +40,9 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
   };
 
   const [sortByState, setSortByState] = useState({
-    Creation: false,
-    Modified: false,
-    Name: false,
+    creation: false,
+    modified: false,
+    name: false,
   });
   const [sortTypeState, setSortTypeState] = useState({
     DESC: false,
@@ -61,10 +61,12 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
           const checkSortType = Object.keys(sortTypeState).filter((key) => sortTypeState[key]);
           if (checkSortBy.length > 0 && checkSortType.length > 0) {
             !sortTypeState[0]
-              ? setSortTypeState((pre) => ({ ...pre, DESC: false }))
-              : setSortTypeState((pre) => ({ ...pre, ASC: false }));
+              ? setSortTypeState((pre) => ({ DESC: true, ASC: false }))
+              : setSortTypeState((pre) => ({ DESC: false, ASC: true }));
+            // console.log('1');
           } else {
             setSortTypeState((pre) => ({ ...pre, DESC: true }));
+            // console.log('2');
           }
           !sortByState[key]
             ? toast.show({ description: `Sort By ${label}`, duration: 2000 })
@@ -91,7 +93,7 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
             key === 'ASC' &&
               // console.log('Switch DESC false') &&
               setSortTypeState((pre) => ({ ...pre, DESC: false }));
-
+            // console.log('11');
             !sortTypeState[key]
               ? toast.show({ description: `Sort Type ${label}`, duration: 2000 })
               : toast.show({ description: `Cancel Sort Type ${label}`, duration: 2000 });
@@ -115,15 +117,22 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
     // value of sortByState
     const sortValue = Object.values(sortByState).map((data) => data);
     // find sort by name
-    const sortSelected = Object.keys(sortByState).filter((key, index) => sortValue[index] && key);
+    const sortSelected = String(Object.keys(sortByState).filter((key, index) => sortValue[index] && key)).replace(
+      /\[|\]/g,
+      ''
+    );
     // value of sortTypeState
     const sortTypeValue = Object.values(sortTypeState).map((data) => data);
+    // console.log('sortTypeValue', sortTypeValue);
     // find sort type
-    const sortTypeSelected = Object.keys(sortTypeState).filter((key, index) => sortTypeValue[index] && key);
+    const sortTypeSelected = String(
+      Object.keys(sortTypeState).filter((key, index) => sortTypeValue[index] && key)
+    ).replace(/\[|\]/g, '');
     // call sort function
-    if (sortSelected.length !== 0 && sortTypeSelected !== 0) sortBy(data, setData, sortSelected, sortTypeSelected);
-    if (sortSelected.length === 0) {
-      sortBy(data, setData, 'Creation', 'DESC');
+    if (sortSelected.length !== 0 && sortTypeSelected !== 0) {
+      sortBy(data, setData, sortSelected, sortTypeSelected);
+    } else if (sortSelected.length === 0) {
+      sortBy(data, setData, 'creation', 'DESC');
     }
   };
 
@@ -253,18 +262,18 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
             >
               <SortItem
                 type={'sortBy'}
-                label={'Creation'}
-                handleSort={() => handleActiveItem('Creation', 'sortBy')}
+                label={'creation'}
+                handleSort={() => handleActiveItem('creation', 'sortBy')}
               />
               <SortItem
                 type={'sortBy'}
-                label={'Modified'}
-                handleSort={() => handleActiveItem('Modified', 'sortBy')}
+                label={'modified'}
+                handleSort={() => handleActiveItem('modified', 'sortBy')}
               />
               <SortItem
                 type={'sortBy'}
-                label={'Name'}
-                handleSort={() => handleActiveItem('Name', 'sortBy')}
+                label={'name'}
+                handleSort={() => handleActiveItem('name', 'sortBy')}
               />
             </ScrollView>
           </VStack>
@@ -317,7 +326,7 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
               setSortTypeState(initialsSortType);
               dispatch({ type: 'SET_CTM_SORT_BY', payload: '' });
               dispatch({ type: 'SET_CTM_SORT_TYPE', payload: '' });
-              sortBy(data, setData, 'Creation', 'ASC');
+              sortBy(data, setData, 'creation', 'ASC');
               setOpen(false);
               toast.show({ description: 'Clear all sort', duration: 2000 });
             }}

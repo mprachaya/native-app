@@ -46,9 +46,9 @@ function CustomerPage({ route }) {
   // column for searching
   const dataColumn = ['customer_group', 'territory', 'customer_name'];
   const initialsSortBy = {
-    Creation: false,
-    Modified: false,
-    Name: false,
+    creation: false,
+    modified: false,
+    name: false,
   };
 
   const initialsSortType = {
@@ -138,14 +138,6 @@ function CustomerPage({ route }) {
 
     handleBack();
   }, [navigation]);
-
-  // useMemo(() => {
-  //   console.log('filterActive ', filterActive);
-  // }, [filterActive]);
-
-  // useMemo(() => {
-  //   console.log('sortActive ', sortActive);
-  // }, [sortActive]);
 
   useMemo(() => {
     if (toggleFilter === undefined) {

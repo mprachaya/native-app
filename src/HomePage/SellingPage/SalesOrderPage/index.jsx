@@ -45,9 +45,9 @@ function SalesOrderPage({ route }) {
   // column for searching
   const dataColumn = ['customer_name', 'status', 'name', 'transaction_date'];
   const initialsSortBy = {
-    Creation: false,
-    Modified: false,
-    Name: false,
+    creation: false,
+    modified: false,
+    name: false,
   };
 
   const initialsSortType = {
@@ -141,7 +141,7 @@ function SalesOrderPage({ route }) {
   ];
 
   const handleClickDetails = (name) => {
-    navigation.replace(DetailsName, {
+    navigation.navigate(DetailsName, {
       name: name,
     });
   };
@@ -240,10 +240,18 @@ function SalesOrderPage({ route }) {
   }, [salesOrderData, toggleFilter]);
 
   const isFocused = useIsFocused();
+  const [doOnce, setDoOnce] = useState(true);
 
   useMemo(() => {
-    refetchData();
+    if (doOnce) {
+      refetchData(true);
+    } else {
+      setDoOnce(false);
+      true;
+    }
   }, [isFocused]);
+
+  useMemo(() => {}, [isFocused]);
 
   // hot loading when data still not available
   if (loading) {

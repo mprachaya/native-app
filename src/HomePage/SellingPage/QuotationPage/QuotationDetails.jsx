@@ -105,7 +105,7 @@ function DetailsPage({ route, navigation }) {
       onPress={() => {
         // handleClose();
         // navigation.pop();
-        navigation.replace(title, { filterData: [] });
+        navigation.pop();
       }}
     >
       <ChevronLeftIcon />

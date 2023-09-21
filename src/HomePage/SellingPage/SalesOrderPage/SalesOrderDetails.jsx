@@ -89,7 +89,7 @@ function DetailsPage({ route, navigation }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => {
-        navigation.replace(title, { filterData: [] });
+        navigation.pop();
       }}
     >
       <ChevronLeftIcon />

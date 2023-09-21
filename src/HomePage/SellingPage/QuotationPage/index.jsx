@@ -4,7 +4,7 @@ import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../..
 import { COLORS } from '../../../../constants/theme';
 import { QuotationList } from './QuotationList';
 import { config } from '../../../../config';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { Platform } from 'react-native';
 import { Dimensions } from 'react-native';
 import { SortBy } from '../../../../utils/sorting';
@@ -46,9 +46,9 @@ function QuotationPage({ route }) {
   // column for searching
   const dataColumn = ['customer_name', 'status', 'name', 'transaction_date'];
   const initialsSortBy = {
-    Creation: false,
-    Modified: false,
-    Name: false,
+    creation: false,
+    modified: false,
+    name: false,
   };
 
   const initialsSortType = {
@@ -123,7 +123,7 @@ function QuotationPage({ route }) {
   ];
 
   const handleClickDetails = (name) => {
-    navigation.replace(DetailsName, {
+    navigation.navigate(DetailsName, {
       name: name,
     });
   };
@@ -204,6 +204,17 @@ function QuotationPage({ route }) {
       setTempData(quotationData);
     }
   }, [quotationData]);
+
+  const isFocused = useIsFocused();
+  const [doOnce, setDoOnce] = useState(true);
+
+  useMemo(() => {
+    if (doOnce) {
+      refetchData(true);
+    } else {
+      setDoOnce(false);
+    }
+  }, [isFocused]);
 
   // useMemo(() => {
   //   console.log('filterActive ', filterActive);
