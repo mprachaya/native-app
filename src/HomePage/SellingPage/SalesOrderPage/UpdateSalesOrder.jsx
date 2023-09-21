@@ -7,10 +7,8 @@ import {
   Container,
   DeleteIcon,
   Divider,
-  // FlatList,
   FormControl,
   HStack,
-  // Image,
   Input,
   Modal,
   ScrollView,
@@ -26,12 +24,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
 import { Platform, Pressable, StyleSheet } from 'react-native';
-import useSubmit from '../../../../hooks/useSubmit';
 import useConfig from '../../../../config/path';
 import axios from 'axios';
 import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { handleChange } from '../../../../hooks/useValidation';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -911,13 +907,6 @@ function UpdateSalesOrder({ navigation, route }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
-                {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
-                {/* tc_name: null,
-              <OnPressContainer
-                onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
-              > */}
-
-                {/* </OnPressContainer> */}
 
                 <OnPressContainer
                   onPress={() =>
@@ -982,19 +971,11 @@ function UpdateSalesOrder({ navigation, route }) {
       // handleCheckRequired();
       // if column required is not filled push property name into check array
       let checkNull = stateWithAmount.items === null;
-      // requiredState.forEach((st_name) => {
-      //   if (!ctmState2[st_name]) {
-      //     check.push(st_name);
-      //   }
-      // });
       // if have any length of check mean required state is still not filled yet
       if (checkNull) {
         alert('Please Add Items');
       } else {
         // if filled go to next step
-        // handleSubmit(stateWithAmount);
-        // setState((pre) => ({ ...pre, items: stateWithAmount }));
-        // console.log('items =', items);
         const cloneState = { ...state };
 
         const stateNoAmount = Object.values(stateWithAmount)?.map((obj) => {
@@ -1121,9 +1102,6 @@ function UpdateSalesOrder({ navigation, route }) {
       </Pressable>
     );
 
-    // useMemo(() => {
-    //   console.log(stepState);
-    // }, [stepState]);
     const [stateWithAmount, setStateWithAmount] = useState({ items: null });
 
     const AskCameraPermission = () =>
@@ -1194,21 +1172,6 @@ function UpdateSalesOrder({ navigation, route }) {
     };
     useMemo(() => {
       getBarCodeScannerPermissions();
-      // axios
-      //   .get(urlGetItemsQuotation, {
-      //     headers: {
-      //       Authorization: '',
-      //     },
-      //   })
-      //   .then((response) => {
-      //     // console.log(response.data.message.data);
-      //     // setItems(response.data.message.data);
-      //     setItems((pre) => ({ ...pre, items: response.data.message.data }));
-      //     // setItemLength(response.data.message.data.length);
-      //   })
-      //   .catch((error) => {
-      //     alert(error);
-      //   });
     }, []);
 
     useMemo(() => {
@@ -1220,8 +1183,6 @@ function UpdateSalesOrder({ navigation, route }) {
     }, [scanned]);
 
     useMemo(() => {
-      // console.log(items);
-      // console.log('testssss:', items.items);
       if (items?.items !== null) {
         const updateState = Object.values(items?.items).map((data, index) => {
           const temp = { ...items.items };
@@ -1229,20 +1190,11 @@ function UpdateSalesOrder({ navigation, route }) {
           temp[index].amount = (parseFloat(temp[index]?.qty) * parseFloat(temp[index]?.rate)).toFixed(2);
           return temp;
         });
-        // console.log('Add Amount', ...updateState);
         setStateWithAmount(...updateState);
-
-        // Object.values(state.items)?.map((element) => {
-        //   delete element.amount;
-        // });
       } else {
         setStateWithAmount(items);
       }
     }, [items]);
-
-    // React.useEffect(() => {
-    //   console.log('State With Amount', stateWithAmount);
-    // }, [stateWithAmount]);
 
     return (
       <React.Fragment>
@@ -1536,16 +1488,6 @@ function UpdateSalesOrder({ navigation, route }) {
               QR CODE
             </Button>
           </HStack>
-          {/* {openItemList && (
-            <DynamicSelectPage
-              title={'Item List'} // for change dynamic title
-              url={urlItemQRCode} // for change dynamic data in selection
-              open={openItemList} // state for show/hide selection
-              setOpen={setOpenItemList} // for control show/hide
-              setState={setItems} // for send data to outside selection and set it in main state by property
-              property={propertySelected} // name of property for send data to outside
-            />
-          )} */}
         </VStack>
       </React.Fragment>
     );
@@ -1553,15 +1495,12 @@ function UpdateSalesOrder({ navigation, route }) {
 
   const SuccessMessage = ({ setState }) => {
     const handleBack = () => {
-      // setState(initialState);
-      // refetchData();
       navigation.pop();
       navigation.replace(title, { filterData: [] });
     };
     const handleAddAnother = () => {
       setState(initialState);
       navigation.replace('UpdateSalesOrder', { QuotationState: [] });
-      // setStepState(1);
     };
 
     return (
@@ -1616,89 +1555,12 @@ function UpdateSalesOrder({ navigation, route }) {
               >
                 Back to Sales Order Page
               </Button>
-              {/* <Button
-                rounded={24}
-                minW={{ base: 'full', lg: 400 }}
-                bg={COLORS.tertiary}
-                _text={{ fontWeight: 'bold' }}
-                _pressed={{ bg: COLORS.tertiary2 }}
-                onPress={() => handleAddAnother()}
-              >
-                Add another Sales Order
-              </Button> */}
             </VStack>
           </VStack>
         </Container>
       </FadeTransition>
     );
   };
-  // useMemo(() => {
-  //   const reformatQuotationState = () => {
-  //     function mapProperties(inputObject) {
-  //       if (QuotationState) {
-  //         return {
-  //           doctype: 'Sales Order',
-  //           customer: inputObject.party_name,
-  //           customer_address: inputObject.customer_address || '',
-  //           order_type: inputObject.order_type,
-  //           contact_person: inputObject.contact_person || '',
-  //           project: '',
-  //           conversion_rate: inputObject.conversion_rate || '0.0',
-  //           transaction_date: inputObject.transaction_date,
-  //           delivery_date: '',
-  //           company: inputObject.company,
-  //           currency: inputObject.currency,
-  //           set_warehouse: inputObject.set_warehouse || '',
-  //           selling_price_list: inputObject.selling_price_list || '',
-  //           payment_terms_template: inputObject.payment_terms_template || '',
-  //           tc_name: inputObject.tc_name || '',
-  //           sales_partner: inputObject.sales_partner || '',
-  //           items: Object.values(inputObject.items).map((it) => {
-  //             return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
-  //           }),
-  //         };
-  //       } else {
-  //         return {
-  //           doctype: 'Sales Order',
-  //           customer: inputObject.customer,
-  //           customer_address: inputObject.customer_address || '',
-  //           order_type: inputObject.order_type,
-  //           contact_person: inputObject.contact_person || '',
-  //           project: inputObject.project || '',
-  //           conversion_rate: inputObject.conversion_rate || '0.0',
-  //           transaction_date: inputObject.transaction_date,
-  //           delivery_date: QuotationState ? inputObject.valid_till : inputObject.delivery_date,
-  //           company: inputObject.company,
-  //           currency: inputObject.currency,
-  //           set_warehouse: inputObject.set_warehouse || '',
-  //           selling_price_list: inputObject.selling_price_list || '',
-  //           payment_terms_template: inputObject.payment_terms_template || '',
-  //           tc_name: inputObject.tc_name || '',
-  //           sales_partner: inputObject.sales_partner || '',
-  //           items: Object.values(inputObject.items).map((it) => {
-  //             return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
-  //           }),
-  //         };
-  //       }
-
-  //       // return { doctype: inputObject.doctype };
-  //     }
-  //     if (Object.values(QuotationState).length > 0) {
-  //       const newData = mapProperties(QuotationState);
-  //       // console.log('newData', newData);
-  //       setState(newData);
-
-  //       // console.log('Quotation  state reformatted');
-  //     } else {
-  //       const newData = mapProperties(preState);
-  //       // console.log('newData', newData);
-  //       setState(newData);
-  //       // console.log('Pre state reformatted');
-  //     }
-  //   };
-  //   reformatQuotationState();
-  //   // console.log('QuotationState :', QuotationState);
-  // }, []);
 
   // log when state having changed
   useMemo(() => {
@@ -1709,16 +1571,6 @@ function UpdateSalesOrder({ navigation, route }) {
     <ContainerStyled>
       <FadeTransition animated={stepState}>
         <Center>
-          {/* {stepState !== 4 && (
-            <Text
-              position={'absolute'}
-              fontWeight={'bold'}
-              color={COLORS.tertiary2}
-              top={6}
-            >
-              {title}
-            </Text>
-          )} */}
           {/* display when step = 1 and do not have any selection displayed */}
           {stepState === 1 && !openSelection && !openCustomerType && (
             <FirstStep
@@ -1751,16 +1603,6 @@ function UpdateSalesOrder({ navigation, route }) {
               property={propertySelected} // name of property for send data to outside
             />
           )}
-          {/* {openCustomerType && (
-            <StaticSelectPage
-              title={'Customer Type'} // name of statice selection
-              data={customerTypes} // data of statice selection
-              open={openCustomerType} // state for show/hide selection
-              setOpen={setOpenCustomerType} // for control show/hide
-              setState={setState} // for send data to outside selection and set it in main state by property
-              property={'customer_type'} // name of property for send data to outside
-            />
-          )} */}
         </Center>
       </FadeTransition>
     </ContainerStyled>

@@ -12,20 +12,17 @@ import {
   VStack,
   View,
 } from 'native-base';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { COLORS } from '../../../../constants/theme';
 import { Edit, SaleInvoice } from '../../../../constants/icons';
 import { ConnectionLinks, Loading, CreateSelect } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
-import useUpdate from '../../../../hooks/useUpdate';
 import useConfig from '../../../../config/path';
-import { Alert, ImageBackground, Pressable } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { Alert } from 'react-native';
 import axios from 'axios';
 import ExportPDF from '../../../../_test/ExportPDF';
 import { getDataAPICustom } from '../../../../utils/reformatresponse';
 import { useIsFocused } from '@react-navigation/native';
-// import Export from '../../../../assets/icons/export.png';
 // wrap components
 const ContainerStyled = (props) => {
   return (
@@ -43,8 +40,6 @@ function DetailsPage({ route, navigation }) {
   const connectionTo = 'SalesInvoiceDetails';
   const { name } = route.params;
   const { baseURL, SALES_ORDER, SALES_INVOICE_BY_SALES_ORDER } = useConfig(true);
-  // const heightScrollView = 2000;
-  // data fetching with custom hook useFetch
   const { data, setData, setRefetch, loading, error } = useFetch(
     baseURL + SALES_ORDER + '/' + (name ? name : route.params.connectName),
     {
@@ -79,31 +74,6 @@ function DetailsPage({ route, navigation }) {
     };
   };
   const handleOpenUpdate = () => {
-    // function mapProperties(inputObject) {
-    //   return {
-    //     doctype: 'Sales Order',
-    //     customer: inputObject.customer,
-    //     customer_address: inputObject.customer_address || '',
-    //     order_type: inputObject.order_type,
-    //     contact_person: inputObject.contact_person || '',
-    //     project: inputObject.project,
-    //     conversion_rate: inputObject.conversion_rate || '0.0',
-    //     transaction_date: inputObject.transaction_date,
-    //     delivery_date: inputObject.delivery_date,
-    //     company: inputObject.company,
-    //     currency: inputObject.currency,
-    //     set_warehouse: inputObject.set_warehouse,
-    //     selling_price_list: inputObject.selling_price_list || '',
-    //     payment_terms_template: inputObject.payment_terms_template || '',
-    //     tc_name: inputObject.tc_name || '',
-    //     sales_partner: inputObject.sales_partner || '',
-    //     items: Object.values(inputObject.items).map((it) => {
-    //       return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
-    //     }),
-    //   };
-    // return { doctype: inputObject.doctype };
-    // return { doctype: inputObject.doctype };
-    // };
     const newData = mapProperties(data);
     // console.log('newData', newData);
     navigation.navigate('UpdateSalesOrder', { name: data.name, preState: newData, amend: 0, QuotationState: [] });
@@ -119,8 +89,6 @@ function DetailsPage({ route, navigation }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => {
-        // handleClose();
-        // navigation.pop();
         navigation.replace(title, { filterData: [] });
       }}
     >
@@ -139,7 +107,6 @@ function DetailsPage({ route, navigation }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => handleOpenUpdate()}
-      // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
     >
       <Edit color={COLORS.primary} />
     </Button>
@@ -154,8 +121,6 @@ function DetailsPage({ route, navigation }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => setOpenPrint(true)}
-      // onPress={() => handleOpenUpdate()}
-      // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
     >
       <Text
         textAlign='left'
@@ -202,8 +167,6 @@ function DetailsPage({ route, navigation }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'sm', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => handleChangeStatus(data?.status)}
-      // onPress={() => handleOpenUpdate()}
-      // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
     >
       <Text
         textAlign='left'
@@ -332,7 +295,6 @@ function DetailsPage({ route, navigation }) {
           },
           {
             text: 'Cancel',
-            // onPress: () => console.log('Cancel Pressed'),
             style: 'cancel', // This makes the button appear differently (e.g., grayed out)
           },
         ],
@@ -360,7 +322,6 @@ function DetailsPage({ route, navigation }) {
           },
           {
             text: 'Cancel',
-            // onPress: () => console.log('Cancel Pressed'),
             style: 'cancel', // This makes the button appear differently (e.g., grayed out)
           },
         ],
@@ -389,8 +350,6 @@ function DetailsPage({ route, navigation }) {
             return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
           }),
         };
-        // return { doctype: inputObject.doctype };
-        // return { doctype: inputObject.doctype };
       }
       const newData = mapProperties(data);
       navigation.replace('UpdateSalesOrder', { name: data.name, preState: newData, amend: 1, QuotationState: [] });
@@ -461,7 +420,6 @@ function DetailsPage({ route, navigation }) {
   useMemo(() => {
     if (data.items) {
       const formatData = reformatDefaultSalesInvoice(data);
-      // console.log('formatData:', formatData);
       setDefaultInvoiceData(formatData);
     }
   }, [data]);
@@ -474,25 +432,6 @@ function DetailsPage({ route, navigation }) {
 
   // get connection links
   const [links, setLinks] = useState([]);
-
-  // useMemo(() => {
-  //   if (baseURL) {
-  //     // console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
-  //     axios
-  //       .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + data?.name)
-  //       .then((response) => {
-  //         // Handle the successful response here
-
-  //         // console.log('Response:', getDataAPICustom(response));
-  //         setLinks(getDataAPICustom(response));
-  //         // console.log(response.data.message);
-  //       })
-  //       .catch((error) => {
-  //         // Handle any errors that occur during the request
-  //         console.error('Error:', error);
-  //       });
-  //   }
-  // }, [baseURL]);
   const isFocused = useIsFocused();
 
   useMemo(() => {
@@ -556,13 +495,10 @@ function DetailsPage({ route, navigation }) {
             m={2}
             mt={6}
             mb={24}
-            // h={heightScrollView}
-
             alignItems={'center'}
             space={2}
           >
             <VStack
-              // bg={'black'}
               justifyContent={'center'}
               alignItems={'center'}
             >
@@ -1114,9 +1050,6 @@ function DetailsPage({ route, navigation }) {
                             source={{
                               uri: item.image,
                               method: 'GET',
-                              // headers: {
-                              //   Authorization: token,
-                              // },
                             }}
                           />
                         </Box>

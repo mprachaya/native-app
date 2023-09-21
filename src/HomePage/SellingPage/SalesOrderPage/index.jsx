@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Box, Button, Center, ChevronLeftIcon, FlatList, HStack, List, Text, Toast, VStack, View } from 'native-base';
+import React, { useState, useMemo } from 'react';
+import { Box, Button, Center, ChevronLeftIcon, FlatList, HStack, List, Text, VStack, View } from 'native-base';
 import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { SalesOrderList } from './SalesOrderList';
@@ -59,12 +59,10 @@ function SalesOrderPage({ route }) {
   const [sortTypeState, setSortTypeState] = useState(initialsSortType);
 
   const FilterName = 'FilterSalesOrder';
-  const SortName = 'SortAndroidQuotation';
   const DetailsName = 'SalesOrderDetails';
   const AddNewName = 'AddNewSalesOrder';
 
   const [tempData, setTempData] = useState(null); // for store filtered Data
-  // data fetching with custom hook useFetch
   const [filterActive, setFilterActive] = useState(false);
   const [sortActive, setSortActive] = useState(false);
   const {
@@ -165,21 +163,15 @@ function SalesOrderPage({ route }) {
   const handleFilter = (active) => {
     if (active && filterData !== undefined) {
       const dataTemp = [...salesOrderData];
-      // create new object for re formatting filter data and get only not equal ''
       const newObjFilter = Object.fromEntries(Object.entries(filterData)?.filter(([key, value]) => value !== ''));
-      // console.log('FilterState: ', Object.values(newObjFilter).length);
-      // filtering
-      // console.log('newObjFilter', newObjFilter);
       const filterResult = dataTemp.filter((item) => {
         if (Object.keys(newObjFilter).length > 0) {
           for (let key in newObjFilter) {
             if (
               item[key] === '' ||
-              // (!newObjFilter[key].includes(item[key]) &&
               (newObjFilter[key] !== item[key] && key !== 'transaction_date_from' && key !== 'transaction_date_to')
             ) {
               return false;
-              // console.log(filterData[key]);
             }
           }
         }
@@ -219,7 +211,6 @@ function SalesOrderPage({ route }) {
       } else {
         setTempData(null);
       }
-      // console.log('filterResult:', filterResult);
     }
   };
 
@@ -239,14 +230,6 @@ function SalesOrderPage({ route }) {
     }
   }, [salesOrderData]);
 
-  // useMemo(() => {
-  //   console.log('filterActive ', filterActive);
-  // }, [filterActive]);
-
-  // useMemo(() => {
-  //   console.log('sortActive ', sortActive);
-  // }, [sortActive]);
-
   useMemo(() => {
     if (toggleFilter === undefined) {
     } else {
@@ -254,9 +237,6 @@ function SalesOrderPage({ route }) {
     }
     checkFilter();
     checkSort();
-
-    // console.log(filterData);
-    // console.log(filterData);
   }, [salesOrderData, toggleFilter]);
 
   const isFocused = useIsFocused();
@@ -316,12 +296,6 @@ function SalesOrderPage({ route }) {
               ml={{ base: 6, lg: 0 }}
               rounded={12}
               variant={'unstyled'}
-              // onPress={() => {
-              //   navigation.reset({
-              //     index: 0,
-              //     routes: [{ name: 'Selling' }],
-              //   });
-              // }}
               onPress={() => {
                 navigation.goBack();
               }}
@@ -329,29 +303,7 @@ function SalesOrderPage({ route }) {
             >
               <ChevronLeftIcon />
             </Button>
-            {/* {Platform.OS === 'android' && (
-              <NavHeaderRight
-                filterActive={filterActive ? 'filter' : null} // for active option bg color
-                sortActive={sortActive ? 'sort' : null}
-                openAdd={() => navigation.navigate(AddNewName)}
-                // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
-                openSort={() =>
-                  navigation.navigate(SortName, {
-                    sortBy: SortBy,
-                    data: salesOrderData,
-                    setData: setSalesOrderData,
-                    setReload: setReloadState,
-                    sortByst: sortByState,
-                    sortTypest: sortTypeState,
-                    setSortByst: setSortByState,
-                    setSortTypest: setSortTypeState,
-                  })
-                }
-                openFilter={() => {
-                  navigation.navigate(FilterName, { toggleFilter: false, storeFilter: filterData });
-                }}
-              />
-            )} */}
+
             {Platform.OS === 'ios' && (
               <NavHeaderRight
                 filterActive={filterActive ? 'filter' : null} // for active option bg color

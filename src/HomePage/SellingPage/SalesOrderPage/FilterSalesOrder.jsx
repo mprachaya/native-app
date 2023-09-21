@@ -2,7 +2,6 @@ import {
   Button,
   Center,
   CheckIcon,
-  Checkbox,
   CloseIcon,
   FormControl,
   HStack,
@@ -10,13 +9,11 @@ import {
   Pressable,
   ScrollView,
   Select,
-  Text,
   VStack,
   View,
 } from 'native-base';
 import React, { useState, useMemo, useEffect } from 'react';
 import { useWindowDimensions } from 'react-native';
-import { Platform } from 'react-native';
 import { COLORS, SIZES } from '../../../../constants/theme';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import useConfig from '../../../../config/path';
@@ -37,7 +34,6 @@ const ContainerStyled = (props) => {
 };
 
 function FilterSalesOrder({ route, navigation }) {
-  // const { baseURL, quotation_toS, TERRITORY } = useConfig(true);
   const { storeFilter } = route.params; // get State from storeFilter
   const { baseURL, CUSTOMERS } = useConfig(true);
 
@@ -73,10 +69,8 @@ function FilterSalesOrder({ route, navigation }) {
     let dd = currentDate.getDate();
     if (dd < 10) dd = '0' + dd;
     if (mm < 10) mm = '0' + mm;
-    // const formattedToday = dd + '-' + mm + '-' + yyyy;
     const formattedToday = yyyy + '-' + mm + '-' + dd;
     if (event?.type === 'dismissed') {
-      // setFilterState((pre) => ({ ...pre, transaction_date_from: formattedToday }));
     } else {
       type === 'transaction'
         ? setFilterState((pre) => ({ ...pre, transaction_date_from: formattedToday }))
@@ -92,7 +86,6 @@ function FilterSalesOrder({ route, navigation }) {
     if (mm < 10) mm = '0' + mm;
     const formattedToday = yyyy + '-' + mm + '-' + dd;
     if (event?.type === 'dismissed') {
-      // setFilterState((pre) => ({ ...pre, transaction_date_to: formattedToday }));
     } else {
       type === 'transaction'
         ? setFilterState((pre) => ({ ...pre, transaction_date_to: formattedToday }))
@@ -107,10 +100,6 @@ function FilterSalesOrder({ route, navigation }) {
     // setAndroidNextMount(() => plusMonth);
     setDateIOSNextMonth(() => plusMonth);
     setDeliveryDateIOSNextMonth(() => plusMonth);
-
-    // const dateNow = new Date();
-    // dateNow.setMonth(dateNow.getMonth());
-    // setDateIOS(dateNow);
   }, []);
 
   useMemo(() => {
@@ -173,15 +162,11 @@ function FilterSalesOrder({ route, navigation }) {
       if (storeFilter.transaction_date_from) {
         setCheckedFromDateState(true);
         setCheckedToDateState(true);
-        // setDateIOS(new Date(storeFilter.transaction_date_from));
-        // setDateIOSNextMonth(new Date(storeFilter.transaction_date_to));
       }
       // set Filter Date from storeFilter
       if (storeFilter.delivery_date_from) {
         setCheckedDeliveryFromDateState(true);
         setCheckedDeliveryToDateState(true);
-        // setDeliveryDateIOS(new Date(storeFilter.delivery_date_from));
-        // setDeliveryDateIOSNextMonth(new Date(storeFilter.delivery_date_to));
       }
     }
   }, [storeFilter]);

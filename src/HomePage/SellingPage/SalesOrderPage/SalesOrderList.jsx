@@ -4,7 +4,6 @@ import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
 import GetScreenSize from '../../../../hooks/GetScreenSize';
-import useConfig from '../../../../config/path';
 
 export function SalesOrderList({ data, reload, setReload, returnDataIndex, handleClickDetails }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -208,8 +207,6 @@ export function SalesOrderList({ data, reload, setReload, returnDataIndex, handl
       >
         <FlatList
           data={data?.slice(0, dataIndex)}
-          // numColumns={2}
-          // columnWrapperStyle={{ justifyContent: 'space-between' }}
           keyExtractor={(item) => item.name}
           onEndReached={() =>
             dataIndex < data?.length && dataIndex + length < data?.length

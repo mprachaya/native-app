@@ -21,17 +21,15 @@ import {
   WarningOutlineIcon,
 } from 'native-base';
 import React, { useState, useMemo, useEffect } from 'react';
-import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
+import { DynamicSelectPage } from '../../../../components';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
 import { Platform, Pressable, StyleSheet } from 'react-native';
-import useSubmit from '../../../../hooks/useSubmit';
 import useConfig from '../../../../config/path';
 import axios from 'axios';
 import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { handleChange } from '../../../../hooks/useValidation';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -392,14 +390,7 @@ function AddNewSalesOrder({ navigation, route }) {
           .get(urlCustomer + '/' + ctmState.customer)
           .then((response) => response.data)
           .then((res) => {
-            // console.log(res.data);
-
-            //checking for multiple responses for more flexibility
-            //with the url we send in.
-            // alert(res.data.territory);
             setCustomer(res.data);
-            // console.log(res.data);
-            // console.log('Fetching successful!');
           })
           .catch((err) => {
             // console.log(err);
@@ -669,7 +660,6 @@ function AddNewSalesOrder({ navigation, route }) {
     });
 
     const handleCheckRequired = () => {
-      // console.log(ctmState2['set_warehouse']);
       requiredState.forEach((st_name) => {
         if (!ctmState2[st_name]) {
           setNullState((pre) => ({ ...pre, [st_name]: true }));
@@ -891,13 +881,6 @@ function AddNewSalesOrder({ navigation, route }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
-                {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
-                {/* tc_name: null,
-              <OnPressContainer
-                onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
-              > */}
-
-                {/* </OnPressContainer> */}
 
                 <OnPressContainer
                   onPress={() =>
@@ -957,35 +940,17 @@ function AddNewSalesOrder({ navigation, route }) {
     const [showAlert, setShowAlert] = useState(false);
 
     const handleForward = () => {
-      // before go to next step check all required state
-      // check then make input error style
-      // handleCheckRequired();
-      // if column required is not filled push property name into check array
       let checkNull = stateWithAmount.items === null;
-      // requiredState.forEach((st_name) => {
-      //   if (!ctmState2[st_name]) {
-      //     check.push(st_name);
-      //   }
-      // });
-      // if have any length of check mean required state is still not filled yet
       if (checkNull) {
         alert('Please Add Items');
       } else {
-        // if filled go to next step
-        // handleSubmit(stateWithAmount);
-        // setState((pre) => ({ ...pre, items: stateWithAmount }));
-        // console.log('items =', items);
         const cloneState = { ...state };
 
         const stateNoAmount = Object.values(stateWithAmount)?.map((obj) => {
-          // Create a new object with properties other than "amount"
           const { amount, ...newObj } = obj;
           return newObj;
         });
         cloneState.items = Object.values(stateNoAmount);
-        // console.log(cloneState);
-        // console.log(urlSubmit);
-        // console.log(cloneState);
         axios
           .post(urlSubmit, cloneState)
           .then(
@@ -1154,21 +1119,6 @@ function AddNewSalesOrder({ navigation, route }) {
     };
     useMemo(() => {
       getBarCodeScannerPermissions();
-      // axios
-      //   .get(urlGetItemsQuotation, {
-      //     headers: {
-      //       Authorization: '',
-      //     },
-      //   })
-      //   .then((response) => {
-      //     // console.log(response.data.message.data);
-      //     // setItems(response.data.message.data);
-      //     setItems((pre) => ({ ...pre, items: response.data.message.data }));
-      //     // setItemLength(response.data.message.data.length);
-      //   })
-      //   .catch((error) => {
-      //     alert(error);
-      //   });
     }, []);
 
     useMemo(() => {
@@ -1180,8 +1130,6 @@ function AddNewSalesOrder({ navigation, route }) {
     }, [scanned]);
 
     useMemo(() => {
-      // console.log(items);
-      // console.log('testssss:', items.items);
       if (items?.items !== null) {
         const updateState = Object.values(items?.items).map((data, index) => {
           const temp = { ...items.items };
@@ -1191,18 +1139,10 @@ function AddNewSalesOrder({ navigation, route }) {
         });
         // console.log('Add Amount', ...updateState);
         setStateWithAmount(...updateState);
-
-        // Object.values(state.items)?.map((element) => {
-        //   delete element.amount;
-        // });
       } else {
         setStateWithAmount(items);
       }
     }, [items]);
-
-    // React.useEffect(() => {
-    //   console.log('State With Amount', stateWithAmount);
-    // }, [stateWithAmount]);
 
     return (
       <React.Fragment>
@@ -1503,16 +1443,6 @@ function AddNewSalesOrder({ navigation, route }) {
               QR CODE
             </Button>
           </HStack>
-          {/* {openItemList && (
-            <DynamicSelectPage
-              title={'Item List'} // for change dynamic title
-              url={urlItemQRCode} // for change dynamic data in selection
-              open={openItemList} // state for show/hide selection
-              setOpen={setOpenItemList} // for control show/hide
-              setState={setItems} // for send data to outside selection and set it in main state by property
-              property={propertySelected} // name of property for send data to outside
-            />
-          )} */}
         </VStack>
       </React.Fragment>
     );
@@ -1645,16 +1575,6 @@ function AddNewSalesOrder({ navigation, route }) {
     <ContainerStyled>
       <FadeTransition animated={stepState}>
         <Center>
-          {/* {stepState !== 4 && (
-            <Text
-              position={'absolute'}
-              fontWeight={'bold'}
-              color={COLORS.tertiary2}
-              top={6}
-            >
-              {title}
-            </Text>
-          )} */}
           {/* display when step = 1 and do not have any selection displayed */}
           {stepState === 1 && !openSelection && !openCustomerType && (
             <FirstStep
@@ -1687,16 +1607,6 @@ function AddNewSalesOrder({ navigation, route }) {
               property={propertySelected} // name of property for send data to outside
             />
           )}
-          {/* {openCustomerType && (
-            <StaticSelectPage
-              title={'Customer Type'} // name of statice selection
-              data={customerTypes} // data of statice selection
-              open={openCustomerType} // state for show/hide selection
-              setOpen={setOpenCustomerType} // for control show/hide
-              setState={setState} // for send data to outside selection and set it in main state by property
-              property={'customer_type'} // name of property for send data to outside
-            />
-          )} */}
         </Center>
       </FadeTransition>
     </ContainerStyled>
