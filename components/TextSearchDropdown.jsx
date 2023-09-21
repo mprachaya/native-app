@@ -90,7 +90,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
         // setOnFocus(true);
         setLoadingSearch(true);
         Object.keys(allData[0])?.map((key) => {
-          if ((key !== 'image' && key === 'name') || key === 'customer' || key === 'status') {
+          if ((key !== 'image' && key === 'name') || key === 'customer' || key === 'status' || key === 'party') {
             const search = handleSearch(allData, SearchText, key);
 
             if (search) {
@@ -180,7 +180,8 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
           >
             <FadeTransition animated={focus}>
               <FlatList
-                mx={{ base: 4, lg: '30%' }}
+                w={'80'}
+                mx={{ base: 0, lg: '30%' }}
                 data={data}
                 ListHeaderComponent={() => (
                   <View
@@ -224,7 +225,8 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
                               },
                             ],
                           }}
-                          p='5'
+                          px='4'
+                          py='3'
                           rounded='12'
                           borderWidth='1'
                           borderColor='coolGray.300'
@@ -260,13 +262,14 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
                                 {item[dataColumn[1]]}
                               </Badge>
                             </HStack>
-
-                            <Text
-                              fontSize={10}
-                              color='coolGray.800'
-                            >
-                              {item.creation.slice(0, 16)}
-                            </Text>
+                            {item.creation && (
+                              <Text
+                                fontSize={10}
+                                color='coolGray.800'
+                              >
+                                {item.creation.slice(0, 10)}
+                              </Text>
+                            )}
                           </HStack>
                           <Text
                             color='coolGray.800'

@@ -25,7 +25,7 @@ export default function useFetch(url, header) {
               setLoading(false);
               //checking for multiple responses for more flexibility
               //with the url we send in.
-              res.data && setData(res.data);
+              res.data ? setData(res.data) : setData(res.message);
               // console.log('Fetching successful!');
             })
             .catch((err) => {
@@ -43,7 +43,7 @@ export default function useFetch(url, header) {
               setLoading(false);
               //checking for multiple responses for more flexibility
               //with the url we send in.
-              res.data && setData(res.data);
+              res.data ? setData(res.data) : setData(res.message);
               // sconsole.log('Fetching successful!');
             })
             .catch((err) => {

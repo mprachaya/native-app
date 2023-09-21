@@ -37,6 +37,11 @@ export default function useConfig(trigger) {
   const PAYMENT_BY_SALES_INVOICE =
     '/api/method/frappe.erpapp.link_salesinvoice_paymententry.findPaymentBySalesInvoice?si_name=';
 
+  const PAYMENT_ENTRYS = '/api/method/frappe.erpapp.payment_entry.getAllPaymentEntry';
+  const PAYMENT_ENTRY = '/api/method/frappe.erpapp.payment_entry.getPaymentEntryByName?pa_name=';
+  const SALES_INVOICE_BY_PAYMENT_ENTRY =
+    '/api/method/frappe.erpapp.link_salesinvoice_paymententry.findSalesInvoiceByPayment?pa_name=';
+
   const DOCTYPE_EXPORT = '/api/method/frappe.utils.print_format.download_pdf';
   // ?doctype=${docType}&name=${name}&format=${format}`
   // ex. const docType = 'Quotation'; const name = 'SAL-QTN-2023-00001'; const format = 'test-qt';
@@ -87,5 +92,8 @@ export default function useConfig(trigger) {
     SALES_INVOICE,
     COST_CENTER,
     PAYMENT_BY_SALES_INVOICE,
+    PAYMENT_ENTRYS,
+    PAYMENT_ENTRY,
+    SALES_INVOICE_BY_PAYMENT_ENTRY,
   };
 }

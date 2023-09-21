@@ -46,6 +46,10 @@ import SalesInvoiceItemDetails from './src/HomePage/SellingPage/SalesInvoicePage
 import UpdateSalesInvoice from './src/HomePage/SellingPage/SalesInvoicePage/UpdateSalesInvoice';
 import FilterSalesInvoice from './src/HomePage/SellingPage/SalesInvoicePage/FilterSalesInvoice';
 
+//payment entry
+import PaymentEntryPage from './src/HomePage/SellingPage/PaymentEntryPage';
+import PaymentEntryDetails from './src/HomePage/SellingPage/PaymentEntryPage/PaymentEntryDetails';
+
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
@@ -494,6 +498,35 @@ export default function App() {
                 header: () => (
                   <NavHeader
                     pageName={'Filter Sales Invoice'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            {/* PaymentEntry Page */}
+            <Stack.Screen
+              name='PaymentEntry'
+              component={PaymentEntryPage}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Payment Entry'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='PaymentEntryDetails'
+              component={PaymentEntryDetails}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Payment Entry Details'}
                     noHeader={true}
                   />
                 ),

@@ -520,7 +520,7 @@ function DetailsPage({ route, navigation }) {
                   alignItems={'flex-end'}
                 >
                   <VStack
-                    alignItems={'center'}
+                    alignItems={'flex-end'}
                     minHeight={10}
                   >
                     <DisplayTextLeft>{data.transaction_date}</DisplayTextLeft>

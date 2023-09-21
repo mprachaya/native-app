@@ -167,12 +167,14 @@ function SellingPage({ navigation }) {
               justifyContent={{ base: 'center', lg: 'space-around' }}
             >
               <MenuIcon
+                active={true}
+                onPress={() => navigation.navigate('PaymentEntry', { filterData: [] })}
                 menuLabel={'Payment\nEntry'}
                 Icon={
                   <PaymentEntry
                     width={24}
                     height={24}
-                    color={iconColor}
+                    color={iconActive}
                   />
                 }
               />

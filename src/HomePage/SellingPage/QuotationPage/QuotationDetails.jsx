@@ -476,7 +476,7 @@ function DetailsPage({ route, navigation }) {
                   alignItems={'flex-end'}
                 >
                   <VStack
-                    alignItems={'center'}
+                    alignItems={'flex-end'}
                     minHeight={10}
                   >
                     <DisplayTextLeft>{data.transaction_date}</DisplayTextLeft>
@@ -607,7 +607,7 @@ function DetailsPage({ route, navigation }) {
             />
             <VStack
               mt={6}
-              space={2}
+              space={2.5}
               alignItems='center'
             >
               <HStack
@@ -723,7 +723,7 @@ function DetailsPage({ route, navigation }) {
             />
             <VStack
               mt={6}
-              space={2}
+              space={2.5}
               alignItems='center'
             >
               <HStack

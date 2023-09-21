@@ -5,16 +5,17 @@ import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
 import GetScreenSize from '../../../../hooks/GetScreenSize';
 
-export function SalesOrderList({ data, reload, setReload, returnDataIndex, handleClickDetails }) {
+export function PaymentEntryList({ data, reload, setReload, returnDataIndex, handleClickDetails }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');
   const [dataIndex, setDataIndex] = useState(20);
   const length = 20;
   const [loadMore, setLoadMore] = useState(false);
   const [tempIndex, setTempIndex] = useState(0);
 
-  const Item = React.memo(({ name, title, total, date, status }) => (
+  const Item = React.memo(({ name, title, type, date, status }) => (
     <Pressable
       mb={2}
+      // px={2}
       py={6}
       rounded={12}
       w={'full'}
@@ -50,13 +51,13 @@ export function SalesOrderList({ data, reload, setReload, returnDataIndex, handl
           </HStack>
         </VStack>
         <Text
-          color={COLORS.gray}
+          color={type === 'Receive' ? 'blue.300' : type === 'Pay' ? 'green.300' : 'red.300'}
           fontSize={'xs'}
           position={'absolute'}
           bottom={0}
           left={0}
         >
-          Total: {parseInt(total).toFixed(2)}
+          {type}
         </Text>
         <View
           py={2}
@@ -65,44 +66,20 @@ export function SalesOrderList({ data, reload, setReload, returnDataIndex, handl
           bottom={6}
           right={6}
           rounded={6}
-          // Draft ,To Deliver ,Deliver and Bill
-          // Draft
-          //   - This is the initial status of a Sales Order. It indicates that the order has been created but not yet submitted.
-          // To Deliver
-          //   - Once a Sales Order is ready for processing, it is submitted. This status signifies that the order is in the queue for further action.
-          // To Bill
-          //   - This status indicates that the Sales Order is ready to be invoiced. It typically means that the items in the order are in stock and can be shipped.
-          // To Deliver and Bill
-          //   - This status indicates that the Sales Order is ready to be delivered and invoiced. It implies that the items are in stock and can be both shipped and billed.
-          // Completed
-          //   - This status signifies that the Sales Order has been fulfilled. It may mean that the items have been shipped and invoiced, and the transaction is considered closed.
-          // Cancelled
-          //   - A Sales Order with this status has been cancelled and will not be processed further.
-          // On Hold
-          //   - This status is used to indicate that the Sales Order is temporarily halted and not being processed at the moment.
-          // Stopped
-          //   - This status is similar to "On Hold" and signifies that the Sales Order has been stopped and is not being processed.
-          // Lost
-          //   - This status is used when a Sales Order is not won and is considered lost.
-          // Closed
-          //   - This status typically means that the Sales Order has been closed and is no longer active.
-
           bg={
             status === 'Draft' // default status
               ? 'error.200'
-              : status === 'To Deliver and Bill' // show when already create invoice
+              : status === 'Submitted'
+              ? 'info.200'
+              : status === 'Paid'
+              ? 'emerald.200'
+              : status === 'Unpaid'
               ? 'warning.200'
-              : status === 'To Deliver' // show when summit Sales Order (Status from To Deliver and Bill To Deliver) already create invoice
-              ? 'warning.200'
-              : status === 'Completed'
-              ? 'success.200'
+              : status === 'Overdue'
+              ? 'error.200'
               : status === 'Cancelled'
               ? 'error.200'
-              : status === 'Closed'
-              ? 'error.200'
-              : status === 'On Hold'
-              ? 'error.200'
-              : 'blue.200'
+              : 'blue.100'
           }
         >
           <Text
@@ -206,6 +183,8 @@ export function SalesOrderList({ data, reload, setReload, returnDataIndex, handl
       >
         <FlatList
           data={data?.slice(0, dataIndex)}
+          // numColumns={2}
+          // columnWrapperStyle={{ justifyContent: 'space-between' }}
           keyExtractor={(item) => item.name}
           onEndReached={() =>
             dataIndex < data?.length && dataIndex + length < data?.length
@@ -225,12 +204,10 @@ export function SalesOrderList({ data, reload, setReload, returnDataIndex, handl
           renderItem={({ item }) => (
             <Item
               name={item.name}
-              title={item.customer_name}
-              type={item.customer_type}
-              group={item.customer_group}
+              title={item.name}
+              type={item.payment_type}
               status={item.status}
-              date={item.transaction_date}
-              total={item.total}
+              date={item.posting_date}
             />
           )}
         />
@@ -245,12 +222,10 @@ export function SalesOrderList({ data, reload, setReload, returnDataIndex, handl
           renderItem={({ item }) => (
             <Item
               name={item.name}
-              title={item.customer_name}
-              type={item.customer_type}
-              group={item.customer_group}
+              title={item.name}
+              type={item.payment_type}
               status={item.status}
-              date={item.transaction_date}
-              total={item.total}
+              date={item.posting_date}
             />
           )}
           removeClippedSubviews={true}

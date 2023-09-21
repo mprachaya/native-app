@@ -403,7 +403,7 @@ function DetailsPage({ route, navigation }) {
   useMemo(() => {
     if (data.length !== 0 && doOnce) {
       handleFetchLinks(PAYMENT_BY_SALES_INVOICE, data.name, setLinksPayment);
-      console.log('isFocused', isFocused);
+      // console.log('isFocused', isFocused);
       const _links = Object.values(data?.items).filter((item, index) => item.sales_order !== undefined);
       if (_links.length !== 0) {
         // console.log('has connection (Sales Order)');
@@ -497,10 +497,10 @@ function DetailsPage({ route, navigation }) {
             m={2}
             mt={6}
             mb={24}
+            space={2.5}
             // h={heightScrollView}
 
             alignItems={'center'}
-            space={2}
           >
             <VStack
               // bg={'black'}
@@ -525,7 +525,7 @@ function DetailsPage({ route, navigation }) {
                   alignItems={'flex-end'}
                 >
                   <VStack
-                    alignItems={'center'}
+                    alignItems={'flex-end'}
                     minHeight={10}
                   >
                     <DisplayTextLeft>{data.posting_date}</DisplayTextLeft>
@@ -578,7 +578,7 @@ function DetailsPage({ route, navigation }) {
             />
             <VStack
               mt={6}
-              space={2}
+              space={2.5}
               alignItems='center'
             >
               <HStack
@@ -827,7 +827,7 @@ function DetailsPage({ route, navigation }) {
             />
             <VStack
               mt={6}
-              space={2}
+              space={2.5}
               alignItems='center'
             >
               <HStack
