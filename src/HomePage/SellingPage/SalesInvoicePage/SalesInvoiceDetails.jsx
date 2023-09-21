@@ -14,7 +14,7 @@ import {
 } from 'native-base';
 import React, { useEffect, useMemo, useState } from 'react';
 import { COLORS } from '../../../../constants/theme';
-import { Edit, SaleOrder } from '../../../../constants/icons';
+import { Edit, PaymentEntry, SaleOrder } from '../../../../constants/icons';
 import { ConnectionLinks, Loading, CreateSelect } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
 import useUpdate from '../../../../hooks/useUpdate';
@@ -40,9 +40,10 @@ const ContainerStyled = (props) => {
 function DetailsPage({ route, navigation }) {
   const title = 'SalesInvoice';
   const { name } = route.params; // for sales invoice page
-  const [linkName, setLinkName] = useState(''); // for connection link
-  const connectionTo = 'SalesOrderDetails';
-  const { baseURL, SALES_INVOICE, SALES_INVOICE_BY_SALES_INVOICE } = useConfig(true);
+  // const [linkName, setLinkName] = useState(''); // for connection link
+  const connectionSalesOrderTo = 'SalesOrderDetails'; // fior Sales Order Connection
+  const connectionPaymentTo = 'PaymentEntryDetails';
+  const { baseURL, SALES_INVOICE, PAYMENT_BY_SALES_INVOICE } = useConfig(true);
   // const heightScrollView = 2000;
   // data fetching with custom hook useFetch
   const { data, setData, setRefetch, loading, error } = useFetch(
@@ -55,11 +56,11 @@ function DetailsPage({ route, navigation }) {
   );
   const [openPrint, setOpenPrint] = useState(false);
 
-  useEffect(() => {
-    if (route.params.connectionName) {
-      setLinkName(route.params.connectionName);
-    }
-  }, [route]);
+  // useEffect(() => {
+  //   if (route.params.connectionName) {
+  //     setLinkName(route.params.connectionName);
+  //   }
+  // }, [route]);
 
   const handleOpenUpdate = () => {
     function mapProperties(inputObject) {
@@ -309,10 +310,6 @@ function DetailsPage({ route, navigation }) {
                 .then((res) => {
                   //  navigation.replace('SalesOrderDetails', { name: data.name });
                   res.data && setRefetch(true);
-                  // navigation.reset({
-                  //   index: 1,
-                  //   routes: [{ name: 'SalesInvoiceDetails', params: { name: data.name } }],
-                  // });
                 })
                 .catch((err) => {
                   // console.log('An error occurred. Awkward.. : ', err.response);
@@ -421,12 +418,28 @@ function DetailsPage({ route, navigation }) {
   };
 
   // get connection links
-  const [links, setLinks] = useState([]);
-
+  const [links, setLinks] = useState([]); // sales order
+  const [linksPayment, setLinksPayment] = useState([]); // payment entry
   const isFocused = useIsFocused();
+  const [doOnce, setDoOnce] = useState(true); // for loading when is focused once
+
+  const handleFetchLinks = (path, byName, setState) => {
+    axios
+      .get(baseURL + path + byName)
+      .then((res) => {
+        setState(res.data.message);
+        console.log('message', res.data.message);
+      })
+      .catch((error) => {
+        alert(error.message);
+        console.log(path + byName);
+      });
+  };
 
   useMemo(() => {
-    if (data.length !== 0) {
+    if (data.length !== 0 && doOnce) {
+      handleFetchLinks(PAYMENT_BY_SALES_INVOICE, data.name, setLinksPayment);
+      console.log('isFocused', isFocused);
       const _links = Object.values(data?.items).filter((item, index) => item.sales_order !== undefined);
       if (_links.length !== 0) {
         console.log('has connection (Sales Order)');
@@ -438,9 +451,11 @@ function DetailsPage({ route, navigation }) {
           },
         ];
         setLinks(LinkCreated);
+        setDoOnce(false);
         // console.log('link:', LinkCreated);
       } else {
         console.log('has no connection (Sales Order)');
+        setDoOnce(false);
       }
     }
   }, [data, isFocused]);
@@ -1082,7 +1097,14 @@ function DetailsPage({ route, navigation }) {
                             alignItems={'center'}
                             position={'absolute'}
                           >
-                            <Text color={'white'}>No Image</Text>
+                            <Text
+                              letterSpacing={1}
+                              fontWeight={'bold'}
+                              fontSize={'lg'}
+                              color={'white'}
+                            >
+                              #{index + 1}
+                            </Text>
                           </Box>
 
                           <Image
@@ -1097,11 +1119,12 @@ function DetailsPage({ route, navigation }) {
                         </Box>
                       )}
                       <VStack
-                        mt={1}
+                        mt={3}
+                        ml={2}
                         mr={12}
-                        maxW={'48'}
+                        w={'full'}
+                        maxW={'40'}
                       >
-                        <Text fontSize={'xs'}>#{index + 1}.</Text>
                         <Text fontSize={'xs'}>
                           {item.item_name + ' '}({item.item_group})
                         </Text>
@@ -1129,9 +1152,15 @@ function DetailsPage({ route, navigation }) {
                 </Text>
                 <ConnectionLinks
                   links={links}
-                  navigateTo={connectionTo}
+                  navigateTo={connectionSalesOrderTo}
                   Icon={<SaleOrder color={COLORS.secondary} />}
                   name={'Sales Order'}
+                />
+                <ConnectionLinks
+                  links={linksPayment}
+                  navigateTo={connectionPaymentTo}
+                  Icon={<PaymentEntry color={COLORS.secondary} />}
+                  name={'Payment Entry'}
                 />
               </VStack>
             </VStack>

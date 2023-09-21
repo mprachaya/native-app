@@ -15,7 +15,7 @@ function MenuIcon({ Icon, menuLabel, onPress, active }) {
       >
         <VStack>
           <Circle
-            background={!active ? 'white' : COLORS.primary}
+            background={!active ? 'white' : 'blueGray.200'}
             size={'md'}
           >
             {Icon}

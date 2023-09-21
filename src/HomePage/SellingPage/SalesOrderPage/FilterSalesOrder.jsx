@@ -468,7 +468,7 @@ function FilterSalesOrder({ route, navigation }) {
                   </HStack>
                 </View>
                 <View
-                  ml={6}
+                  ml={3}
                   my={3}
                 >
                   <FormControl justifyContent={'center'}>
@@ -557,7 +557,7 @@ function FilterSalesOrder({ route, navigation }) {
                   </HStack>
                 </View>
                 <View
-                  ml={6}
+                  ml={3}
                   my={3}
                 >
                   <FormControl justifyContent={'center'}>

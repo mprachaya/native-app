@@ -34,6 +34,8 @@ export default function useConfig(trigger) {
   const SALES_INVOICES = '/api/resource/Sales Invoice?fields=["*"]&limit=500&order_by=creation desc';
   const SALES_INVOICE = '/api/resource/Sales Invoice';
   const COST_CENTER = '/api/resource/Cost Center';
+  const PAYMENT_BY_SALES_INVOICE =
+    '/api/method/frappe.erpapp.link_salesinvoice_paymententry.findPaymentBySalesInvoice?si_name=';
 
   const DOCTYPE_EXPORT = '/api/method/frappe.utils.print_format.download_pdf';
   // ?doctype=${docType}&name=${name}&format=${format}`
@@ -84,5 +86,6 @@ export default function useConfig(trigger) {
     SALES_INVOICES,
     SALES_INVOICE,
     COST_CENTER,
+    PAYMENT_BY_SALES_INVOICE,
   };
 }

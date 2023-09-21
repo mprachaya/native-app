@@ -49,18 +49,17 @@ export default function ConnectionLinks({ Icon, name, links, navigateTo }) {
           px={6}
         >
           <HStack
-            py={3.5}
             w='250'
             justifyContent={'space-between'}
           >
             <VStack justifyContent={'center'}>
               <Text fontSize={'xs'}>{link.parent}</Text>
-              <Text
+              {/* <Text
                 fontSize={'xs'}
                 color={COLORS.gray}
               >
                 {link.transaction_date}
-              </Text>
+              </Text> */}
             </VStack>
             <Button
               onPress={() => navigation.navigate(navigateTo, { connectName: link.parent })}
