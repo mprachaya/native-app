@@ -22,17 +22,15 @@ import {
   WarningOutlineIcon,
 } from 'native-base';
 import React, { useState, useMemo, useEffect } from 'react';
-import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
+import { DynamicSelectPage } from '../../../../components';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
 import { Platform, Pressable, StyleSheet } from 'react-native';
-import useSubmit from '../../../../hooks/useSubmit';
 import useConfig from '../../../../config/path';
 import axios from 'axios';
 import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { handleChange } from '../../../../hooks/useValidation';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -88,13 +86,9 @@ function AddNewSalesInvoice({ navigation, route }) {
   // max of steps
   const maxStep = 3;
   const [parentId, setParentId] = useState('');
-  // const [defaultData, setDefaultData] = useState([]);
   // Check if route.params is defined
   useEffect(() => {
     if (route.params?.CreateFrom) setParentId(route.params.CreateFrom);
-    // setDefaultData(route.params.defaultData);
-    // console.log('Create From: ', route.params.CreateFrom);
-    // console.log('default Data: ', route.params.defaultData);
     if (route.params?.defaultData) setState(route.params.defaultData);
   }, [route.params]);
 
@@ -329,10 +323,7 @@ function AddNewSalesInvoice({ navigation, route }) {
     };
 
     const handleBackFirstPage = () => {
-      // handleClose();
-      // navigation.pop();
       navigation.goBack();
-      // navigation.replace(title, { filterData: [] });
       setState(initialState);
     };
 
@@ -414,17 +405,10 @@ function AddNewSalesInvoice({ navigation, route }) {
           .get(urlCustomer + '/' + ctmState?.customer)
           .then((response) => response.data)
           .then((res) => {
-            // console.log(res.data);
-
-            //checking for multiple responses for more flexibility
-            //with the url we send in.
-            // alert(res.data.territory);
             setCustomer(res.data);
-            // console.log(res.data);
-            // console.log('Fetching successful!');
           })
           .catch((err) => {
-            // console.log(err);
+            alert(err);
           });
       }
       // console.log(ctmState);
@@ -539,7 +523,6 @@ function AddNewSalesInvoice({ navigation, route }) {
                     showSoftInputOnFocus={false} // disable toggle keyboard
                   />
                 </OnPressContainer>
-                {/* <OnPressContainer onPress={() => handleOpenDynamicSelection('Territory', 'territory', urlTerritory)}> */}
 
                 <VStack>
                   <StyledTextField
@@ -872,8 +855,6 @@ function AddNewSalesInvoice({ navigation, route }) {
                           } else {
                             setCtmState2((pre) => ({ ...pre, update_stock: !ctmState2.update_stock }));
                           }
-
-                          // setState((pre) => ({ ...pre, update_stock: !ctmState2.update_stock }));
                         }}
                       />
                     </HStack>
@@ -924,12 +905,6 @@ function AddNewSalesInvoice({ navigation, route }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
-                {/* <StyledTextField
-                  label={'Exchange Rate'}
-                  value={String(ctmState2.conversion_rate)}
-                  keyboardType='numeric'
-                  handleChange={(val) => setCtmState2((pre) => ({ ...pre, conversion_rate: val }))}
-                /> */}
                 {ctmState2.update_stock && (
                   <OnPressContainer
                     onPress={() => handleOpenDynamicSelection('Set Source Warehouse', 'set_warehouse', urlWarehouse)}
@@ -944,14 +919,6 @@ function AddNewSalesInvoice({ navigation, route }) {
                     />
                   </OnPressContainer>
                 )}
-
-                {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
-                {/* tc_name: null,
-              <OnPressContainer
-                onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
-              > */}
-
-                {/* </OnPressContainer> */}
 
                 <OnPressContainer
                   onPress={() =>
@@ -1026,11 +993,7 @@ function AddNewSalesInvoice({ navigation, route }) {
           ...obj,
           sales_order: parentId,
         }));
-        // console.log('stateWithParent: ', stateWithParent);
         cloneState.items = Object.values(stateWithParent);
-        // console.log(cloneState);
-        // console.log(urlSubmit);
-        // console.log(cloneState);
         console.log(cloneState);
         if (cloneState) {
           axios
@@ -1129,9 +1092,6 @@ function AddNewSalesInvoice({ navigation, route }) {
       </Pressable>
     );
 
-    // useMemo(() => {
-    //   console.log(stepState);
-    // }, [stepState]);
     const [stateWithAmount, setStateWithAmount] = useState({ items: null });
 
     const AskCameraPermission = () =>
@@ -1499,13 +1459,6 @@ function AddNewSalesInvoice({ navigation, route }) {
             w={'96'}
             justifyContent={'center'}
           >
-            {/* <Button
-              onPress={() => handleOpenDynamicSelection('Items', 'currency', urlCurrency)}
-              _text={{ fontWeight: 'bold', color: COLORS.tertiary }}
-              variant={'outline'}
-            >
-              + Add Item
-            </Button> */}
             <Button
               onPress={() => setScanned(true)}
               bg={COLORS.primary}
@@ -1522,16 +1475,6 @@ function AddNewSalesInvoice({ navigation, route }) {
               QR CODE
             </Button>
           </HStack>
-          {/* {openItemList && (
-            <DynamicSelectPage
-              title={'Item List'} // for change dynamic title
-              url={urlItemQRCode} // for change dynamic data in selection
-              open={openItemList} // state for show/hide selection
-              setOpen={setOpenItemList} // for control show/hide
-              setState={setItems} // for send data to outside selection and set it in main state by property
-              property={propertySelected} // name of property for send data to outside
-            />
-          )} */}
         </VStack>
       </React.Fragment>
     );
@@ -1539,11 +1482,6 @@ function AddNewSalesInvoice({ navigation, route }) {
 
   const SuccessMessage = ({ setState }) => {
     const handleBack = () => {
-      // setState(initialState);
-      // refetchData();
-      // if (parentId !== undefined) {
-      //   navigation.replace(title, { filterData: [] });
-      // } else {
       if (parentId !== undefined) {
         navigation.pop();
       } else {
@@ -1689,16 +1627,6 @@ function AddNewSalesInvoice({ navigation, route }) {
     <ContainerStyled>
       <FadeTransition animated={stepState}>
         <Center>
-          {/* {stepState !== 4 && (
-            <Text
-              position={'absolute'}
-              fontWeight={'bold'}
-              color={COLORS.tertiary2}
-              top={6}
-            >
-              {title}
-            </Text>
-          )} */}
           {/* display when step = 1 and do not have any selection displayed */}
           {stepState === 1 && !openSelection && (
             <FirstStep
@@ -1720,7 +1648,7 @@ function AddNewSalesInvoice({ navigation, route }) {
             />
           )}
           {stepState === 4 && !openSelection && <SuccessMessage setState={setState} />}
-          {/* {stepState === 3 && !openSelection && !openCustomerType && <SuccessMessage setState={setState} />} */}
+
           {openSelection && (
             <DynamicSelectPage
               title={titleSelection} // for change dynamic title
@@ -1731,16 +1659,6 @@ function AddNewSalesInvoice({ navigation, route }) {
               property={propertySelected} // name of property for send data to outside
             />
           )}
-          {/* {openCustomerType && (
-            <StaticSelectPage
-              title={'Customer Type'} // name of statice selection
-              data={customerTypes} // data of statice selection
-              open={openCustomerType} // state for show/hide selection
-              setOpen={setOpenCustomerType} // for control show/hide
-              setState={setState} // for send data to outside selection and set it in main state by property
-              property={'customer_type'} // name of property for send data to outside
-            />
-          )} */}
         </Center>
       </FadeTransition>
     </ContainerStyled>

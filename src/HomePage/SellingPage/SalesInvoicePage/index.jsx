@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Box, Button, Center, ChevronLeftIcon, FlatList, HStack, List, Text, Toast, VStack, View } from 'native-base';
+import React, { useState, useMemo } from 'react';
+import { Box, Button, Center, ChevronLeftIcon, FlatList, HStack, List, Text, VStack, View } from 'native-base';
 import { Loading, SortModal, NavHeaderRight, TextSearchDropdown } from '../../../../components';
 import { COLORS } from '../../../../constants/theme';
 import { SalesInvoiceList } from './SalesInvoiceList';
@@ -84,10 +84,6 @@ function SalesInvoicePage({ route }) {
     return qtt.status === 'Draft';
   }).length;
 
-  // var countSubmitted = salesInvoiceData.filter((qtt) => {
-  //   return qtt.status === 'Submitted';
-  // }).length;
-
   var countPaid = salesInvoiceData.filter((qtt) => {
     return qtt.status === 'Paid';
   }).length;
@@ -110,10 +106,6 @@ function SalesInvoicePage({ route }) {
       name: 'Draft',
       count: countDraft,
     },
-    // {
-    //   name: 'Submitted',
-    //   count: countSubmitted,
-    // },
     {
       name: 'Paid',
       count: countPaid,
@@ -161,9 +153,7 @@ function SalesInvoicePage({ route }) {
       const dataTemp = [...salesInvoiceData];
       // create new object for re formatting filter data and get only not equal ''
       const newObjFilter = Object.fromEntries(Object.entries(filterData)?.filter(([key, value]) => value !== ''));
-      // console.log('FilterState: ', Object.values(newObjFilter).length);
-      // filtering
-      // console.log('newObjFilter', newObjFilter);
+
       const filterResult = dataTemp.filter((item) => {
         if (Object.keys(newObjFilter).length > 0) {
           for (let key in newObjFilter) {
@@ -184,22 +174,7 @@ function SalesInvoicePage({ route }) {
         const filterFromDate = Object.values(filterResult)?.filter((item) => {
           return item.posting_date >= newObjFilter.from_date && item.posting_date <= newObjFilter.to_date;
         });
-        // : newObjFilter.posting_date
-        // ? Object.values(filterResult)?.filter((item) => {
-        //     return (
-        //       item.posting_date >= newObjFilter.transaction_date_from &&
-        //       item.posting_date <= newObjFilter.transaction_date_to
-        //     );
-        //   })
-        // : newObjFilter.delivery_date_from
-        // ? Object.values(filterResult)?.filter((item) => {
-        //     return (
-        //       item.delivery_date >= newObjFilter.delivery_date_from &&
-        //       item.delivery_date <= newObjFilter.delivery_date_to
-        //     );
-        //   })
-        // : null;
-        // console.log('filterFromDate', filterFromDate);
+
         setTempData(filterFromDate);
       } else if (filterResult.length > 0) {
         setTempData(filterResult);
@@ -310,29 +285,7 @@ function SalesInvoicePage({ route }) {
             >
               <ChevronLeftIcon />
             </Button>
-            {/* {Platform.OS === 'android' && (
-              <NavHeaderRight
-                filterActive={filterActive ? 'filter' : null} // for active option bg color
-                sortActive={sortActive ? 'sort' : null}
-                openAdd={() => navigation.navigate(AddNewName)}
-                // openAdd={() => setOpenState((pre) => ({ ...pre, add: true }))}
-                openSort={() =>
-                  navigation.navigate(SortName, {
-                    sortBy: SortBy,
-                    data: salesInvoiceData,
-                    setData: setSalesInvoiceData,
-                    setReload: setReloadState,
-                    sortByst: sortByState,
-                    sortTypest: sortTypeState,
-                    setSortByst: setSortByState,
-                    setSortTypest: setSortTypeState,
-                  })
-                }
-                openFilter={() => {
-                  navigation.navigate(FilterName, { toggleFilter: false, storeFilter: filterData });
-                }}
-              />
-            )} */}
+
             {Platform.OS === 'ios' && (
               <NavHeaderRight
                 filterActive={filterActive ? 'filter' : null} // for active option bg color

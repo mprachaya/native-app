@@ -40,8 +40,6 @@ function ItemDetails({ navigation, route }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => {
-        // handleClose();
-        // navigation.pop();
         navigation.goBack();
       }}
     >

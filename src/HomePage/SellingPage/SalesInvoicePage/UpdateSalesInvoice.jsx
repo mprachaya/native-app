@@ -8,31 +8,26 @@ import {
   Container,
   DeleteIcon,
   Divider,
-  // FlatList,
   FormControl,
   HStack,
-  // Image,
   Input,
   Modal,
   ScrollView,
-  Select,
   Text,
   VStack,
   View,
   WarningOutlineIcon,
 } from 'native-base';
 import React, { useState, useMemo, useEffect } from 'react';
-import { DynamicSelectPage, StaticSelectPage } from '../../../../components';
+import { DynamicSelectPage } from '../../../../components';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
 import { Platform, Pressable, StyleSheet } from 'react-native';
-import useSubmit from '../../../../hooks/useSubmit';
 import useConfig from '../../../../config/path';
 import axios from 'axios';
 import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { handleChange } from '../../../../hooks/useValidation';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -108,8 +103,6 @@ function UpdateSalesInvoice({ navigation, route }) {
 
   // state for show / hide selection (dynamically)
   const [openSelection, setOpenSelection] = useState(false);
-  // state for show / hide selection (static)
-  const [openCustomerType, setOpenCustomerType] = useState(false);
 
   // initial state
   const initialState = {
@@ -220,55 +213,6 @@ function UpdateSalesInvoice({ navigation, route }) {
       customer: false,
     });
 
-    // date now for android
-    const [dateAndroidNow] = useState(new Date());
-    const [dateAndroidNextMount, setAndroidNextMount] = useState(new Date()); // add 1 mount
-    const onChangeAndroidFrom = (event, selectedDate) => {
-      const currentDate = selectedDate;
-      const yyyy = currentDate.getFullYear();
-      let mm = currentDate.getMonth() + 1; // Months start at 0!
-      let dd = currentDate.getDate();
-      if (dd < 10) dd = '0' + dd;
-      if (mm < 10) mm = '0' + mm;
-      const formattedToday = yyyy + '-' + mm + '-' + dd;
-      if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
-        return;
-      }
-      setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
-    };
-    const onChangeAndroidTo = (event, selectedDate) => {
-      const currentDate = selectedDate;
-      const yyyy = currentDate.getFullYear();
-      let mm = currentDate.getMonth() + 1; // Months start at 0!
-      let dd = currentDate.getDate();
-      if (dd < 10) dd = '0' + dd;
-      if (mm < 10) mm = '0' + mm;
-      const formattedToday = yyyy + '-' + mm + '-' + dd;
-      if (event?.type === 'dismissed') {
-        setCtmState((pre) => ({ ...pre, due_date: formattedToday }));
-        return;
-      }
-      setCtmState((pre) => ({ ...pre, due_date: formattedToday }));
-    };
-
-    const showAndoirdDatepickerFrom = () => {
-      DateTimePickerAndroid.open({
-        value: dateAndroidNow,
-        onChange: (event, date) => onChangeAndroidFrom(event, date),
-        mode: 'date',
-        is24Hour: true,
-      });
-    };
-
-    const showAndoirdDatepickerTo = () => {
-      DateTimePickerAndroid.open({
-        value: dateAndroidNextMount,
-        onChange: (event, date) => onChangeAndroidTo(event, date),
-        mode: 'date',
-        is24Hour: true,
-      });
-    };
     // date now for ios
     const [dateIOS, setDateIOS] = useState(new Date());
     const [dateIOSNextMonth, setDateIOSNextMonth] = useState(new Date());
@@ -337,10 +281,8 @@ function UpdateSalesInvoice({ navigation, route }) {
     };
 
     const handleBackFirstPage = () => {
-      // handleClose();
-      // navigation.pop();
       navigation.pop();
-      // navigation.replace(title, { filterData: [] });
+
       setState(initialState);
     };
 
@@ -422,14 +364,7 @@ function UpdateSalesInvoice({ navigation, route }) {
           .get(urlCustomer + '/' + ctmState?.customer)
           .then((response) => response.data)
           .then((res) => {
-            // console.log(res.data);
-
-            //checking for multiple responses for more flexibility
-            //with the url we send in.
-            // alert(res.data.territory);
             setCustomer(res.data);
-            // console.log(res.data);
-            // console.log('Fetching successful!');
           })
           .catch((err) => {
             // console.log(err);
@@ -471,8 +406,6 @@ function UpdateSalesInvoice({ navigation, route }) {
           posting_date: preState.posting_date,
           due_date: preState.due_date,
         }));
-        //  setDateAndroidNow(new Date(preState.transaction_date));
-        //  setAndroidNextMount(new Date(preState.delivery_date));
         setDateIOS(new Date(preState.posting_date));
         setDateIOSNextMonth(new Date(preState.due_date));
       } else {
@@ -586,33 +519,7 @@ function UpdateSalesInvoice({ navigation, route }) {
 
                 {/* </OnPressContainer> */}
               </VStack>
-              {/* for Android */}
-              {/* {Platform.OS === 'android' && (
-                <VStack space={4}>
-                  <View w={'container'}>
-                    <OnPressContainer onPress={() => showAndoirdDatepickerFrom()}>
-                      <StyledTextField
-                        caretHidden
-                        label={'From Date'}
-                        // placeholder={'Select Transaction Date'}
-                        value={ctmState?.posting_date}
-                        showSoftInputOnFocus={false} // disable toggle keyboard
-                      />
-                    </OnPressContainer>
-                  </View>
-                  <View w={'container'}>
-                    <OnPressContainer onPress={() => showAndoirdDatepickerTo()}>
-                      <StyledTextField
-                        caretHidden
-                        label={'To Date'}
-                        placeholder={'Select Valid Date'}
-                        value={ctmState?.due_date}
-                        showSoftInputOnFocus={false} // disable toggle keyboard
-                      />
-                    </OnPressContainer>
-                  </View>
-                </VStack>
-              )} */}
+
               {/* for IOS */}
               {Platform.OS === 'ios' && (
                 <React.Fragment>
@@ -950,12 +857,7 @@ function UpdateSalesInvoice({ navigation, route }) {
                     showSoftInputOnFocus={false}
                   />
                 </OnPressContainer>
-                {/* <StyledTextField
-                  label={'Exchange Rate'}
-                  value={String(ctmState2.conversion_rate)}
-                  keyboardType='numeric'
-                  handleChange={(val) => setCtmState2((pre) => ({ ...pre, conversion_rate: val }))}
-                /> */}
+
                 {ctmState2.update_stock && (
                   <OnPressContainer
                     onPress={() => handleOpenDynamicSelection('Set Source Warehouse', 'set_warehouse', urlWarehouse)}
@@ -970,14 +872,6 @@ function UpdateSalesInvoice({ navigation, route }) {
                     />
                   </OnPressContainer>
                 )}
-
-                {/* currency: 'THB', conversion_rate: 1, selling_price_list: 'Standard Selling', payment_terms_template: null, */}
-                {/* tc_name: null,
-              <OnPressContainer
-                onPress={() => handleOpenDynamicSelection('Price List', 'default_price_list', urlPriceList)}
-              > */}
-
-                {/* </OnPressContainer> */}
 
                 <OnPressContainer
                   onPress={() =>
@@ -1037,24 +931,13 @@ function UpdateSalesInvoice({ navigation, route }) {
     const [showAlert, setShowAlert] = useState(false);
 
     const handleForward = () => {
-      // before go to next step check all required state
-      // check then make input error style
-      // handleCheckRequired();
       // if column required is not filled push property name into check array
       let checkNull = stateWithAmount.items === null;
-      // requiredState.forEach((st_name) => {
-      //   if (!ctmState2[st_name]) {
-      //     check.push(st_name);
-      //   }
-      // });
+
       // if have any length of check mean required state is still not filled yet
       if (checkNull) {
         alert('Please Add Items');
       } else {
-        // if filled go to next step
-        // handleSubmit(stateWithAmount);
-        // setState((pre) => ({ ...pre, items: stateWithAmount }));
-        // console.log('items =', items);
         const cloneState = { ...state };
 
         const stateNoAmount = Object.values(stateWithAmount)?.map((obj) => {
@@ -1167,9 +1050,6 @@ function UpdateSalesInvoice({ navigation, route }) {
       </Pressable>
     );
 
-    // useMemo(() => {
-    //   console.log(stepState);
-    // }, [stepState]);
     const [stateWithAmount, setStateWithAmount] = useState({ items: null });
 
     const AskCameraPermission = () =>
@@ -1538,13 +1418,6 @@ function UpdateSalesInvoice({ navigation, route }) {
             w={'96'}
             justifyContent={'center'}
           >
-            {/* <Button
-              onPress={() => handleOpenDynamicSelection('Items', 'currency', urlCurrency)}
-              _text={{ fontWeight: 'bold', color: COLORS.tertiary }}
-              variant={'outline'}
-            >
-              + Add Item
-            </Button> */}
             <Button
               onPress={() => setScanned(true)}
               bg={COLORS.primary}
@@ -1561,16 +1434,6 @@ function UpdateSalesInvoice({ navigation, route }) {
               QR CODE
             </Button>
           </HStack>
-          {/* {openItemList && (
-            <DynamicSelectPage
-              title={'Item List'} // for change dynamic title
-              url={urlItemQRCode} // for change dynamic data in selection
-              open={openItemList} // state for show/hide selection
-              setOpen={setOpenItemList} // for control show/hide
-              setState={setItems} // for send data to outside selection and set it in main state by property
-              property={propertySelected} // name of property for send data to outside
-            />
-          )} */}
         </VStack>
       </React.Fragment>
     );
@@ -1578,25 +1441,8 @@ function UpdateSalesInvoice({ navigation, route }) {
 
   const SuccessMessage = ({ setState }) => {
     const handleBack = () => {
-      // setState(initialState);
-      // refetchData();
-      // if (parentId !== undefined) {
-      //   navigation.replace(title, { filterData: [] });
-      // } else {
-      // if (parentId !== undefined) {
-      //   navigation.pop();
-      // } else {
       navigation.pop();
-      // navigation.replace(title, { filterData: [] });
-      // }
-
-      // }
     };
-    // const handleAddAnother = () => {
-    //   setState(initialState);
-    //   navigation.replace('AddNewSalesInvoice');
-    //   // setStepState(1);
-    // };
 
     return (
       <FadeTransition animated={stepState === 4 && true}>
@@ -1663,18 +1509,6 @@ function UpdateSalesInvoice({ navigation, route }) {
                   {'Back to ' + display_title + ' Page '}
                 </Button>
               )}
-              {/* {parentId === '' && (
-                <Button
-                  rounded={24}
-                  minW={{ base: 'full', lg: 400 }}
-                  bg={COLORS.tertiary}
-                  _text={{ fontWeight: 'bold' }}
-                  _pressed={{ bg: COLORS.tertiary2 }}
-                  onPress={() => handleAddAnother()}
-                >
-                  {'Add another ' + display_title}
-                </Button>
-              )} */}
             </VStack>
           </VStack>
         </Container>
@@ -1691,16 +1525,6 @@ function UpdateSalesInvoice({ navigation, route }) {
     <ContainerStyled>
       <FadeTransition animated={stepState}>
         <Center>
-          {/* {stepState !== 4 && (
-            <Text
-              position={'absolute'}
-              fontWeight={'bold'}
-              color={COLORS.tertiary2}
-              top={6}
-            >
-              {title}
-            </Text>
-          )} */}
           {/* display when step = 1 and do not have any selection displayed */}
           {stepState === 1 && !openSelection && (
             <FirstStep
@@ -1734,16 +1558,6 @@ function UpdateSalesInvoice({ navigation, route }) {
               property={propertySelected} // name of property for send data to outside
             />
           )}
-          {/* {openCustomerType && (
-            <StaticSelectPage
-              title={'Customer Type'} // name of statice selection
-              data={customerTypes} // data of statice selection
-              open={openCustomerType} // state for show/hide selection
-              setOpen={setOpenCustomerType} // for control show/hide
-              setState={setState} // for send data to outside selection and set it in main state by property
-              property={'customer_type'} // name of property for send data to outside
-            />
-          )} */}
         </Center>
       </FadeTransition>
     </ContainerStyled>

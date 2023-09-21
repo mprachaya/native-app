@@ -12,19 +12,17 @@ import {
   VStack,
   View,
 } from 'native-base';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { COLORS } from '../../../../constants/theme';
 import { Edit, PaymentEntry, SaleOrder } from '../../../../constants/icons';
-import { ConnectionLinks, Loading, CreateSelect } from '../../../../components';
+import { ConnectionLinks, Loading } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
-import useUpdate from '../../../../hooks/useUpdate';
 import useConfig from '../../../../config/path';
-import { Alert, ImageBackground, Pressable } from 'react-native';
+import { Alert } from 'react-native';
 import axios from 'axios';
 import ExportPDF from '../../../../_test/ExportPDF';
-import { getDataAPICustom } from '../../../../utils/reformatresponse';
 import { useIsFocused } from '@react-navigation/native';
-// import Export from '../../../../assets/icons/export.png';
+
 // wrap components
 const ContainerStyled = (props) => {
   return (
@@ -56,22 +54,16 @@ function DetailsPage({ route, navigation }) {
   );
   const [openPrint, setOpenPrint] = useState(false);
 
-  // useEffect(() => {
-  //   if (route.params.connectionName) {
-  //     setLinkName(route.params.connectionName);
-  //   }
-  // }, [route]);
-
   const handleOpenUpdate = () => {
     function mapProperties(inputObject) {
       return {
         doctype: 'Sales Invoice',
         customer: inputObject.customer,
         customer_address: inputObject.customer_address || '',
-        // order_type: inputObject.order_type,
+
         contact_person: inputObject.contact_person || '',
         project: inputObject.project || '',
-        // conversion_rate: 1.0,
+
         posting_date: inputObject.posting_date,
         due_date: inputObject.due_date,
         company: inputObject.company,
@@ -87,8 +79,6 @@ function DetailsPage({ route, navigation }) {
           return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
         }),
       };
-      // return { doctype: inputObject.doctype };
-      // return { doctype: inputObject.doctype };
     }
     const newData = mapProperties(data);
     // console.log('newData', newData);
@@ -112,8 +102,6 @@ function DetailsPage({ route, navigation }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => {
-        // handleClose();
-        // navigation.pop();
         if (route.params.connectName) {
           navigation.goBack();
         } else {
@@ -151,8 +139,6 @@ function DetailsPage({ route, navigation }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => setOpenPrint(true)}
-      // onPress={() => handleOpenUpdate()}
-      // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
     >
       <Text
         textAlign='left'
@@ -166,29 +152,7 @@ function DetailsPage({ route, navigation }) {
       </Text>
     </Button>
   );
-  // const CreateSalesOrderButton = () => (
-  //   <Button
-  //     mr={2}
-  //     px={3.5}
-  //     rounded={'xl'}
-  //     variant={'outline'}
-  //     background={COLORS.lightWhite}
-  //     _pressed={{ background: COLORS.white }}
-  //     _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
-  //     onPress={() => navigation.navigate('AddNewSalesOrder', { QuotationState: data })}
-  //   >
-  //     <Text
-  //       textAlign='left'
-  //       maxWidth={24}
-  //       fontWeight={'bold'}
-  //       fontSize={'sm'}
-  //       letterSpacing={1}
-  //       color={'blue.400'}
-  //     >
-  //       Create
-  //     </Text>
-  //   </Button>
-  // );
+
   const StatusButton = ({ status }) => (
     <Button
       mr={2}
@@ -381,8 +345,6 @@ function DetailsPage({ route, navigation }) {
       // }
       // const newData = mapProperties(data);
       // navigation.replace('UpdateSalesOrder', { name: data.name, preState: newData, amend: 1, QuotationState: [] });
-    } else if (status === 'Expired') {
-    } else if (status === 'Ordered') {
     }
   };
 
@@ -424,16 +386,18 @@ function DetailsPage({ route, navigation }) {
   const [doOnce, setDoOnce] = useState(true); // for loading when is focused once
 
   const handleFetchLinks = (path, byName, setState) => {
-    axios
-      .get(baseURL + path + byName)
-      .then((res) => {
-        setState(res.data.message);
-        console.log('message', res.data.message);
-      })
-      .catch((error) => {
-        alert(error.message);
-        console.log(path + byName);
-      });
+    if (path) {
+      axios
+        .get(baseURL + path + byName)
+        .then((res) => {
+          setState(res.data.message);
+          // console.log('message', res.data.message);
+        })
+        .catch((error) => {
+          alert(error.message);
+          // console.log(path + byName);
+        });
+    }
   };
 
   useMemo(() => {
@@ -442,7 +406,7 @@ function DetailsPage({ route, navigation }) {
       console.log('isFocused', isFocused);
       const _links = Object.values(data?.items).filter((item, index) => item.sales_order !== undefined);
       if (_links.length !== 0) {
-        console.log('has connection (Sales Order)');
+        // console.log('has connection (Sales Order)');
         // console.log(_links)
         const LinkCreated = [
           {
@@ -454,7 +418,7 @@ function DetailsPage({ route, navigation }) {
         setDoOnce(false);
         // console.log('link:', LinkCreated);
       } else {
-        console.log('has no connection (Sales Order)');
+        // console.log('has no connection (Sales Order)');
         setDoOnce(false);
       }
     }
@@ -520,19 +484,6 @@ function DetailsPage({ route, navigation }) {
             <BackButton />
           </HStack>
           <HStack h={10}>
-            {/* {data?.status === 'Open' && <CreateSalesOrderButton />} */}
-
-            {/* Create button show when submited */}
-            {/* {data?.status === 'Unpaid' && 
-            (
-              <CreateSelect
-                id={name}
-                // navigateName={'AddNewSalesOrder'}
-                label={'Create'}
-                menus={[{ label: 'Payment', value: 'Payment' }]}
-              />
-            )
-            } */}
             {data?.status !== 'Paid' && data?.status !== 'Cancelled' && data?.status !== 'Overdue' && (
               <StatusButton status={data?.status} />
             )}

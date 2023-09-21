@@ -4,7 +4,6 @@ import { CustomerSkeletonBase, CustomerSkeletonLg } from '../../../../components
 import { Dimensions } from 'react-native';
 import { COLORS } from '../../../../constants/theme';
 import GetScreenSize from '../../../../hooks/GetScreenSize';
-import useConfig from '../../../../config/path';
 
 export function SalesInvoiceList({ data, reload, setReload, returnDataIndex, handleClickDetails }) {
   const { width: SCREEN_WIDTH } = Dimensions.get('window');

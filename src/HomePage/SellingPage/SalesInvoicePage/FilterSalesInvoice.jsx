@@ -2,7 +2,6 @@ import {
   Button,
   Center,
   CheckIcon,
-  Checkbox,
   CloseIcon,
   FormControl,
   HStack,
@@ -10,13 +9,11 @@ import {
   Pressable,
   ScrollView,
   Select,
-  Text,
   VStack,
   View,
 } from 'native-base';
 import React, { useState, useMemo, useEffect } from 'react';
 import { useWindowDimensions } from 'react-native';
-import { Platform } from 'react-native';
 import { COLORS, SIZES } from '../../../../constants/theme';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import useConfig from '../../../../config/path';
@@ -94,10 +91,6 @@ function FilterSalesInvoice({ route, navigation }) {
     plusMonth.setMonth(plusMonth.getMonth() + 1);
     // setAndroidNextMount(() => plusMonth);
     setDateIOSNextMonth(() => plusMonth);
-
-    // const dateNow = new Date();
-    // dateNow.setMonth(dateNow.getMonth());
-    // setDateIOS(dateNow);
   }, []);
 
   useMemo(() => {
