@@ -605,6 +605,10 @@ function AddNewQuotation({ navigation }) {
                     mt={2}
                   >
                     <View w={'container'}>
+                      <FormControl justifyContent={'center'}>
+                        <FormControl.Label>From Date</FormControl.Label>
+                      </FormControl>
+
                       <View alignItems={'start'}>
                         <HStack>
                           <RNDateTimePicker
@@ -622,7 +626,7 @@ function AddNewQuotation({ navigation }) {
                   <HStack justifyContent={'center'}>
                     <View w={'container'}>
                       <FormControl justifyContent={'center'}>
-                        <FormControl.Label mx={7}>To Date</FormControl.Label>
+                        <FormControl.Label ml={12}>To Date</FormControl.Label>
                       </FormControl>
                       <View
                         mx={12}

@@ -83,7 +83,7 @@ function CustomerPage({ route }) {
   }).length;
 
   const handleClickDetails = (name) => {
-    navigation.replace('CustomerDetails', {
+    navigation.navigate('CustomerDetails', {
       name: name,
     });
   };

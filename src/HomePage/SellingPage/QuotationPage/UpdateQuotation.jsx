@@ -435,7 +435,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
           space={SPACING.small}
         >
           <ScrollView>
-            <VStack h={{ base: 700, lg: 1400 }}>
+            <VStack h={1400}>
               <OnPressContainer onPress={() => handleOpenDynamicSelection('Company', 'company', urlCompany)}>
                 <StyledTextField
                   caretHidden
@@ -576,6 +576,10 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                     mt={2}
                   >
                     <View w={'container'}>
+                      <FormControl justifyContent={'center'}>
+                        <FormControl.Label>From Date</FormControl.Label>
+                      </FormControl>
+
                       <View alignItems={'start'}>
                         <HStack>
                           <RNDateTimePicker
