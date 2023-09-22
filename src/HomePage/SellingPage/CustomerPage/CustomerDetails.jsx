@@ -65,7 +65,7 @@ function DetailsPage({ route, navigation }) {
   };
 
   const handleOpenUpdate = () => {
-    navigation.replace('UpdateCustomer', { name: data.name, preState: data });
+    navigation.navigate('UpdateCustomer', { name: data.name, preState: data });
   };
 
   const BackButton = () => (
@@ -80,7 +80,7 @@ function DetailsPage({ route, navigation }) {
       onPress={() => {
         // handleClose();
         navigation.pop();
-        navigation.replace('Customer', { filterData: [] });
+        // navigation.replace('Customer', { filterData: [] });
       }}
     >
       <ChevronLeftIcon />

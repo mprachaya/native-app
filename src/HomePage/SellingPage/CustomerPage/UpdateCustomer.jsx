@@ -676,7 +676,7 @@ function UpdateCustomer({ route, navigation, handleClose }) {
   const SuccessMessage = () => {
     const handleBack = () => {
       navigation.pop();
-      navigation.replace(mainPage, { filterData: [] });
+      // navigation.replace(mainPage, { filterData: [] });
     };
 
     return (

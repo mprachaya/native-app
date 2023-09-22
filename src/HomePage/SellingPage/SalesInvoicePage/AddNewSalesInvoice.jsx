@@ -400,7 +400,7 @@ function AddNewSalesInvoice({ navigation, route }) {
     );
 
     useMemo(() => {
-      if (ctmState?.customer !== undefined || ctmState?.customer !== '') {
+      if (ctmState?.customer !== undefined && ctmState?.customer !== '') {
         axios
           .get(urlCustomer + '/' + ctmState?.customer)
           .then((response) => response.data)

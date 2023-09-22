@@ -1496,7 +1496,7 @@ function UpdateSalesOrder({ navigation, route }) {
   const SuccessMessage = ({ setState }) => {
     const handleBack = () => {
       navigation.pop();
-      navigation.replace(title, { filterData: [] });
+      // navigation.replace(title, { filterData: [] });
     };
     const handleAddAnother = () => {
       setState(initialState);

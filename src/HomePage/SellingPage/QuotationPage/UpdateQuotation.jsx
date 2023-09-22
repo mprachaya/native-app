@@ -300,7 +300,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     const handleBackFirstPage = () => {
       // handleClose();
       navigation.pop();
-      navigation.replace('Quotation', { filterData: [] });
+      // navigation.replace('Quotation', { filterData: [] });
       setState(initialState);
     };
 
@@ -1474,7 +1474,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
       // setState(initialState);
       // refetchData();
       navigation.pop();
-      navigation.replace('Quotation', { filterData: [] });
+      // navigation.replace('Quotation', { filterData: [] });
     };
     const handleAddAnother = () => {
       setState(initialState);

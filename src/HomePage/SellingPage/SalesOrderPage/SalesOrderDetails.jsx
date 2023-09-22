@@ -352,7 +352,7 @@ function DetailsPage({ route, navigation }) {
         };
       }
       const newData = mapProperties(data);
-      navigation.replace('UpdateSalesOrder', { name: data.name, preState: newData, amend: 1, QuotationState: [] });
+      navigation.navigate('UpdateSalesOrder', { name: data.name, preState: newData, amend: 1, QuotationState: [] });
     } else if (status === 'Expired') {
     } else if (status === 'Ordered') {
     } else if (state === 'Expired') {
@@ -433,24 +433,33 @@ function DetailsPage({ route, navigation }) {
   // get connection links
   const [links, setLinks] = useState([]);
   const isFocused = useIsFocused();
+  const [doOnce, setDoOnce] = useState(true);
 
   useMemo(() => {
-    if (baseURL) {
-      // console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
-      axios
-        .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + data?.name)
-        .then((response) => {
-          // Handle the successful response here
+    if (doOnce) {
+      setRefetch(true);
+      if (baseURL) {
+        // console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
+        axios
+          .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + data?.name)
+          .then((response) => {
+            // Handle the successful response here
 
-          // console.log('Response:', getDataAPICustom(response));
-          setLinks(getDataAPICustom(response));
-        })
-        .catch((error) => {
-          // Handle any errors that occur during the request
-          // console.error('Error:', error);
-        });
+            // console.log('Response:', getDataAPICustom(response));
+            setLinks(getDataAPICustom(response));
+          })
+          .catch((error) => {
+            // Handle any errors that occur during the request
+            // console.error('Error:', error);
+          });
+      }
+    } else {
+      setDoOnce(false);
     }
-  }, [baseURL, data, isFocused]);
+  }, [isFocused]);
+  // useMemo(() => {
+
+  // }, [baseURL, data, isFocused]);
 
   if (loading) {
     return <Loading loading={loading} />;

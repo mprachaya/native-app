@@ -13,7 +13,7 @@ import {
   VStack,
   View,
 } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { COLORS } from '../../../../constants/theme';
 import { Edit, SaleInvoice } from '../../../../constants/icons';
 import { Loading } from '../../../../components';
@@ -24,6 +24,7 @@ import { Alert, ImageBackground, Pressable } from 'react-native';
 import Animated from 'react-native-reanimated';
 import axios from 'axios';
 import ExportPDF from '../../../../_test/ExportPDF';
+import { useIsFocused } from '@react-navigation/native';
 // import Export from '../../../../assets/icons/export.png';
 // wrap components
 const ContainerStyled = (props) => {
@@ -90,7 +91,7 @@ function DetailsPage({ route, navigation }) {
     }
     const newData = mapProperties(data);
     // console.log('newData', newData);
-    navigation.replace('UpdateQuotation', { name: data.name, preState: newData, amend: 0 });
+    navigation.navigate('UpdateQuotation', { name: data.name, preState: newData, amend: 0 });
   };
 
   const BackButton = () => (
@@ -374,7 +375,7 @@ function DetailsPage({ route, navigation }) {
         // return { doctype: inputObject.doctype };
       }
       const newData = mapProperties(data);
-      navigation.replace('UpdateQuotation', { name: data.name, preState: newData, amend: 1 });
+      navigation.navigate('UpdateQuotation', { name: data.name, preState: newData, amend: 1 });
     } else if (status === 'Expired') {
     } else if (status === 'Ordered') {
     } else if (state === 'Expired') {
@@ -411,6 +412,16 @@ function DetailsPage({ route, navigation }) {
       data: data,
     });
   };
+  const isFocused = useIsFocused();
+  const [doOnce, setDoOnce] = useState(true);
+
+  useMemo(() => {
+    if (doOnce) {
+      setRefetch(true);
+    } else {
+      setDoOnce(false);
+    }
+  }, [isFocused]);
 
   if (loading) {
     return <Loading loading={loading} />;
