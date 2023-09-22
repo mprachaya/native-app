@@ -44,7 +44,7 @@ function CustomerPage({ route }) {
   });
 
   // column for searching
-  const dataColumn = ['customer_group', 'territory', 'customer_name'];
+  const dataColumn = ['customer_group', 'territory', 'name'];
   const initialsSortBy = {
     creation: false,
     modified: false,

@@ -144,6 +144,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
         <VStack
           m={6}
           justifyContent={'center'}
+
           // height={'100vh'}
         >
           <SearchInput
@@ -171,7 +172,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
           <VStack
             mt={4}
             // m={6}
-            h={1000}
+            h={800}
             bg={'blueGray.100'}
             // mx={{ base: 4 }}
             // w={{ base: '96', lg: 'full' }}
@@ -180,6 +181,7 @@ function TextSearchDropdown({ allData, dataColumn, returnData, returnLength, han
           >
             <FadeTransition animated={focus}>
               <FlatList
+                contentContainerStyle={{ paddingBottom: 200 }}
                 w={'80'}
                 mx={{ base: 0, lg: '30%' }}
                 data={data}

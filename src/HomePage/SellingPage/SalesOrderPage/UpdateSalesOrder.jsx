@@ -310,7 +310,7 @@ function UpdateSalesOrder({ navigation, route }) {
     const handleBackFirstPage = () => {
       // handleClose();
       navigation.pop();
-      navigation.replace(title, { filterData: [] });
+      // navigation.replace(title, { filterData: [] });
       setState(initialState);
     };
 
@@ -405,7 +405,7 @@ function UpdateSalesOrder({ navigation, route }) {
             // console.log(err);
           });
       }
-      console.log(ctmState);
+      // console.log(ctmState);
     }, [ctmState]);
     // set Default value of to Date Object (+ 1 month)
     useMemo(() => {
@@ -984,23 +984,23 @@ function UpdateSalesOrder({ navigation, route }) {
           return newObj;
         });
         cloneState.items = Object.values(stateNoAmount);
-        console.log(cloneState);
-        console.log(urlSubmit);
+        // console.log(cloneState);
+        // console.log(urlSubmit);
         // when status === amend
         if (amend === 1) {
           axios
             .delete(`${urlSubmit}/${name}`)
             .then((response) => {
-              console.log('Quotation deleted successfully:', response.data);
+              // console.log('Quotation deleted successfully:', response.data);
             })
             .catch((error) => {
-              console.error('Error deleting quotation:', error);
+              // console.error('Error deleting quotation:', error);
             });
           axios
             .post(urlSubmit, cloneState)
             .then((response) => console.log('Insert Amend!:', response.data))
             .catch((err) => {
-              console.log('An error occurred. Awkward.. : ', err.message);
+              // console.log('An error occurred. Awkward.. : ', err.message);
               // alert('Status Error: ' + err);
             })
             .finally(() => {
@@ -1012,7 +1012,7 @@ function UpdateSalesOrder({ navigation, route }) {
             .put(urlSubmit + '/' + name, cloneState)
             .then((response) => console.log('Update Normal!:', response.data))
             .catch((err) => {
-              console.log('An error occurred. Awkward.. : ', err.message);
+              // console.log('An error occurred. Awkward.. : ', err.message);
               // alert('Status Error: ' + err);
             })
             .finally(() => {
@@ -1139,7 +1139,7 @@ function UpdateSalesOrder({ navigation, route }) {
             // res.data && alert(`Item exist!:`);
             if (items.items !== null) {
               const duplicated = items.items.find((item) => item.item_code === res.data[0].item_code);
-              console.log('duplicated = ', duplicated);
+              // console.log('duplicated = ', duplicated);
               if (duplicated === undefined) {
                 setItems((pre) => ({
                   items: [...items.items, { item_code: res.data[0].item_code, qty: 1, rate: 1 }],
@@ -1163,7 +1163,7 @@ function UpdateSalesOrder({ navigation, route }) {
           }
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
           alert(`Item not exist!`);
           setQrCodeData('');
         });
@@ -1293,7 +1293,7 @@ function UpdateSalesOrder({ navigation, route }) {
                               const cloneState = Object.values(stateWithAmount).find(
                                 (ele) => ele.item_code !== data.item_code
                               );
-                              console.log('cloneState', cloneState);
+                              // console.log('cloneState', cloneState);
                               // const ModiState = cloneState
                               //   ? Object.values(cloneState).map((d, i) => {
                               //       return { [i]: { item_code: d.item_code, qty: d.qty, rate: d.rate } };
@@ -1498,10 +1498,6 @@ function UpdateSalesOrder({ navigation, route }) {
       navigation.pop();
       // navigation.replace(title, { filterData: [] });
     };
-    const handleAddAnother = () => {
-      setState(initialState);
-      navigation.replace('UpdateSalesOrder', { QuotationState: [] });
-    };
 
     return (
       <FadeTransition animated={stepState === 4 && true}>
@@ -1563,9 +1559,9 @@ function UpdateSalesOrder({ navigation, route }) {
   };
 
   // log when state having changed
-  useMemo(() => {
-    console.log('state: ', state);
-  }, [state]);
+  // useMemo(() => {
+  //   console.log('state: ', state);
+  // }, [state]);
 
   return (
     <ContainerStyled>

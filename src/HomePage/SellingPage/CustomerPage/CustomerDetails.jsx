@@ -13,7 +13,7 @@ import {
   VStack,
   View,
 } from 'native-base';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { COLORS } from '../../../../constants/theme';
 import { Edit } from '../../../../constants/icons';
 import { config } from '../../../../config';
@@ -22,6 +22,7 @@ import useFetch from '../../../../hooks/useFetch';
 import WebView from 'react-native-webview';
 import useUpdate from '../../../../hooks/useUpdate';
 import useConfig from '../../../../config/path';
+import { useIsFocused } from '@react-navigation/native';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -57,10 +58,10 @@ function DetailsPage({ route, navigation }) {
           // Authorization: config.API_TOKEN,
         },
       },
-      baseURL + CUSTOMER + name,
+      baseURL + CUSTOMER + '/' + name,
       tempState,
       () => void 0,
-      () => setRefetch(1)
+      () => setRefetch(true)
     );
   };
 
@@ -141,6 +142,18 @@ function DetailsPage({ route, navigation }) {
       {children}
     </Text>
   );
+
+  const isFocused = useIsFocused();
+  const [doOnce, setDoOnce] = useState(true);
+
+  useMemo(() => {
+    if (doOnce) {
+      setRefetch(true);
+    } else {
+      setDoOnce(false);
+    }
+  }, [isFocused]);
+
   if (loading) {
     return <Loading loading={loading} />;
   }

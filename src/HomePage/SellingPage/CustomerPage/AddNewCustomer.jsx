@@ -648,7 +648,7 @@ function AddNewCustomer({ navigation }) {
                   showSoftInputOnFocus={false}
                 />
               </OnPressContainer>
-              <OnPressContainer
+              {/* <OnPressContainer
                 onPress={() => handleOpenDynamicSelection('Payment Terms', 'payment_terms', urlPaymentTerm)}
               >
                 <StyledTextField
@@ -658,10 +658,11 @@ function AddNewCustomer({ navigation }) {
                   name={'payment_terms'}
                   showSoftInputOnFocus={false}
                 />
-              </OnPressContainer>
+              </OnPressContainer> */}
             </HStack>
             <StyledTextField
               isDisabled
+              isReadOnly
               label={'Credit Limit'}
               placeholder={'Credit Limit'}
             />

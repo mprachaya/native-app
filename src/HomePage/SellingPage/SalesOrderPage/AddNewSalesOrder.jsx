@@ -396,7 +396,7 @@ function AddNewSalesOrder({ navigation, route }) {
             // console.log(err);
           });
       }
-      console.log(ctmState);
+      // console.log(ctmState);
     }, [ctmState]);
     // set Default value of to Date Object (+ 1 month)
     useMemo(() => {
@@ -1086,7 +1086,7 @@ function AddNewSalesOrder({ navigation, route }) {
             // res.data && alert(`Item exist!:`);
             if (items.items !== null) {
               const duplicated = items.items.find((item) => item.item_code === res.data[0].item_code);
-              console.log('duplicated = ', duplicated);
+              // console.log('duplicated = ', duplicated);
               if (duplicated === undefined) {
                 setItems((pre) => ({
                   items: [...items.items, { item_code: res.data[0].item_code, qty: 1, rate: 1 }],
@@ -1110,7 +1110,7 @@ function AddNewSalesOrder({ navigation, route }) {
           }
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
           alert(`Item not exist!`);
           setQrCodeData('');
         });
@@ -1240,7 +1240,7 @@ function AddNewSalesOrder({ navigation, route }) {
                               const cloneState = Object.values(stateWithAmount).find(
                                 (ele) => ele.item_code !== data.item_code
                               );
-                              console.log('cloneState', cloneState);
+                              // console.log('cloneState', cloneState);
                               // const ModiState = cloneState
                               //   ? Object.values(cloneState).map((d, i) => {
                               //       return { [i]: { item_code: d.item_code, qty: d.qty, rate: d.rate } };
@@ -1559,7 +1559,7 @@ function AddNewSalesOrder({ navigation, route }) {
         const newData = mapProperties(QuotationState);
         // console.log('newData', newData);
         setState(newData);
-        console.log(newData);
+        // console.log(newData);
       }
     };
     reformatQuotationState();
@@ -1567,9 +1567,9 @@ function AddNewSalesOrder({ navigation, route }) {
   }, []);
 
   // log when state having changed
-  useMemo(() => {
-    console.log('state: ', state);
-  }, [state]);
+  // useMemo(() => {
+  //   console.log('state: ', state);
+  // }, [state]);
 
   return (
     <ContainerStyled>
