@@ -455,7 +455,7 @@ function AddNewQuotation({ navigation }) {
         >
           <ForwardButton />
         </HStack>
-        <View mt={12}>
+        <View mt={16}>
           <DisplayStep />
         </View>
         <VStack
@@ -826,7 +826,7 @@ function AddNewQuotation({ navigation }) {
         >
           <ForwardButton />
         </HStack>
-        <View mt={12}>
+        <View mt={16}>
           <DisplayStep />
         </View>
         <VStack
@@ -1252,7 +1252,9 @@ function AddNewQuotation({ navigation }) {
         >
           <ForwardButton />
         </HStack>
-        <DisplayStep />
+        <View mt={-1}>
+          <DisplayStep />
+        </View>
         <VStack
           mt={2}
           m={2}

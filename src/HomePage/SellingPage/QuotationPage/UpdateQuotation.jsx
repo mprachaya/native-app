@@ -426,7 +426,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
         >
           <ForwardButton />
         </HStack>
-        <View mt={12}>
+        <View mt={'16'}>
           <DisplayStep />
         </View>
         <VStack
@@ -597,7 +597,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
                   <HStack justifyContent={'center'}>
                     <View w={'container'}>
                       <FormControl justifyContent={'center'}>
-                        <FormControl.Label mx={7}>To Date</FormControl.Label>
+                        <FormControl.Label ml={12}>To Date</FormControl.Label>
                       </FormControl>
                       <View
                         mx={12}
@@ -797,7 +797,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
         >
           <ForwardButton />
         </HStack>
-        <View mt={12}>
+        <View mt={'16'}>
           <DisplayStep />
         </View>
         <VStack
@@ -1182,7 +1182,9 @@ function UpdateQuotation({ route, navigation, handleClose }) {
         >
           <ForwardButton />
         </HStack>
-        <DisplayStep />
+        <View mt={-1}>
+          <DisplayStep />
+        </View>
         <VStack
           mt={2}
           m={2}
