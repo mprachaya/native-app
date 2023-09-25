@@ -42,6 +42,8 @@ export default function useConfig(trigger) {
   const SALES_INVOICE_BY_PAYMENT_ENTRY =
     '/api/method/frappe.erpapp.link_salesinvoice_paymententry.findSalesInvoiceByPayment?pa_name=';
   const PAYMENT_ENTRY_UPDATE_DOCSTATUS = '/api/resource/Payment Entry';
+  const PAYMENT_MODE = '/api/resource/Mode of Payment?fields=["*"]&limit=500';
+  const SUPPLIER = '/api/resource/Supplier?fields=["*"]&limit=500';
 
   const DOCTYPE_EXPORT = '/api/method/frappe.utils.print_format.download_pdf';
   // ?doctype=${docType}&name=${name}&format=${format}`
@@ -97,5 +99,7 @@ export default function useConfig(trigger) {
     PAYMENT_ENTRY,
     SALES_INVOICE_BY_PAYMENT_ENTRY,
     PAYMENT_ENTRY_UPDATE_DOCSTATUS,
+    PAYMENT_MODE,
+    SUPPLIER,
   };
 }

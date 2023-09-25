@@ -42,7 +42,7 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property, isRe
     setState((pre) => ({ ...pre, [name]: value }));
     setOpen(false);
   };
-  const Item = ({ name }) => (
+  const Item = ({ name, active }) => (
     <Button
       mx={2}
       mb={2}
@@ -52,7 +52,7 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property, isRe
       rounded={12}
       bg={'blueGray.50'}
       _pressed={{ bg: 'blueGray.200' }}
-      onPress={() => returnValue(property, name)}
+      onPress={() => active && returnValue(property, name)}
     >
       <Text
         p={2}
@@ -141,7 +141,10 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property, isRe
   if (error) {
     return (
       <ContainerStyled>
-        <HStack justifyContent='center'>
+        <HStack
+          justifyContent='center'
+          m={24}
+        >
           <Text>ERROR</Text>
         </HStack>
       </ContainerStyled>
@@ -263,10 +266,25 @@ function DynamicSelectPage({ title, url, open, setOpen, setState, property, isRe
                 data={list}
                 w={{ base: 'sm', lg: 'lg' }}
                 // showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => <Item name={item.name} />}
+                renderItem={({ item }) => (
+                  <Item
+                    name={item.name}
+                    active={true}
+                  />
+                )}
               />
             ) : (
-              <Text> No data</Text>
+              <FlatList
+                data={[{ name: 'No Data' }]}
+                w={{ base: 'sm', lg: 'lg' }}
+                // showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <Item
+                    name={item.name}
+                    active={false}
+                  />
+                )}
+              />
             )}
           </VStack>
         </Center>

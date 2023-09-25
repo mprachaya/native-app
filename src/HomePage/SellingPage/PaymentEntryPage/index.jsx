@@ -62,7 +62,7 @@ function PaymentEntryPage({ route }) {
 
   const FilterName = 'FilterSalesInvoice';
   const DetailsName = 'PaymentEntryDetails';
-  const AddNewName = 'AddNewSalesInvoice';
+  const AddNewName = 'AddNewPaymentEntry';
 
   const [tempData, setTempData] = useState(null); // for store filtered Data
   // data fetching with custom hook useFetch

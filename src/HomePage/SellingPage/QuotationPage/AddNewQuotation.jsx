@@ -7,10 +7,8 @@ import {
   Container,
   DeleteIcon,
   Divider,
-  FlatList,
   FormControl,
   HStack,
-  Image,
   Input,
   Modal,
   ScrollView,
@@ -103,7 +101,8 @@ function AddNewQuotation({ navigation }) {
     selling_price_list: 'Standard Selling',
     payment_terms_template: '',
     tc_name: '',
-    items: null,
+    // items: null,
+    items: [{ item_code: 'M42 HSS-001', qty: 20, rate: 200 }],
   };
 
   // main state
