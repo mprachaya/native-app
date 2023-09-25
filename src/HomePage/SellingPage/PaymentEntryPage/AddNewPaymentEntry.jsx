@@ -105,6 +105,7 @@ function AddNewPaymentEntry({ navigation, route }) {
     received_amount: 0,
     mode_of_payment: null,
     posting_date: '',
+    paid_from: '113110 - Accounts receivable - Domestic - VCL',
     paid_to: '111100 - Cash in hand - VCL',
     party_type: 'Customer', // Type of party (Customer, Supplier, etc.)
     party: '', // Name of the party
@@ -119,6 +120,7 @@ function AddNewPaymentEntry({ navigation, route }) {
     received_amount: 0,
     mode_of_payment: null,
     posting_date: '',
+    paid_from: '113110 - Accounts receivable - Domestic - VCL',
     paid_to: '111100 - Cash in hand - VCL',
     party_type: 'Customer', // Type of party (Customer, Supplier, etc.)
     party: '', // Name of the party
@@ -162,6 +164,7 @@ function AddNewPaymentEntry({ navigation, route }) {
     // COST_CENTER,
     PAYMENT_MODE,
     SUPPLIER,
+    ACCOUNT,
   } = useConfig(true);
   // const urlCurrency = baseURL + CURRENCY;
   // const urlPriceList = baseURL + PRICE_LIST;
@@ -181,6 +184,7 @@ function AddNewPaymentEntry({ navigation, route }) {
   // const urlContact = baseURL + CONTACT;
   const urlPaymentMode = baseURL + PAYMENT_MODE;
   const urlSupplier = baseURL + SUPPLIER;
+  const urlAccount = baseURL + ACCOUNT;
   // handle dynamic property for multi selection in page
   const [propertySelected, setPropertySelected] = useState('');
 
@@ -518,16 +522,39 @@ function AddNewPaymentEntry({ navigation, route }) {
                     />
                   </View>
                 </View>
-                <OnPressContainer
-                  onPress={() => handleOpenDynamicSelection('Mode of Payment', 'mode_of_payment', urlPaymentMode)}
-                >
-                  <StyledTextField
-                    caretHidden
-                    label={'Mode of Payment'}
-                    value={ctmState?.mode_of_payment !== null ? ctmState?.mode_of_payment : ''}
-                    showSoftInputOnFocus={false} // disable toggle keyboard
-                  />
-                </OnPressContainer>
+                {ctmState.payment_type === 'Internal Transfer' ? (
+                  <React.Fragment>
+                    <OnPressContainer
+                      onPress={() => handleOpenDynamicSelection('Payment From', 'paid_from', urlAccount)}
+                    >
+                      <StyledTextField
+                        caretHidden
+                        label={'Payment From'}
+                        value={ctmState?.paid_from !== null ? ctmState?.paid_from : ''}
+                        showSoftInputOnFocus={false} // disable toggle keyboard
+                      />
+                    </OnPressContainer>
+                    <OnPressContainer onPress={() => handleOpenDynamicSelection('Payment From', 'paid_to', urlAccount)}>
+                      <StyledTextField
+                        caretHidden
+                        label={'Payment To'}
+                        value={ctmState?.paid_to !== null ? ctmState?.paid_to : ''}
+                        showSoftInputOnFocus={false} // disable toggle keyboard
+                      />
+                    </OnPressContainer>
+                  </React.Fragment>
+                ) : (
+                  <OnPressContainer
+                    onPress={() => handleOpenDynamicSelection('Mode of Payment', 'mode_of_payment', urlPaymentMode)}
+                  >
+                    <StyledTextField
+                      caretHidden
+                      label={'Mode of Payment'}
+                      value={ctmState?.mode_of_payment !== null ? ctmState?.mode_of_payment : ''}
+                      showSoftInputOnFocus={false} // disable toggle keyboard
+                    />
+                  </OnPressContainer>
+                )}
 
                 <StyledTextField
                   label={'Paid Amount'}
