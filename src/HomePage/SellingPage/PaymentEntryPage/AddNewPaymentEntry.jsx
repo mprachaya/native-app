@@ -3,17 +3,10 @@ import {
   Button,
   Center,
   CheckIcon,
-  Checkbox,
-  ChevronLeftIcon,
   Container,
-  DeleteIcon,
-  Divider,
-  // FlatList,
   FormControl,
   HStack,
-  // Image,
   Input,
-  Modal,
   ScrollView,
   Select,
   Text,
@@ -23,13 +16,12 @@ import {
 } from 'native-base';
 import React, { useState, useMemo, useEffect } from 'react';
 import { DynamicSelectPage } from '../../../../components';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS, SIZES, SPACING } from '../../../../constants/theme';
 import FadeTransition from '../../../../components/FadeTransition';
-import { Platform, Pressable, StyleSheet } from 'react-native';
+import { Pressable } from 'react-native';
 import useConfig from '../../../../config/path';
-import axios from 'axios';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
+import axios from 'axios';
 
 // wrap components
 const ContainerStyled = (props) => {
@@ -92,8 +84,6 @@ function AddNewPaymentEntry({ navigation, route }) {
     if (route.params?.defaultData) setState(route.params.defaultData);
   }, [route.params]);
 
-  // const { QuotationState } = route.params;
-
   // state for show / hide selection (dynamically)
   const [openSelection, setOpenSelection] = useState(false);
 
@@ -148,55 +138,31 @@ function AddNewPaymentEntry({ navigation, route }) {
   // url path for fetching selection data
   const {
     baseURL,
+    PAYMENT_ENTRY_IN_UP,
     CUSTOMER, //
-    // ADDRESS, //
-    // CONTACT, //
-    // CURRENCY, //
-    // PRICE_LIST, //
-    // PAYMENT_TERMS_TEMPLATES, //
-    // TERMS_AND_CONDITIONS, //
-    // ITEM_QRCODE, //
-    // SALES_INVOICE, //
     COMPANY, //
-    // PROJECT, //
-    // WAREHOUSE, //
-    // SALES_PARTNER, //
-    // COST_CENTER,
     PAYMENT_MODE,
     SUPPLIER,
     ACCOUNT,
   } = useConfig(true);
-  // const urlCurrency = baseURL + CURRENCY;
-  // const urlPriceList = baseURL + PRICE_LIST;
-  // const urlPaymentTermTemplate = baseURL + PAYMENT_TERMS_TEMPLATES;
-  // const urlTermAndConditions = baseURL + TERMS_AND_CONDITIONS;
-  // const urlItemQRCode = baseURL + ITEM_QRCODE;
-  // const urlSubmit = baseURL + SALES_INVOICE;
-  const urlCompany = baseURL + COMPANY;
-  // const urlProject = baseURL + PROJECT;
-  // const urlWarehouse = baseURL + WAREHOUSE;
-  // const urlSalesPartner = baseURL + SALES_PARTNER;
-  // const urlCostCenter = baseURL + COST_CENTER;
 
+  const urlCompany = baseURL + COMPANY;
   const urlCustomer = baseURL + CUSTOMER;
-  // const urlLead = baseURL + LEAD;
-  // const urlAddress = baseURL + ADDRESS;
-  // const urlContact = baseURL + CONTACT;
   const urlPaymentMode = baseURL + PAYMENT_MODE;
   const urlSupplier = baseURL + SUPPLIER;
   const urlAccount = baseURL + ACCOUNT;
   // handle dynamic property for multi selection in page
   const [propertySelected, setPropertySelected] = useState('');
 
-  function sumAmount(obj) {
-    let totalAmount = 0;
-    for (let key in obj) {
-      if (obj[key] !== null && typeof obj[key] === 'object' && 'amount' in obj[key]) {
-        totalAmount += parseFloat(obj[key].amount);
-      }
-    }
-    return totalAmount.toFixed(2);
-  }
+  // function sumAmount(obj) {
+  //   let totalAmount = 0;
+  //   for (let key in obj) {
+  //     if (obj[key] !== null && typeof obj[key] === 'object' && 'amount' in obj[key]) {
+  //       totalAmount += parseFloat(obj[key].amount);
+  //     }
+  //   }
+  //   return totalAmount.toFixed(2);
+  // }
 
   // handle change property when open selection (dynamic)
   const getValueFromSelection = (name) => {
@@ -214,24 +180,34 @@ function AddNewPaymentEntry({ navigation, route }) {
   const FirstStep = ({ state, setState }) => {
     // sub state
     const [ctmState, setCtmState] = useState(state);
-    const [customer, setCustomer] = useState(null);
     const [dateIOS, setDateIOS] = useState(new Date());
     // filter address
     // start for required validation
-    const [requiredState] = useState(['company', 'customer']);
+    const [requiredState] = useState(['company', 'party']);
     const [nullState, setNullState] = useState({
       company: false,
-      customer: false,
+      party: false,
     });
 
     const handleCheckRequired = () => {
-      requiredState.forEach((st_name) => {
-        if (!ctmState[st_name]) {
-          setNullState((pre) => ({ ...pre, [st_name]: true }));
-        } else {
-          setNullState((pre) => ({ ...pre, [st_name]: false }));
-        }
-      });
+      if (ctmState.payment_type !== 'Internal Transfer') {
+        requiredState.forEach((st_name) => {
+          if (!ctmState[st_name]) {
+            setNullState((pre) => ({ ...pre, [st_name]: true }));
+          } else {
+            setNullState((pre) => ({ ...pre, [st_name]: false }));
+          }
+        });
+      } else {
+        requiredState.forEach((st_name) => {
+          if (!ctmState[st_name] && st_name !== 'party') {
+            setNullState((pre) => ({ ...pre, [st_name]: true }));
+          } else {
+            setNullState((pre) => ({ ...pre, [st_name]: false }));
+          }
+        });
+      }
+
       // console.log(nullState);
     };
     const onChangeDate = (event, selectedDate) => {
@@ -256,17 +232,47 @@ function AddNewPaymentEntry({ navigation, route }) {
       handleCheckRequired();
       // if column required is not filled push property name into check array
       let check = [];
-      requiredState.forEach((st_name) => {
-        if (!ctmState[st_name]) {
-          check.push(st_name);
-        }
-      });
+      if (ctmState.payment_type !== 'Internal Transfer') {
+        requiredState.forEach((st_name) => {
+          if (!ctmState[st_name]) {
+            check.push(st_name);
+          }
+        });
+      } else {
+        // check case payment type = Internal Transfer
+        requiredState.forEach((st_name) => {
+          if (!ctmState[st_name] && st_name !== 'party') {
+            check.push(st_name);
+          }
+        });
+      }
+      // console.log(check);
       // if have any length of check mean required state is still not filled yet
       if (check.length !== 0) {
       } else {
-        // if filled go to next step
-        setStepState((post) => post + 1);
-        setState(ctmState);
+        if (ctmState.payment_type !== 'Internal Transfer') {
+          // alert(`Submit :${ctmState.payment_type}`);
+          if (ctmState) {
+            console.log(baseURL + PAYMENT_ENTRY_IN_UP);
+            axios
+              .post(baseURL + PAYMENT_ENTRY_IN_UP, ctmState)
+              .then((res) => alert('Create Successfully'))
+              .catch((err) => alert(err));
+          }
+        } else {
+          // alert('Submit Internal Transfer! ');
+          let { party, ...formatData } = ctmState;
+          // console.log(formatData);
+          if (formatData) {
+            axios
+              .post(baseURL + PAYMENT_ENTRY_IN_UP, formatData)
+              .then((res) => alert('Create Successfully'))
+              .catch((err) => alert(err));
+          }
+        }
+
+        // setStepState((post) => post + 1);
+        // setState(ctmState);
       }
     };
 
@@ -346,22 +352,27 @@ function AddNewPaymentEntry({ navigation, route }) {
         <View pointerEvents='none'>{children}</View>
       </Pressable>
     );
+    useEffect(() => {
+      //  const plusMonth = new Date(state.due_date);
+      //  plusMonth.setMonth(plusMonth.getMonth());
+      //  setAndroidNextMount(() => plusMonth);
 
-    // useMemo(() => {
-    //   if (ctmState?.customer !== undefined || ctmState?.customer !== '') {
-    //     axios
-    //       .get(urlCustomer + '/' + ctmState?.customer)
-    //       .then((response) => response.data)
-    //       .then((res) => {
-    //         setCustomer(res.data);
-    //       })
-    //       .catch((err) => {
-    //         alert(err);
-    //       });
-    //   }
-    //   // console.log(ctmState);
-    // }, [ctmState]);
-    // set Default value of to Date Object (+ 1 month)
+      //  const dateNow = new Date(state.posting_date);
+      //  dateNow.setMonth(dateNow.getMonth());
+      //  setDateIOS(dateNow);
+
+      const currentDate = new Date();
+
+      const yyyy = currentDate.getFullYear();
+      let mm = currentDate.getMonth() + 1; // Months start at 0!
+      let dd = currentDate.getDate();
+      if (dd < 10) dd = '0' + dd;
+      if (mm < 10) mm = '0' + mm;
+      const formattedToday = yyyy + '-' + mm + '-' + dd;
+      setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
+      // setDateIOS(new Date(formattedToday));
+    }, []);
+
     useMemo(() => {
       console.log(ctmState);
     }, [ctmState]);
@@ -414,18 +425,21 @@ function AddNewPaymentEntry({ navigation, route }) {
                     switch (itemValue) {
                       case 'Receive':
                         {
-                          setCtmState((pre) => ({ ...pre, payment_type: itemValue, party_type: 'Customer' }));
+                          const NewObj = { ...initialState, payment_type: itemValue, party_type: 'Customer' };
+                          setCtmState(NewObj);
                         }
                         break;
 
                       case 'Pay':
                         {
-                          setCtmState((pre) => ({ ...pre, payment_type: itemValue, party_type: 'Supplier' }));
+                          const NewObj = { ...initialState, payment_type: itemValue, party_type: 'Supplier' };
+                          setCtmState(NewObj);
                         }
                         break;
                       case 'Internal Transfer':
                         {
-                          setCtmState((pre) => ({ ...pre, payment_type: itemValue, party_type: 'Customer' }));
+                          const NewObj = { ...initialState, payment_type: itemValue, party_type: 'Customer' };
+                          setCtmState(NewObj);
                         }
                         break;
                     }
@@ -500,7 +514,7 @@ function AddNewPaymentEntry({ navigation, route }) {
                   >
                     <StyledTextField
                       caretHidden
-                      isRequired={nullState.customer}
+                      isRequired={nullState.party}
                       label={ctmState.party_type === 'Customer' ? 'Customer*' : 'Supplier*'}
                       value={ctmState?.party}
                       showSoftInputOnFocus={false} // disable toggle keyboard
@@ -562,16 +576,36 @@ function AddNewPaymentEntry({ navigation, route }) {
                   value={ctmState?.paid_amount ? String(ctmState?.paid_amount) : '0'}
                   handleChange={(value) => {
                     if (value[0] === '0') {
-                      setCtmState((pre) => ({ ...pre, paid_amount: value.substring(1) }));
+                      setCtmState((pre) => ({
+                        ...pre,
+                        paid_amount: value.substring(1),
+                        payment_received: value.substring(1), // Amount received
+                        received_amount: value.substring(1),
+                      }));
                     } else if (value === '' && String(value).length === 0) {
+                      setCtmState((pre) => ({
+                        ...pre,
+                        paid_amount: 0,
+                        payment_received: 0, // Amount received
+                        received_amount: 0,
+                      }));
                       // console.log('empty');
                     } else {
                       let lastIndex = value.length - 1;
                       if (value[lastIndex] === '.') {
-                        console.log('value with . = ', value);
-                        setCtmState((pre) => ({ ...pre, paid_amount: value }));
+                        setCtmState((pre) => ({
+                          ...pre,
+                          paid_amount: value,
+                          payment_received: value, // Amount received
+                          received_amount: value,
+                        }));
                       } else {
-                        setCtmState((pre) => ({ ...pre, paid_amount: parseFloat(value) }));
+                        setCtmState((pre) => ({
+                          ...pre,
+                          paid_amount: parseFloat(value),
+                          payment_received: parseFloat(value), // Amount received
+                          received_amount: parseFloat(value),
+                        }));
                       }
                     }
                   }}

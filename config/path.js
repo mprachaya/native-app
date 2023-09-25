@@ -45,6 +45,8 @@ export default function useConfig(trigger) {
   const PAYMENT_MODE = '/api/resource/Mode of Payment?fields=["*"]&limit=500';
   const SUPPLIER = '/api/resource/Supplier?fields=["*"]&limit=500';
   const ACCOUNT = '/api/resource/Account?limit=500';
+  const PAYMENT_ENTRY_IN_UP = '/api/resource/Payment Entry';
+
   const DOCTYPE_EXPORT = '/api/method/frappe.utils.print_format.download_pdf';
   // ?doctype=${docType}&name=${name}&format=${format}`
   // ex. const docType = 'Quotation'; const name = 'SAL-QTN-2023-00001'; const format = 'test-qt';
@@ -102,5 +104,6 @@ export default function useConfig(trigger) {
     PAYMENT_MODE,
     SUPPLIER,
     ACCOUNT,
+    PAYMENT_ENTRY_IN_UP,
   };
 }
