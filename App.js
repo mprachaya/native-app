@@ -50,6 +50,7 @@ import FilterSalesInvoice from './src/HomePage/SellingPage/SalesInvoicePage/Filt
 import PaymentEntryPage from './src/HomePage/SellingPage/PaymentEntryPage';
 import PaymentEntryDetails from './src/HomePage/SellingPage/PaymentEntryPage/PaymentEntryDetails';
 import AddNewPaymentEntry from './src/HomePage/SellingPage/PaymentEntryPage/AddNewPaymentEntry';
+import UpdatePaymentEntry from './src/HomePage/SellingPage/PaymentEntryPage/UpdatePaymentEntry';
 
 // etc
 import QRScannerAutofill from './_test/QRScannerAutofill';
@@ -542,6 +543,20 @@ export default function App() {
                 header: () => (
                   <NavHeader
                     pageName={'Create New Payment Entry'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='UpdatePaymentEntry'
+              component={UpdatePaymentEntry}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Edit Payment Entry'}
                     noHeader={true}
                   />
                 ),

@@ -386,7 +386,7 @@ function DetailsPage({ route, navigation }) {
   const [doOnce, setDoOnce] = useState(true); // for loading when is focused once
 
   const handleFetchLinks = (path, byName, setState) => {
-    if (path) {
+    if (path && baseURL) {
       axios
         .get(baseURL + path + byName)
         .then((res) => {
@@ -401,30 +401,34 @@ function DetailsPage({ route, navigation }) {
   };
 
   useMemo(() => {
-    if (data.length !== 0 && doOnce) {
+    // console.log('is Focused:', isFocused);
+    if ((data !== undefined && doOnce && baseURL) || isFocused) {
       handleFetchLinks(PAYMENT_BY_SALES_INVOICE, data.name, setLinksPayment);
-      // console.log('isFocused', isFocused);
-      const _links = Object.values(data?.items).filter((item, index) => item.sales_order !== undefined);
-      if (_links.length !== 0 && _links[0].sales_order !== '') {
-        // console.log('has connection (Sales Order)');
-        // console.log(_links)
-        console.log('link:', _links);
-        const LinkCreated = [
-          {
-            parent: _links[0].sales_order,
-            transaction_date: _links[0].creation.slice(0, 10),
-          },
-        ];
-        console.log('LinkCreated:', LinkCreated);
-        setLinks(LinkCreated);
-        setDoOnce(false);
-        // console.log('link:', LinkCreated);
-      } else {
-        // console.log('has no connection (Sales Order)');
-        setDoOnce(false);
+      const temp = { ...data.items };
+      if (temp) {
+        const _links = Object.values(temp).filter((item, index) => item.sales_order !== undefined);
+        if (_links.length !== 0 && _links[0].sales_order !== '') {
+          // console.log('has connection (Sales Order)');
+          // console.log(_links)
+          console.log('link:', _links);
+          const LinkCreated = [
+            {
+              parent: _links[0].sales_order,
+              transaction_date: _links[0].creation.slice(0, 10),
+            },
+          ];
+          console.log('LinkCreated:', LinkCreated);
+          setLinks(LinkCreated);
+          setDoOnce(false);
+          // console.log('link:', LinkCreated);
+        }
+        if (isFocused) {
+          // console.log('has no connection (Sales Order)');
+          setDoOnce(true);
+        }
       }
     }
-  }, [data, isFocused]);
+  }, [data, isFocused, baseURL]);
   // refetch when back to page
   useMemo(() => {
     setRefetch(true);

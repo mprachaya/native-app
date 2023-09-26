@@ -9,6 +9,7 @@ import {
   Input,
   ScrollView,
   Select,
+  Spinner,
   Text,
   VStack,
   View,
@@ -68,7 +69,7 @@ const StyledTextField = (props) => {
   );
 };
 // main component
-function AddNewPaymentEntry({ navigation, route }) {
+function UpdatePaymentEntry({ navigation, route }) {
   // page name display
   const display_title = 'Payment Entry';
   //for navigation
@@ -77,12 +78,7 @@ function AddNewPaymentEntry({ navigation, route }) {
   const [stepState, setStepState] = useState(1);
   // max of steps
   const maxStep = 1;
-  // const [parentId, setParentId] = useState('');
   // Check if route.params is defined
-  // useEffect(() => {
-  //   if (route.params?.CreateFrom) setParentId(route.params.CreateFrom);
-  //   if (route.params?.defaultData) setState(route.params.defaultData);
-  // }, [route.params]);
 
   // state for show / hide selection (dynamically)
   const [openSelection, setOpenSelection] = useState(false);
@@ -102,33 +98,33 @@ function AddNewPaymentEntry({ navigation, route }) {
     company: '', // Name of your company
   };
 
-  // initial state with ref
-  const initialStateWithRef = {
-    payment_type: 'Receive',
-    payment_received: 0, // Amount received
-    paid_amount: 0,
-    received_amount: 0,
-    mode_of_payment: null,
-    posting_date: '',
-    paid_from: '113110 - Accounts receivable - Domestic - VCL',
-    paid_to: '111100 - Cash in hand - VCL',
-    party_type: 'Customer', // Type of party (Customer, Supplier, etc.)
-    party: '', // Name of the party
-    company: '', // Name of your company
-    references: [
-      // Add references to link with Sales Invoices or other documents
-      {
-        doctype: 'Payment Entry Reference',
-        reference_doctype: 'Sales Invoice',
-        reference_name: '',
-        allocated_amount: 0,
-        due_date: '',
-        account: '113110 - Accounts receivable - Domestic - VCL',
-        party_type: '',
-        party: '',
-      },
-    ],
-  };
+  // // initial state with ref
+  // const initialStateWithRef = {
+  //   payment_type: 'Receive',
+  //   payment_received: 0, // Amount received
+  //   paid_amount: 0,
+  //   received_amount: 0,
+  //   mode_of_payment: null,
+  //   posting_date: '',
+  //   paid_from: '113110 - Accounts receivable - Domestic - VCL',
+  //   paid_to: '111100 - Cash in hand - VCL',
+  //   party_type: 'Customer', // Type of party (Customer, Supplier, etc.)
+  //   party: '', // Name of the party
+  //   company: '', // Name of your company
+  //   references: [
+  //     // Add references to link with Sales Invoices or other documents
+  //     {
+  //       doctype: 'Payment Entry Reference',
+  //       reference_doctype: 'Sales Invoice',
+  //       reference_name: '',
+  //       allocated_amount: 0,
+  //       due_date: '',
+  //       account: '113110 - Accounts receivable - Domestic - VCL',
+  //       party_type: '',
+  //       party: '',
+  //     },
+  //   ],
+  // };
   // main state
   const [state, setState] = useState(initialState);
   // for handle selection title (dynamic)
@@ -165,6 +161,69 @@ function AddNewPaymentEntry({ navigation, route }) {
     setUrlSelected(url);
     setOpenSelection(true);
   };
+
+  const [updateName, setUpdateName] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (route.params?.name) setUpdateName(route.params?.name);
+  }, [route.params]);
+  useEffect(() => {
+    if (updateName !== null && baseURL) {
+      // console.log(updateName);
+      setLoading(true);
+      axios
+        .get(baseURL + PAYMENT_ENTRY_IN_UP + '/' + updateName)
+        .then((response) => {
+          console.log('res', response.data.data);
+          response.data.data.references
+            ? setState({
+                payment_type: 'Receive',
+                payment_received: response.data.data?.paid_amount, // Amount received
+                paid_amount: response.data.data?.paid_amount,
+                received_amount: response.data.data?.paid_amount,
+                mode_of_payment: response.data.data?.mode_of_payment || null,
+                posting_date: response.data.data?.posting_date,
+                party: response.data.data?.party,
+                company: response.data.data?.company,
+                paid_from: response.data.data?.paid_from,
+                paid_to: response.data.data?.paid_to,
+                party_type: response.data.data?.party_type,
+                references: [
+                  // Add references to link with Sales Invoices or other documents
+                  {
+                    doctype: 'Payment Entry Reference',
+                    reference_doctype: 'Sales Invoice',
+                    reference_name: response.data.data.references[0].reference_name,
+                    allocated_amount: response.data.data.references[0].allocated_amount,
+                    due_date: response.data.data.references[0].due_date,
+                    account: response.data.data.references[0].account,
+                    party_type: response.data.data?.party_type,
+                    party: response.data.data?.party,
+                  },
+                ],
+              })
+            : setState({
+                payment_type: 'Receive',
+                payment_received: response.data.data?.total, // Amount received
+                paid_amount: response.data.data?.total || 0,
+                received_amount: response.data.data?.total || 0,
+                mode_of_payment: response.data.data?.mode_of_payment,
+                posting_date: response.data.data?.posting_date,
+                party: response.data.data?.party,
+                company: response.data.data?.company,
+                paid_from: response.data.data?.paid_from,
+                paid_to: response.data.data?.paid_to,
+                party_type: response.data.data?.party_type,
+              });
+        })
+        .catch((error) => alert(error))
+        .finally(() => {
+          setLoading(false);
+        });
+      // console.log(baseURL + PAYMENT_ENTRY_IN_UP + '/' + route.params?.name);
+      // setState(route.params.preState);
+    }
+  }, [updateName, baseURL]);
 
   // sub component first step
   const FirstStep = ({ state, setState }) => {
@@ -246,7 +305,7 @@ function AddNewPaymentEntry({ navigation, route }) {
             // console.log(baseURL + PAYMENT_ENTRY_IN_UP);
             // console.log(ctmState);
             axios
-              .post(baseURL + PAYMENT_ENTRY_IN_UP, ctmState)
+              .put(baseURL + PAYMENT_ENTRY_IN_UP + '/' + updateName, ctmState)
               .then((res) => {
                 // alert('Create Successfully');
                 setStepState((post) => post + 1);
@@ -259,7 +318,7 @@ function AddNewPaymentEntry({ navigation, route }) {
           // console.log(formatData);
           if (formatData) {
             axios
-              .post(baseURL + PAYMENT_ENTRY_IN_UP, formatData)
+              .put(baseURL + PAYMENT_ENTRY_IN_UP + '/' + updateName, formatData)
               .then((res) => {
                 // alert('Create Successfully');
                 setStepState((post) => post + 1);
@@ -275,7 +334,7 @@ function AddNewPaymentEntry({ navigation, route }) {
 
     const handleBackFirstPage = () => {
       navigation.goBack();
-      setState(initialState);
+      // setState(initialState);
     };
 
     const handleOpenDynamicSelection = (title, name, url) => {
@@ -350,21 +409,23 @@ function AddNewPaymentEntry({ navigation, route }) {
       </Pressable>
     );
     useEffect(() => {
-      const currentDate = new Date();
+      if (state.posting_date) {
+        const currentDate = new Date(state.posting_date);
 
-      const yyyy = currentDate.getFullYear();
-      let mm = currentDate.getMonth() + 1; // Months start at 0!
-      let dd = currentDate.getDate();
-      if (dd < 10) dd = '0' + dd;
-      if (mm < 10) mm = '0' + mm;
-      const formattedToday = yyyy + '-' + mm + '-' + dd;
-      setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
-      // setDateIOS(new Date(formattedToday));
-    }, []);
+        const yyyy = currentDate.getFullYear();
+        let mm = currentDate.getMonth() + 1; // Months start at 0!
+        let dd = currentDate.getDate();
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        const formattedToday = yyyy + '-' + mm + '-' + dd;
+        setCtmState((pre) => ({ ...pre, posting_date: formattedToday }));
+        setDateIOS(new Date(state.posting_date));
+      }
+    }, [state]);
 
-    // useMemo(() => {
-    //   console.log(ctmState);
-    // }, [ctmState]);
+    useMemo(() => {
+      console.log(ctmState);
+    }, [ctmState]);
 
     return (
       <React.Fragment>
@@ -658,54 +719,21 @@ function AddNewPaymentEntry({ navigation, route }) {
                 color='emerald.500'
               />
             </Box>
-            <Text
-              textAlign={'center'}
-              color={COLORS.gray}
-              textWeight={'bold'}
-              fontSize={24}
-            >
-              {'Add ' + display_title + '\nSuccess!'}
-            </Text>
 
             <VStack
               mt={{ base: 16, lg: 24 }}
               space={6}
             >
-              {route.params?.defaultData !== undefined ? (
-                <Button
-                  rounded={24}
-                  minW={{ base: 'full', lg: 400 }}
-                  bg={COLORS.white}
-                  _text={{ color: COLORS.gray }}
-                  _pressed={{ bg: 'blueGray.200' }}
-                  onPress={() => handleBack()}
-                >
-                  {'Back '}
-                </Button>
-              ) : (
-                <Button
-                  rounded={24}
-                  minW={{ base: 'full', lg: 400 }}
-                  bg={COLORS.white}
-                  _text={{ color: COLORS.gray }}
-                  _pressed={{ bg: 'blueGray.200' }}
-                  onPress={() => handleBack()}
-                >
-                  {'Back to ' + display_title + ' Page '}
-                </Button>
-              )}
-              {route.params?.defaultData === undefined && (
-                <Button
-                  rounded={24}
-                  minW={{ base: 'full', lg: 400 }}
-                  bg={COLORS.tertiary}
-                  _text={{ fontWeight: 'bold' }}
-                  _pressed={{ bg: COLORS.tertiary2 }}
-                  onPress={() => handleAddAnother()}
-                >
-                  {'Add another ' + display_title}
-                </Button>
-              )}
+              <Button
+                rounded={24}
+                minW={{ base: 'full', lg: 400 }}
+                bg={COLORS.white}
+                _text={{ color: COLORS.gray }}
+                _pressed={{ bg: 'blueGray.200' }}
+                onPress={() => navigation.pop()}
+              >
+                {'Back to ' + display_title + ' Page '}
+              </Button>
             </VStack>
           </VStack>
         </Container>
@@ -713,24 +741,32 @@ function AddNewPaymentEntry({ navigation, route }) {
     );
   };
 
-  const [doOnce, setDoOnce] = useState(true);
+  // const [doOnce, setDoOnce] = useState(true);
 
-  useMemo(() => {
-    const reformatData = () => {
-      if (route.params?.defaultData) {
-        // console.log('newData', newData);
-        setState(route.params?.defaultData);
-        // console.log('from Sales Invoice:', route.params?.defaultData);
-        // console.log(newData);
-      } else {
-        setState(initialState);
-      }
-    };
-    if (doOnce) {
-      reformatData();
-      setDoOnce(false);
-    }
-  }, [route.params]);
+  // useMemo(() => {
+  //   const reformatData = () => {
+  //     if (route.params?.defaultData) {
+  //       // console.log('newData', newData);
+  //       setState(route.params?.defaultData);
+  //       // console.log('from Sales Invoice:', route.params?.defaultData);
+  //       // console.log(newData);
+  //     } else {
+  //       setState(initialState);
+  //     }
+  //   };
+  //   if (doOnce) {
+  //     reformatData();
+  //     setDoOnce(false);
+  //   }
+  // }, [route.params]);
+
+  if (loading) {
+    return (
+      <View m={24}>
+        <Spinner />
+      </View>
+    );
+  }
 
   // log when state having changed
   // useMemo(() => {
@@ -766,4 +802,4 @@ function AddNewPaymentEntry({ navigation, route }) {
   );
 }
 
-export default AddNewPaymentEntry;
+export default UpdatePaymentEntry;

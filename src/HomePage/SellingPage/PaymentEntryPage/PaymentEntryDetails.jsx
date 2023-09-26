@@ -59,40 +59,8 @@ function DetailsPage({ route, navigation }) {
   const [openPrint, setOpenPrint] = useState(false);
 
   const handleOpenUpdate = () => {
-    function mapProperties(inputObject) {
-      return {
-        doctype: 'Sales Invoice',
-        customer: inputObject.customer,
-        customer_address: inputObject.customer_address || '',
-
-        contact_person: inputObject.contact_person || '',
-        project: inputObject.project || '',
-
-        posting_date: inputObject.posting_date,
-        due_date: inputObject.due_date,
-        company: inputObject.company,
-        currency: inputObject.currency,
-        cost_center: inputObject.cost_center || '',
-        update_stock: inputObject.update_stock || '0',
-        set_warehouse: inputObject.set_warehouse || '',
-        selling_price_list: inputObject.selling_price_list || '',
-        payment_terms_template: inputObject.payment_terms_template || '',
-        tc_name: inputObject.tc_name || '',
-        sales_partner: inputObject.sales_partner || '',
-        items: Object.values(inputObject.items).map((it) => {
-          return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
-        }),
-      };
-    }
-    const newData = mapProperties(data);
-    // console.log('newData', newData);
-    const sales_order = Object.values(links).map((link) => link.parent);
-    let removeBlanketSO = String(sales_order).replace(/\[|\]/g, '');
     navigation.navigate('UpdatePaymentEntry', {
       name: data.name,
-      preState: newData,
-      amend: 0,
-      CreateFrom: removeBlanketSO !== undefined ? removeBlanketSO : undefined,
     });
   };
 
@@ -308,35 +276,6 @@ function DetailsPage({ route, navigation }) {
         { cancelable: false } // Prevents users from dismissing the alert by tapping outside of it
       );
     }
-    // else if (status === 'Cancelled') {
-    //   // function mapProperties(inputObject) {
-    //   //   return {
-    //   //     doctype: 'Sales Invoice',
-    //   //     customer: inputObject.customer,
-    //   //     customer_address: inputObject.customer_address || '',
-    //   //     order_type: inputObject.order_type,
-    //   //     contact_person: inputObject.contact_person || '',
-    //   //     project: inputObject.project,
-    //   //     conversion_rate: inputObject.conversion_rate,
-    //   //     transaction_date: inputObject.transaction_date,
-    //   //     delivery_date: inputObject.delivery_date,
-    //   //     company: inputObject.company,
-    //   //     currency: inputObject.currency,
-    //   //     set_warehouse: inputObject.set_warehouse,
-    //   //     selling_price_list: inputObject.selling_price_list || '',
-    //   //     payment_terms_template: inputObject.payment_terms_template || '',
-    //   //     tc_name: inputObject.tc_name || '',
-    //   //     sales_partner: inputObject.sales_partner || '',
-    //   //     items: Object.values(inputObject.items).map((it) => {
-    //   //       return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
-    //   //     }),
-    //   //   };
-    //   // return { doctype: inputObject.doctype };
-    //   // return { doctype: inputObject.doctype };
-    //   // }
-    //   // const newData = mapProperties(data);
-    //   // navigation.replace('UpdateSalesOrder', { name: data.name, preState: newData, amend: 1, QuotationState: [] });
-    // }
   };
 
   const handleChangeStatus = (status) => {
@@ -395,59 +334,12 @@ function DetailsPage({ route, navigation }) {
     if (data.length !== 0 && doOnce) {
       handleFetchLinks(SALES_INVOICE_BY_PAYMENT_ENTRY, data.name, setLinksSalesInvoice);
       setDoOnce(false);
-      // const _links = Object.values(data?.items).filter((item, index) => item.sales_order !== undefined);
-      // if (_links.length !== 0) {
-      //   // console.log('has connection (Sales Order)');
-      //   // console.log(_links)
-      //   // const LinkCreated = [
-      //   //   {
-      //   //     parent: _links[0].sales_order,
-      //   //     transaction_date: _links[0].creation.slice(0, 10),
-      //   //   },
-      //   // ];
-      //   setLinks(LinkCreated);
-      //   setDoOnce(false);
-      //   // console.log('link:', LinkCreated);
-      // } else {
-      //   // console.log('has no connection (Sales Order)');
-      //   setDoOnce(false);
-      // }
     }
   }, [data, isFocused]);
   // refetch when back to page
   useMemo(() => {
     setRefetch(true);
   }, [isFocused]);
-
-  const UpdateIsReturn = () => {
-    // if (data.items !== undefined) {
-    //   // console.log('items: ', data?.items);
-    //   const cloneItems = Object.values(data?.items).map((item) => ({
-    //     item_code: item.item_code,
-    //     rate: item.rate,
-    //     qty: -parseInt(item.qty),
-    //   }));
-    //   // console.log(cloneItems);
-    //   const arrayItems = Object.values(cloneItems);
-    //   axios
-    //     .put(baseURL + PAYMENT_ENTRY + '/' + (name ? name : route.params.connectName), {
-    //       is_return: !data?.is_return,
-    //       items: arrayItems,
-    //     })
-    //     .then((response) => response.data)
-    //     .then((res) => {
-    //       res.data && setRefetch(true);
-    //       // console.log(res.data);
-    //     })
-    //     .catch((err) => {
-    //       //  console.log('An error occurred. Awkward.. : ', err);
-    //       alert('Status Error: ' + err);
-    //     });
-    // } else {
-    //   setRefetch(true);
-    //   // console.log(data);
-    // }
-  };
 
   if (loading) {
     return <Loading loading={loading} />;
@@ -506,31 +398,28 @@ function DetailsPage({ route, navigation }) {
               >
                 {data.name}
               </Text>
-              <VStack space={2}>
-                <HStack
-                  alignItems='center'
-                  justifyContent='center'
-                  space={6}
-                  mt={6}
-                >
-                  <HStack
-                    space={6}
-                    alignItems={'flex-end'}
-                  >
-                    <VStack alignItems={'flex-end'}>
-                      <DisplayTextLeft>{data.posting_date}</DisplayTextLeft>
-                      <SubTextLeft>{'Date'}</SubTextLeft>
-                    </VStack>
-                    <VStack alignItems={'flex-start'}>
-                      <DisplayTextRight status={data.status}>{data.status}</DisplayTextRight>
-                      <SubTextLeft>{'Status'}</SubTextLeft>
-                    </VStack>
-                  </HStack>
-                </HStack>
+              <VStack
+                space={6}
+                mt={6}
+              >
                 <VStack alignItems={'center'}>
-                  <Text fontSize={'xs'}>{data.party_name}</Text>
-                  <SubTextRight>{'Party Name'}</SubTextRight>
+                  <DisplayTextLeft>{data.posting_date}</DisplayTextLeft>
+                  <SubTextLeft>{'Date'}</SubTextLeft>
                 </VStack>
+                <HStack
+                  w={'64'}
+                  justifyContent={'space-evenly'}
+                >
+                  <VStack alignItems={'center'}>
+                    <DisplayTextRight status={data.status}>{data.status}</DisplayTextRight>
+                    <SubTextLeft>{'Status'}</SubTextLeft>
+                  </VStack>
+
+                  <VStack alignItems={'center'}>
+                    <Text fontSize={'xs'}>{data.party_name}</Text>
+                    <SubTextRight>{'Party Name'}</SubTextRight>
+                  </VStack>
+                </HStack>
               </VStack>
             </VStack>
             {/* <Divider
@@ -620,7 +509,7 @@ function DetailsPage({ route, navigation }) {
                   fontWeight='bold'
                   _ios={{ fontSize: 'xs', textAlign: 'right', maxWidth: 100 }}
                 >
-                  {data.paid_from_account_balance && parseFloat(data.paid_from_account_balance).toFixed(2)}
+                  {data.paid_to_account_balance ? parseFloat(data.paid_to_account_balance).toFixed(2) : 0.0}
                 </Text>
               </HStack>
             </VStack>
