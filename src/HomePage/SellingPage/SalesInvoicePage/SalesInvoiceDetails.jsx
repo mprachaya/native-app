@@ -15,7 +15,7 @@ import {
 import React, { useMemo, useState } from 'react';
 import { COLORS } from '../../../../constants/theme';
 import { Edit, PaymentEntry, SaleOrder } from '../../../../constants/icons';
-import { ConnectionLinks, Loading } from '../../../../components';
+import { ConnectionLinks, CreateSelect, Loading } from '../../../../components';
 import useFetch from '../../../../hooks/useFetch';
 import useConfig from '../../../../config/path';
 import { Alert } from 'react-native';
@@ -405,15 +405,17 @@ function DetailsPage({ route, navigation }) {
       handleFetchLinks(PAYMENT_BY_SALES_INVOICE, data.name, setLinksPayment);
       // console.log('isFocused', isFocused);
       const _links = Object.values(data?.items).filter((item, index) => item.sales_order !== undefined);
-      if (_links.length !== 0) {
+      if (_links.length !== 0 && _links[0].sales_order !== '') {
         // console.log('has connection (Sales Order)');
         // console.log(_links)
+        console.log('link:', _links);
         const LinkCreated = [
           {
             parent: _links[0].sales_order,
             transaction_date: _links[0].creation.slice(0, 10),
           },
         ];
+        console.log('LinkCreated:', LinkCreated);
         setLinks(LinkCreated);
         setDoOnce(false);
         // console.log('link:', LinkCreated);
@@ -460,6 +462,46 @@ function DetailsPage({ route, navigation }) {
     }
   };
 
+  const reformatDefaultSalesInvoice = (salesInvoice) => {
+    return (
+      salesInvoice !== undefined && {
+        payment_type: 'Receive',
+        payment_received: salesInvoice?.total, // Amount received
+        paid_amount: salesInvoice?.total || 0,
+        received_amount: salesInvoice?.total || 0,
+        mode_of_payment: null,
+        posting_date: '',
+        party: salesInvoice?.customer,
+        company: salesInvoice?.company,
+        paid_from: '113110 - Accounts receivable - Domestic - VCL',
+        paid_to: '111100 - Cash in hand - VCL',
+        party_type: 'Customer',
+        references: [
+          // Add references to link with Sales Invoices or other documents
+          {
+            doctype: 'Payment Entry Reference',
+            reference_doctype: 'Sales Invoice',
+            reference_name: salesInvoice?.name,
+            allocated_amount: salesInvoice?.total,
+            due_date: salesInvoice?.due_date,
+            account: '113110 - Accounts receivable - Domestic - VCL',
+            party_type: 'Customer',
+            party: salesInvoice?.customer,
+          },
+        ],
+      }
+    );
+  };
+
+  const [defaultInvoiceData, setDefaultInvoiceData] = useState([]);
+
+  useMemo(() => {
+    if (data) {
+      const formatData = reformatDefaultSalesInvoice(data);
+      setDefaultInvoiceData(formatData);
+      // console.log('formatData', formatData);
+    }
+  }, [data]);
   if (loading) {
     return <Loading loading={loading} />;
   }
@@ -484,6 +526,14 @@ function DetailsPage({ route, navigation }) {
             <BackButton />
           </HStack>
           <HStack h={10}>
+            {data?.status === 'Unpaid' && (
+              <CreateSelect
+                id={name}
+                defaultData={defaultInvoiceData}
+                label={'Create'}
+                menus={[{ label: 'Payment Entry', value: 'AddNewPaymentEntry' }]}
+              />
+            )}
             {data?.status !== 'Paid' && data?.status !== 'Cancelled' && data?.status !== 'Overdue' && (
               <StatusButton status={data?.status} />
             )}

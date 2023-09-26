@@ -121,9 +121,9 @@ function AddNewSalesInvoice({ navigation, route }) {
     tc_name: '',
     sales_partner: '',
     //step3
-    items: null,
+    // items: null,
     // for testing
-    // items: [{ item_code: 'M42 HSS-001', qty: 20, rate: 200 }],
+    items: [{ item_code: 'M42 HSS-001', qty: 40, rate: 200 }],
   };
 
   // main state

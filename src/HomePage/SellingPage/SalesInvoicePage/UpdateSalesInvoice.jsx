@@ -377,7 +377,7 @@ function UpdateSalesInvoice({ navigation, route }) {
     useMemo(() => {
       const plusMonth = new Date();
       plusMonth.setMonth(plusMonth.getMonth() + 1);
-      setAndroidNextMount(() => plusMonth);
+      // setAndroidNextMount(() => plusMonth);
       setDateIOSNextMonth(() => plusMonth);
 
       const dateNow = new Date();
@@ -420,7 +420,7 @@ function UpdateSalesInvoice({ navigation, route }) {
       if (state.posting_date && state.due_date) {
         const plusMonth = new Date(state.due_date);
         plusMonth.setMonth(plusMonth.getMonth());
-        setAndroidNextMount(() => plusMonth);
+        // setAndroidNextMount(() => plusMonth);
         setDateIOSNextMonth(() => plusMonth);
 
         const dateNow = new Date(state.posting_date);

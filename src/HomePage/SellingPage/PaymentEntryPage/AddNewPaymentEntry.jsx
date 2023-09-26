@@ -154,16 +154,6 @@ function AddNewPaymentEntry({ navigation, route }) {
   // handle dynamic property for multi selection in page
   const [propertySelected, setPropertySelected] = useState('');
 
-  // function sumAmount(obj) {
-  //   let totalAmount = 0;
-  //   for (let key in obj) {
-  //     if (obj[key] !== null && typeof obj[key] === 'object' && 'amount' in obj[key]) {
-  //       totalAmount += parseFloat(obj[key].amount);
-  //     }
-  //   }
-  //   return totalAmount.toFixed(2);
-  // }
-
   // handle change property when open selection (dynamic)
   const getValueFromSelection = (name) => {
     setPropertySelected(name);
@@ -253,7 +243,8 @@ function AddNewPaymentEntry({ navigation, route }) {
         if (ctmState.payment_type !== 'Internal Transfer') {
           // alert(`Submit :${ctmState.payment_type}`);
           if (ctmState) {
-            console.log(baseURL + PAYMENT_ENTRY_IN_UP);
+            // console.log(baseURL + PAYMENT_ENTRY_IN_UP);
+            // console.log(ctmState);
             axios
               .post(baseURL + PAYMENT_ENTRY_IN_UP, ctmState)
               .then((res) => alert('Create Successfully'))
@@ -353,14 +344,6 @@ function AddNewPaymentEntry({ navigation, route }) {
       </Pressable>
     );
     useEffect(() => {
-      //  const plusMonth = new Date(state.due_date);
-      //  plusMonth.setMonth(plusMonth.getMonth());
-      //  setAndroidNextMount(() => plusMonth);
-
-      //  const dateNow = new Date(state.posting_date);
-      //  dateNow.setMonth(dateNow.getMonth());
-      //  setDateIOS(dateNow);
-
       const currentDate = new Date();
 
       const yyyy = currentDate.getFullYear();
@@ -402,12 +385,13 @@ function AddNewPaymentEntry({ navigation, route }) {
           space={SPACING.small}
         >
           <ScrollView>
-            <VStack h={1400}>
+            <VStack h={1000}>
               <View w={'container'}>
                 <FormControl justifyContent={'center'}>
                   <FormControl.Label>Payment Type</FormControl.Label>
                 </FormControl>
                 <Select
+                  isDisabled={route.params?.defaultData}
                   dropdownIcon={true}
                   selectedValue={ctmState.payment_type}
                   w={'full'}
@@ -493,6 +477,7 @@ function AddNewPaymentEntry({ navigation, route }) {
               </View>
               <OnPressContainer onPress={() => handleOpenDynamicSelection('Company', 'company', urlCompany)}>
                 <StyledTextField
+                  isDisabled={route.params?.defaultData}
                   caretHidden
                   isRequired={nullState.company}
                   label={'Company*'}
@@ -513,6 +498,7 @@ function AddNewPaymentEntry({ navigation, route }) {
                     }
                   >
                     <StyledTextField
+                      isDisabled={route.params?.defaultData}
                       caretHidden
                       isRequired={nullState.party}
                       label={ctmState.party_type === 'Customer' ? 'Customer*' : 'Supplier*'}
@@ -720,48 +706,30 @@ function AddNewPaymentEntry({ navigation, route }) {
       </FadeTransition>
     );
   };
+
+  const [doOnce, setDoOnce] = useState(true);
+
   useMemo(() => {
     const reformatData = () => {
-      function mapProperties(inputObject) {
-        return {
-          doctype: 'Sales Order',
-          customer: inputObject.party_name,
-          customer_address: inputObject.customer_address || '',
-          // order_type: inputObject.order_type,
-          contact_person: inputObject.contact_person || '',
-          project: '',
-          // conversion_rate: 1.0,
-          posting_date: '',
-          due_date: '',
-          company: inputObject.company,
-          currency: inputObject.currency,
-          set_warehouse: '',
-          selling_price_list: inputObject.selling_price_list || '',
-          payment_terms_template: inputObject.payment_terms_template || '',
-          tc_name: inputObject.tc_name || '',
-          sales_partner: '',
-          items: Object.values(inputObject.items).map((it) => {
-            return { item_code: it.item_code, rate: parseFloat(it.rate), qty: it.qty };
-          }),
-        };
-        // return { doctype: inputObject.doctype };
-      }
       if (route.params?.defaultData) {
-        const newData = mapProperties(route.params?.defaultData);
         // console.log('newData', newData);
-        setState(newData);
-        console.log(newData);
+        setState(route.params?.defaultData);
+        console.log('from Sales Invoice:', route.params?.defaultData);
+        // console.log(newData);
       } else {
         setState(initialState);
       }
     };
-    reformatData();
+    if (doOnce) {
+      reformatData();
+      setDoOnce(false);
+    }
   }, [route.params]);
 
   // log when state having changed
-  useMemo(() => {
-    console.log('state: ', state);
-  }, [state]);
+  // useMemo(() => {
+  //   console.log('state: ', state);
+  // }, [state]);
 
   return (
     <ContainerStyled>
@@ -774,20 +742,7 @@ function AddNewPaymentEntry({ navigation, route }) {
               setState={setState}
             />
           )}
-          {/* display when step = 2 and do not have any selection displayed */}
-          {stepState === 2 && !openSelection && (
-            <SecondStep
-              state={state}
-              setState={setState}
-            />
-          )}
-          {stepState === 3 && !openSelection && (
-            <ThirdStep
-              state={state}
-              setState={setState}
-            />
-          )}
-          {stepState === 4 && !openSelection && <SuccessMessage setState={setState} />}
+          {stepState === 2 && !openSelection && <SuccessMessage setState={setState} />}
 
           {openSelection && (
             <DynamicSelectPage
