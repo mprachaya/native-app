@@ -32,8 +32,8 @@ const ContainerStyled = (props) => {
 };
 
 function SellingPage({ navigation }) {
-  const iconColor = COLORS.primary;
-  const iconActive = COLORS.tertiary;
+  const activeColor = COLORS.primary;
+  const inActiveColor = COLORS.gray2;
   return (
     <SafeAreaView>
       <ContainerStyled>
@@ -51,7 +51,7 @@ function SellingPage({ navigation }) {
                   <Lead
                     width={24}
                     height={24}
-                    color={iconColor}
+                    color={inActiveColor}
                   />
                 }
               />
@@ -62,19 +62,19 @@ function SellingPage({ navigation }) {
                   <Opportunity
                     width={24}
                     height={24}
-                    color={iconColor}
+                    color={inActiveColor}
                   />
                 }
               />
               <MenuIcon
-                active={true}
+                // active={true}
                 onPress={() => navigation.navigate('Customer', { filterData: [] })}
                 menuLabel={'Customer'}
                 Icon={
                   <Customer
                     width={24}
                     height={24}
-                    color={iconActive}
+                    color={activeColor}
                   />
                 }
               />
@@ -91,7 +91,7 @@ function SellingPage({ navigation }) {
                   <Location
                     width={24}
                     height={24}
-                    color={iconColor}
+                    color={inActiveColor}
                   />
                 }
               />
@@ -101,7 +101,7 @@ function SellingPage({ navigation }) {
                   <Contact
                     width={24}
                     height={24}
-                    color={iconColor}
+                    color={inActiveColor}
                   />
                 }
               />
@@ -111,7 +111,7 @@ function SellingPage({ navigation }) {
                   <CustomerVisit
                     width={24}
                     height={24}
-                    color={iconColor}
+                    color={inActiveColor}
                   />
                 }
               />
@@ -123,38 +123,35 @@ function SellingPage({ navigation }) {
               justifyContent={{ base: 'center', lg: 'space-around' }}
             >
               <MenuIcon
-                active={true}
                 onPress={() => navigation.navigate('Quotation', { filterData: [] })}
                 menuLabel={'Quotation'}
                 Icon={
                   <Quotation
                     width={24}
                     height={24}
-                    color={iconActive}
+                    color={activeColor}
                   />
                 }
               />
               <MenuIcon
-                active={true}
                 onPress={() => navigation.navigate('SalesOrder', { filterData: [] })}
                 menuLabel={'Sales Order'}
                 Icon={
                   <SaleOrder
                     width={24}
                     height={24}
-                    color={iconActive}
+                    color={activeColor}
                   />
                 }
               />
               <MenuIcon
-                active={true}
                 onPress={() => navigation.navigate('SalesInvoice', { filterData: [] })}
                 menuLabel={'Sale\nInvoice'}
                 Icon={
                   <SaleInvoice
                     width={24}
                     height={24}
-                    color={iconActive}
+                    color={activeColor}
                   />
                 }
               />
@@ -167,14 +164,13 @@ function SellingPage({ navigation }) {
               justifyContent={{ base: 'center', lg: 'space-around' }}
             >
               <MenuIcon
-                active={true}
                 onPress={() => navigation.navigate('PaymentEntry', { filterData: [] })}
                 menuLabel={'Payment\nEntry'}
                 Icon={
                   <PaymentEntry
                     width={24}
                     height={24}
-                    color={iconActive}
+                    color={activeColor}
                   />
                 }
               />

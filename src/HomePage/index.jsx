@@ -21,7 +21,8 @@ const ContainerStyled = (props) => {
 };
 
 function HomePage({ navigation }) {
-  const iconColor = COLORS.primary;
+  const activeColor = COLORS.primary;
+  const inActiveColor = COLORS.gray2;
 
   return (
     <SafeAreaView>
@@ -48,7 +49,7 @@ function HomePage({ navigation }) {
                 <Shop
                   width={24}
                   height={24}
-                  color={iconColor}
+                  color={activeColor}
                 />
               }
             />
@@ -58,7 +59,7 @@ function HomePage({ navigation }) {
                 <Stock
                   width={24}
                   height={24}
-                  color={iconColor}
+                  color={inActiveColor}
                 />
               }
             />
@@ -68,7 +69,7 @@ function HomePage({ navigation }) {
                 <Buying
                   width={24}
                   height={24}
-                  color={iconColor}
+                  color={inActiveColor}
                 />
               }
             />
@@ -85,7 +86,7 @@ function HomePage({ navigation }) {
                 <Accounts
                   width={24}
                   height={24}
-                  color={iconColor}
+                  color={inActiveColor}
                 />
               }
             />
@@ -95,7 +96,7 @@ function HomePage({ navigation }) {
                 <HR
                   width={24}
                   height={24}
-                  color={iconColor}
+                  color={inActiveColor}
                 />
               }
             />
@@ -105,7 +106,7 @@ function HomePage({ navigation }) {
                 <Reports
                   width={24}
                   height={24}
-                  color={iconColor}
+                  color={inActiveColor}
                 />
               }
             />
