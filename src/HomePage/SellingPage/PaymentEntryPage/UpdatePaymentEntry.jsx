@@ -333,7 +333,7 @@ function UpdatePaymentEntry({ navigation, route }) {
     };
 
     const handleBackFirstPage = () => {
-      navigation.goBack();
+      navigation.pop();
       // setState(initialState);
     };
 

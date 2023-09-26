@@ -240,11 +240,13 @@ function AddNewPaymentEntry({ navigation, route }) {
       // if have any length of check mean required state is still not filled yet
       if (check.length !== 0) {
       } else {
-        if (ctmState.payment_type !== 'Internal Transfer') {
+        if (ctmState.paid_amount === 0) {
+          alert('Paid Amount Can not  be 0');
+        } else if (ctmState.payment_type !== 'Internal Transfer') {
           // alert(`Submit :${ctmState.payment_type}`);
           if (ctmState) {
             // console.log(baseURL + PAYMENT_ENTRY_IN_UP);
-            // console.log(ctmState);
+            console.log(ctmState);
             axios
               .post(baseURL + PAYMENT_ENTRY_IN_UP, ctmState)
               .then((res) => {
@@ -274,8 +276,8 @@ function AddNewPaymentEntry({ navigation, route }) {
     };
 
     const handleBackFirstPage = () => {
-      navigation.goBack();
-      setState(initialState);
+      navigation.pop();
+      // setState(initialState);
     };
 
     const handleOpenDynamicSelection = (title, name, url) => {

@@ -42,7 +42,7 @@ function ItemDetails({ navigation, route }) {
       onPress={() => {
         // handleClose();
         // navigation.pop();
-        navigation.goBack();
+        navigation.pop();
       }}
     >
       <ChevronLeftIcon />

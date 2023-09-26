@@ -94,12 +94,15 @@ function ExportPDF({ open, handleClose, docType, name }) {
   }
 
   const downloadPDF = async () => {
-    if (format) {
+    if (format && baseURL) {
+      const DOCTYPE = encodeURIComponent(docType);
+      const NAME = encodeURIComponent(name);
+      const FORMAT = encodeURIComponent(format);
+
       const fileName = FileSystem.documentDirectory + 'print-' + '-' + name + '.pdf';
-      const downloadRef = await FileSystem.downloadAsync(
-        `${baseURL}/api/method/frappe.utils.print_format.download_pdf?doctype=${docType}&name=${name}&format=${format}`,
-        fileName
-      );
+      const path = `${baseURL}/api/method/frappe.utils.print_format.download_pdf?doctype=${DOCTYPE}&name=${NAME}&format=${FORMAT}`;
+      console.log(path);
+      const downloadRef = await FileSystem.downloadAsync(path, fileName);
       save(downloadRef.uri);
     }
   };

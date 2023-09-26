@@ -658,7 +658,7 @@ function UpdateSalesInvoice({ navigation, route }) {
     };
 
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 
@@ -970,7 +970,7 @@ function UpdateSalesInvoice({ navigation, route }) {
     };
 
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 

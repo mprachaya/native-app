@@ -294,7 +294,7 @@ function QuotationPage({ route }) {
               //   });
               // }}
               onPress={() => {
-                navigation.goBack();
+                navigation.pop();
               }}
               _pressed={{ bg: 'blueGray.200' }}
             >

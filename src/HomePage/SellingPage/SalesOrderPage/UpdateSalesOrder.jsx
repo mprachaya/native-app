@@ -713,7 +713,7 @@ function UpdateSalesOrder({ navigation, route }) {
     };
 
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 
@@ -1022,7 +1022,7 @@ function UpdateSalesOrder({ navigation, route }) {
       }
     };
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 

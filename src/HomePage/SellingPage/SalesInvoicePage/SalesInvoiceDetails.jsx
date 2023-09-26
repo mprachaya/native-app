@@ -102,11 +102,7 @@ function DetailsPage({ route, navigation }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => {
-        if (route.params.connectName) {
-          navigation.goBack();
-        } else {
-          navigation.pop();
-        }
+        navigation.pop();
       }}
     >
       <ChevronLeftIcon />

@@ -113,7 +113,7 @@ function SortAndroid({ route, navigation }) {
       setTimeout(() => {
         handleSort();
         setLoading(false);
-        navigation.goBack();
+        navigation.pop();
       }, 100);
   }, [loading]);
 

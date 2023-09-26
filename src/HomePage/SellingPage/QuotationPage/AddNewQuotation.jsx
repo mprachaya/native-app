@@ -729,7 +729,7 @@ function AddNewQuotation({ navigation }) {
     };
 
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 
@@ -990,7 +990,7 @@ function AddNewQuotation({ navigation }) {
     };
 
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 

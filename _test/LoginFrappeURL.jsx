@@ -108,9 +108,9 @@ function LoginFrappeURL({ navigation }) {
               })
             }
           >
-            {'Login -> main app'}
+            {'Login to main menu'}
           </Button>
-          <Button
+          {/* <Button
             rounded={20}
             px={6}
             bg={COLORS.primary}
@@ -123,7 +123,7 @@ function LoginFrappeURL({ navigation }) {
             }
           >
             {'Login -> Payment Entry'}
-          </Button>
+          </Button> */}
         </FormControl>
       </VStack>
     </View>

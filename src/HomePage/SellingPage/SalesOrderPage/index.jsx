@@ -305,7 +305,7 @@ function SalesOrderPage({ route }) {
               rounded={12}
               variant={'unstyled'}
               onPress={() => {
-                navigation.goBack();
+                navigation.pop();
               }}
               _pressed={{ bg: 'blueGray.200' }}
             >

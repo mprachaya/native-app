@@ -74,11 +74,7 @@ function DetailsPage({ route, navigation }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => {
-        if (route.params.connectName) {
-          navigation.goBack();
-        } else {
-          navigation.pop();
-        }
+        navigation.pop();
       }}
     >
       <ChevronLeftIcon />
@@ -366,7 +362,7 @@ function DetailsPage({ route, navigation }) {
           </HStack>
           <HStack h={10}>
             {data?.status !== 'Cancelled' && <StatusButton status={data?.status} />}
-            {data?.status !== 'Cancelled' && <PrintAndExport />}
+            {data?.status !== 'Cancelled' && data?.status !== 'Draft' && <PrintAndExport />}
 
             {data?.status === 'Draft' && <EditButton />}
           </HStack>

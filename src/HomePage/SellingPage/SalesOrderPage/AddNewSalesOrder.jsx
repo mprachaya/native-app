@@ -687,7 +687,7 @@ function AddNewSalesOrder({ navigation, route }) {
     };
 
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 
@@ -966,7 +966,7 @@ function AddNewSalesOrder({ navigation, route }) {
     };
 
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 

@@ -282,7 +282,7 @@ function SalesInvoicePage({ route }) {
               rounded={12}
               variant={'unstyled'}
               onPress={() => {
-                navigation.goBack();
+                navigation.pop();
               }}
               // onPress={() => {
               //   navigation.reset({

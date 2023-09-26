@@ -202,7 +202,7 @@ function CustomerPage({ route }) {
               variant={'unstyled'}
               // onPress={() => navigation.replace('Selling')}
               onPress={() => {
-                navigation.goBack();
+                navigation.pop();
               }}
               _pressed={{ bg: 'blueGray.200' }}
             >

@@ -40,7 +40,7 @@ function ItemDetails({ navigation, route }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       onPress={() => {
-        navigation.goBack();
+        navigation.pop();
       }}
     >
       <ChevronLeftIcon />

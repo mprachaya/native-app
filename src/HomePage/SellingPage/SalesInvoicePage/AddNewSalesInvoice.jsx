@@ -323,7 +323,7 @@ function AddNewSalesInvoice({ navigation, route }) {
     };
 
     const handleBackFirstPage = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 
@@ -710,7 +710,7 @@ function AddNewSalesInvoice({ navigation, route }) {
     };
 
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 
@@ -1012,7 +1012,7 @@ function AddNewSalesInvoice({ navigation, route }) {
     };
 
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 

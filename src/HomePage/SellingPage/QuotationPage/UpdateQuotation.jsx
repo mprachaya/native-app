@@ -701,7 +701,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     };
 
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 
@@ -984,7 +984,7 @@ function UpdateQuotation({ route, navigation, handleClose }) {
     };
 
     const handleBack = () => {
-      navigation.goBack();
+      navigation.pop();
       setState(initialState);
     };
 
