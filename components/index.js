@@ -23,6 +23,7 @@ import StaticSelectPage from './StaticSelectPage';
 import TextSearchDropdown from './TextSearchDropdown';
 import ConnectionLinks from './ConnectionLinks';
 import CreateSelect from './CreateSelect';
+import { LoadingFullScreen } from './LoadingFullScreen';
 
 export {
   AppBar,
@@ -53,4 +54,5 @@ export {
   TextSearchDropdown,
   ConnectionLinks,
   CreateSelect,
+  LoadingFullScreen,
 };

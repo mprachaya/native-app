@@ -1,9 +1,23 @@
-import { Button, FormControl, Input, Text, VStack, View } from 'native-base';
+import {
+  Button,
+  FormControl,
+  HStack,
+  Heading,
+  Input,
+  Spinner,
+  Text,
+  VStack,
+  View,
+  StyleSheet,
+  PresenceTransition,
+} from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { COLORS, SIZES } from '../constants/theme';
-import { FrappeLogo } from '../components';
+import { FrappeLogo, LoadingFullScreen } from '../components';
 import axios from 'axios';
 import { storeData } from '../utils/async-storage';
+import { ActivityIndicator } from 'react-native';
+import FadeTransition from '../components/FadeTransition';
 
 const InputStyled = (props) => (
   <Input
@@ -25,13 +39,15 @@ function LoginFrappeURL({ navigation }) {
     usr: 'Administrator',
     pwd: 'ZAQ!@WSX',
   });
-  const [loginSuccess, setLoginSuccess] = useState(false);
+  const [loading, setloading] = useState(false);
+  const [loginSuccess, setloginSuccess] = useState(false);
 
   const handleTyping = (name, value) => {
     setState((pre) => ({ ...pre, [name]: value }));
   };
 
-  const authenticate = async (url, usr, pwd, naviagateTo) => {
+  const authenticate = async (url, usr, pwd) => {
+    setloading(true);
     axios
       .post(`https://${url}/api/method/login`, { usr: usr, pwd: pwd })
       .then((response) => {
@@ -39,20 +55,35 @@ function LoginFrappeURL({ navigation }) {
           // console.log(response);
           storeData('URL', state.url);
           storeData('NAME', response.data.full_name);
-          setLoginSuccess(true);
-          naviagateTo();
+          setloginSuccess(true);
         }
       })
       .catch((error) => {
+        setloading(false);
         alert(`Invalid Authentication`);
       });
   };
+
+  useEffect(() => {
+    if (loading) {
+      setTimeout(() => {
+        setloading(false);
+      }, 2000);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    if (loginSuccess) {
+      navigation.replace('Home');
+    }
+  }, [loginSuccess]);
 
   return (
     <View
       bg={'blueGray.200'}
       h={1200}
     >
+      {loading && <LoadingFullScreen loading={loading} />}
       <VStack
         m={12}
         justifyContent={'center'}
@@ -101,12 +132,7 @@ function LoginFrappeURL({ navigation }) {
             bg={COLORS.primary}
             _text={{ fontSize: 'lg', fontWeight: 'bold', letterSpacing: 0.5 }}
             _pressed={{ bg: COLORS.secondary }}
-            onPress={() =>
-              authenticate(state.url, state.usr, state.pwd, () => {
-                navigation.replace('Home');
-                // navigation.replace('Home');
-              })
-            }
+            onPress={() => authenticate(state.url, state.usr, state.pwd)}
           >
             {'Login to main menu'}
           </Button>
