@@ -134,7 +134,8 @@ function DetailsPage({ route, navigation }) {
       background={COLORS.lightWhite}
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
-      onPress={() => setOpenPrint(true)}
+      // onPress={() => setOpenPrint(true)}
+      onPress={() => navigation.navigate('ExportPage', { DOCTYPE: 'Sales Invoice', NAME: name })}
     >
       <Text
         textAlign='left'
@@ -300,7 +301,7 @@ function DetailsPage({ route, navigation }) {
                   res.data && res.data && setRefetch(true);
                 })
                 .catch((err) => {
-                  console.log('An error occurred. Awkward.. : ', err);
+                  // console.log('An error occurred. Awkward.. : ', err);
                   alert('Status Error: ' + err);
                 });
             },
@@ -406,14 +407,14 @@ function DetailsPage({ route, navigation }) {
         if (_links.length !== 0 && _links[0].sales_order !== '') {
           // console.log('has connection (Sales Order)');
           // console.log(_links)
-          console.log('link:', _links);
+          // console.log('link:', _links);
           const LinkCreated = [
             {
               parent: _links[0].sales_order,
               transaction_date: _links[0].creation.slice(0, 10),
             },
           ];
-          console.log('LinkCreated:', LinkCreated);
+          // console.log('LinkCreated:', LinkCreated);
           setLinks(LinkCreated);
           setDoOnce(false);
           // console.log('link:', LinkCreated);
@@ -1167,13 +1168,13 @@ function DetailsPage({ route, navigation }) {
             </VStack>
           </VStack>
         </ScrollView>
-        <ExportPDF
+        {/* <ExportPDF
           open={openPrint}
           handleClose={() => setOpenPrint(false)}
           docType={'Sales Invoice'}
           name={name}
           // format={'test-qt'}
-        />
+        /> */}
       </Center>
     </ContainerStyled>
   );

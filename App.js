@@ -57,6 +57,7 @@ import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
 import ExportPDF from './_test/ExportPDF';
 import FilterPaymentEntry from './src/HomePage/SellingPage/PaymentEntryPage/FilterPaymentEntry';
+import ExportPDFPage from './_test/ExportPDFPage';
 
 // import QuotationExportPDF from './_test/QuotationExportPDF';
 
@@ -82,15 +83,6 @@ export default function App() {
                 header: () => '',
               }}
             />
-            {/* <Stack.Screen
-              // name='TestQRScanner'
-              // component={QRScannerAutofill}
-              name='QuotationExportPDF'
-              component={QuotationExportPDF}
-              options={{
-                header: () => '',
-              }}
-            /> */}
             <Stack.Screen
               name='TestQRScanner'
               component={QRScannerAutofill}
@@ -103,6 +95,20 @@ export default function App() {
               component={HomePage}
               options={{
                 header: () => <AppBar />,
+              }}
+            />
+            <Stack.Screen
+              name='ExportPage'
+              component={ExportPDFPage}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Report Export'}
+                    noHeader={true}
+                  />
+                ),
               }}
             />
             {/* Selling Page */}

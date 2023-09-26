@@ -138,9 +138,8 @@ function DetailsPage({ route, navigation }) {
       background={COLORS.lightWhite}
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
-      onPress={() => setOpenPrint(true)}
-      // onPress={() => handleOpenUpdate()}
-      // onPress={() => (stepState === 1 ? handleBack() : setStepState((post) => post - 1))}
+      // onPress={() => setOpenPrint(true)}
+      onPress={() => navigation.navigate('ExportPage', { DOCTYPE: 'Quotation', NAME: name })}
     >
       <Text
         textAlign='left'
