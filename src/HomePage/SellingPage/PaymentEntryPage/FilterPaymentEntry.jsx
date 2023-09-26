@@ -33,19 +33,20 @@ const ContainerStyled = (props) => {
   );
 };
 
-function FilterSalesInvoice({ route, navigation }) {
+function FilterPaymentEntry({ route, navigation }) {
   // const { baseURL, quotation_toS, TERRITORY } = useConfig(true);
   const { storeFilter } = route.params; // get State from storeFilter
-  const { baseURL, CUSTOMERS } = useConfig(true);
+  const { baseURL, CUSTOMERS, PAYMENT_MODE } = useConfig(true);
 
   const initialsFilterState = {
     status: '',
-    customer: '',
-    from_date: '',
+    payment_type: '',
+    mode_of_payment: '',
+    party: '',
     to_date: '',
   };
 
-  const RouteName = 'SalesInvoice';
+  const RouteName = 'PaymentEntry';
 
   const [filterState, setFilterState] = useState(initialsFilterState);
 
@@ -245,35 +246,75 @@ function FilterSalesInvoice({ route, navigation }) {
                 />
 
                 <Select.Item
-                  label='Paid'
-                  value='Paid'
-                />
-                <Select.Item
-                  label='Unpaid'
-                  value='Unpaid'
-                />
-                <Select.Item
-                  label='Overdue'
-                  value='Overdue'
+                  label='Submitted'
+                  value='Submitted'
                 />
                 <Select.Item
                   label='Cancelled'
                   value='Cancelled'
                 />
+              </Select>
+            </View>
+            {/* payment type  */}
+            <View w={'container'}>
+              <FormControl justifyContent={'center'}>
+                <FormControl.Label mx={6}>Payment Type</FormControl.Label>
+              </FormControl>
+              <Select
+                dropdownIcon={true}
+                selectedValue={filterState.payment_type}
+                mx={6}
+                w={'full'}
+                fontSize={18}
+                borderWidth={2}
+                borderColor={'gray.200'}
+                accessibilityLabel='Status'
+                placeholder='None'
+                _selectedItem={{
+                  bg: 'blueGray.200',
+                  endIcon: <CheckIcon color={'blueGray.400'} />,
+                }}
+                onValueChange={(itemValue) => setFilterState((pre) => ({ ...pre, payment_type: itemValue }))}
+              >
                 <Select.Item
-                  label='Return'
-                  value='Return'
+                  label='Receive'
+                  value='Receive'
+                />
+
+                <Select.Item
+                  label='Pay'
+                  value='Pay'
+                />
+                <Select.Item
+                  label='Internal Transfer'
+                  value='Internal Transfer'
                 />
               </Select>
             </View>
-            {/*customer */}
+            {/*party */}
             <View w={'container'}>
-              <OnPressContainer onPress={() => handleOpenDynamicSelection('Customer', 'customer', baseURL + CUSTOMERS)}>
+              <OnPressContainer onPress={() => handleOpenDynamicSelection('Party', 'party', baseURL + CUSTOMERS)}>
                 <StyledTextField
                   // isRequired
                   caretHidden
-                  value={filterState.customer}
-                  label={'Customer'}
+                  value={filterState.party}
+                  label={'Party'}
+                  placeholder={'None'}
+                  // name={'default_price_list'}
+                  showSoftInputOnFocus={false}
+                />
+              </OnPressContainer>
+            </View>
+            {/*mode of payment */}
+            <View w={'container'}>
+              <OnPressContainer
+                onPress={() => handleOpenDynamicSelection('Mode of Payment', 'mode_of_payment', baseURL + PAYMENT_MODE)}
+              >
+                <StyledTextField
+                  // isRequired
+                  caretHidden
+                  value={filterState.mode_of_payment}
+                  label={'Mode of Payment'}
                   placeholder={'None'}
                   // name={'default_price_list'}
                   showSoftInputOnFocus={false}
@@ -410,6 +451,7 @@ function FilterSalesInvoice({ route, navigation }) {
         )}
       </Center>
       <DynamicSelectPage
+        isRequired={true}
         title={titleSelection} // for change dynamic title
         url={urlSelected} // for change dynamic data in selection
         open={openSelection} // state for show/hide selection
@@ -421,4 +463,4 @@ function FilterSalesInvoice({ route, navigation }) {
   );
 }
 
-export default FilterSalesInvoice;
+export default FilterPaymentEntry;

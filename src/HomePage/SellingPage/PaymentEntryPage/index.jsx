@@ -60,7 +60,7 @@ function PaymentEntryPage({ route }) {
   const [sortByState, setSortByState] = useState(initialsSortBy);
   const [sortTypeState, setSortTypeState] = useState(initialsSortType);
 
-  const FilterName = 'FilterSalesInvoice';
+  const FilterName = 'FilterPaymentEntry';
   const DetailsName = 'PaymentEntryDetails';
   const AddNewName = 'AddNewPaymentEntry';
 

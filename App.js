@@ -56,6 +56,7 @@ import UpdatePaymentEntry from './src/HomePage/SellingPage/PaymentEntryPage/Upda
 import QRScannerAutofill from './_test/QRScannerAutofill';
 import LoginFrappeURL from './_test/LoginFrappeURL';
 import ExportPDF from './_test/ExportPDF';
+import FilterPaymentEntry from './src/HomePage/SellingPage/PaymentEntryPage/FilterPaymentEntry';
 
 // import QuotationExportPDF from './_test/QuotationExportPDF';
 
@@ -557,6 +558,20 @@ export default function App() {
                 header: () => (
                   <NavHeader
                     pageName={'Edit Payment Entry'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='FilterPaymentEntry'
+              component={FilterPaymentEntry}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Filter Payment Entry'}
                     noHeader={true}
                   />
                 ),
