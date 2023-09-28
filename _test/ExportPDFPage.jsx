@@ -28,7 +28,7 @@ function ExportPDFPage({ navigation, route }) {
           const apiUrl = `${baseURL + DOCTYPE_EXPORT}?doctype=${route.params?.DOCTYPE}&name=${
             route.params?.NAME
           }&format=${format}`;
-          console.log(apiUrl);
+          // console.log(apiUrl);
           const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {

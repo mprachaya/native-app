@@ -174,8 +174,8 @@ function UpdatePaymentEntry({ navigation, route }) {
       axios
         .get(baseURL + PAYMENT_ENTRY_IN_UP + '/' + updateName)
         .then((response) => {
-          console.log('res', response.data.data);
-          response.data.data.references
+          // console.log('res', response.data.data);
+          response.data.data.references.length > 0
             ? setState({
                 payment_type: 'Receive',
                 payment_received: response.data.data?.paid_amount, // Amount received
@@ -423,9 +423,9 @@ function UpdatePaymentEntry({ navigation, route }) {
       }
     }, [state]);
 
-    useMemo(() => {
-      console.log(ctmState);
-    }, [ctmState]);
+    // useMemo(() => {
+    //   console.log(ctmState);
+    // }, [ctmState]);
 
     return (
       <React.Fragment>

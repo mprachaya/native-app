@@ -89,11 +89,11 @@ function UpdateSalesInvoice({ navigation, route }) {
   useEffect(() => {
     if (route.params?.CreateFrom) {
       setParentId(route.params.CreateFrom);
-      console.log('CreateFrom', route.params?.CreateFrom);
+      // console.log('CreateFrom', route.params?.CreateFrom);
     }
     if (route.params?.preState) {
       setState(route.params.preState);
-      console.log('preState', route.params?.preState);
+      // console.log('preState', route.params?.preState);
       setPreState(route.params?.preState);
     }
     if (route.params?.name) {
@@ -649,7 +649,7 @@ function UpdateSalesInvoice({ navigation, route }) {
       // if have any length of check mean required state is still not filled yet
 
       if (check.length !== 0) {
-        console.log('check:', check);
+        // console.log('check:', check);
       } else {
         // if filled go to next step
         setStepState((post) => post + 1);
@@ -953,16 +953,16 @@ function UpdateSalesInvoice({ navigation, route }) {
         // console.log('stateWithParent: ', stateWithParent);
         cloneState.items = Object.values(stateWithParent);
 
-        console.log(cloneState);
+        // console.log(cloneState);
         if (cloneState) {
           axios
             .put(urlSubmit + '/' + name, cloneState)
             .then((response) => {
-              console.log('Sales Invoice Updated:', response.data);
+              // console.log('Sales Invoice Updated:', response.data);
               setStepState(4);
             })
             .catch((err) => {
-              console.log('An error occurred. Awkward.. : ', err.message);
+              // console.log('An error occurred. Awkward.. : ', err.message);
               // alert('Status Error: ' + err);
             });
         }
@@ -1087,7 +1087,7 @@ function UpdateSalesInvoice({ navigation, route }) {
             // res.data && alert(`Item exist!:`);
             if (items.items !== null) {
               const duplicated = items.items.find((item) => item.item_code === res.data[0].item_code);
-              console.log('duplicated = ', duplicated);
+              // console.log('duplicated = ', duplicated);
               if (duplicated === undefined) {
                 setItems((pre) => ({
                   items: [...items.items, { item_code: res.data[0].item_code, qty: 1, rate: 1 }],
@@ -1111,7 +1111,7 @@ function UpdateSalesInvoice({ navigation, route }) {
           }
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
           alert(`Item not exist!`);
           setQrCodeData('');
         });
@@ -1241,7 +1241,7 @@ function UpdateSalesInvoice({ navigation, route }) {
                               const cloneState = Object.values(stateWithAmount).find(
                                 (ele) => ele.item_code !== data.item_code
                               );
-                              console.log('cloneState', cloneState);
+                              // console.log('cloneState', cloneState);
 
                               ModiState = Object.values([cloneState]);
 
@@ -1517,9 +1517,9 @@ function UpdateSalesInvoice({ navigation, route }) {
   };
 
   // log when state having changed
-  useMemo(() => {
-    console.log('state: ', state);
-  }, [state]);
+  // useMemo(() => {
+  //   console.log('state: ', state);
+  // }, [state]);
 
   return (
     <ContainerStyled>

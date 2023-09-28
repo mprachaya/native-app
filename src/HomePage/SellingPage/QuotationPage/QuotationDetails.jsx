@@ -995,13 +995,13 @@ function DetailsPage({ route, navigation }) {
             </VStack>
           </VStack>
         </ScrollView>
-        <ExportPDF
+        {/* <ExportPDF
           open={openPrint}
           handleClose={() => setOpenPrint(false)}
           docType={'Quotation'}
           name={name}
           format={'test-qt'}
-        />
+        /> */}
       </Center>
     </ContainerStyled>
   );

@@ -400,7 +400,9 @@ function AddNewSalesInvoice({ navigation, route }) {
     );
 
     useMemo(() => {
-      if (ctmState?.customer !== undefined && ctmState?.customer !== '') {
+      // console.log(ctmState?.customer);
+      if (ctmState?.customer && ctmState?.customer !== undefined) {
+        // console.log(urlCustomer + '/' + ctmState?.customer);
         axios
           .get(urlCustomer + '/' + ctmState?.customer)
           .then((response) => response.data)
@@ -408,11 +410,12 @@ function AddNewSalesInvoice({ navigation, route }) {
             setCustomer(res.data);
           })
           .catch((err) => {
-            alert(err);
+            // alert(err);
+            // console.log('error read customer');
           });
       }
       // console.log(ctmState);
-    }, [ctmState]);
+    }, [ctmState.customer]);
     // set Default value of to Date Object (+ 1 month)
     useMemo(() => {
       const plusMonth = new Date();
@@ -994,7 +997,7 @@ function AddNewSalesInvoice({ navigation, route }) {
           sales_order: parentId,
         }));
         cloneState.items = Object.values(stateWithParent);
-        console.log(cloneState);
+        // console.log(cloneState);
         if (cloneState) {
           axios
             .post(urlSubmit, cloneState)
@@ -1129,7 +1132,7 @@ function AddNewSalesInvoice({ navigation, route }) {
             // res.data && alert(`Item exist!:`);
             if (items.items !== null) {
               const duplicated = items.items.find((item) => item.item_code === res.data[0].item_code);
-              console.log('duplicated = ', duplicated);
+              // console.log('duplicated = ', duplicated);
               if (duplicated === undefined) {
                 setItems((pre) => ({
                   items: [...items.items, { item_code: res.data[0].item_code, qty: 1, rate: 1 }],
@@ -1153,7 +1156,7 @@ function AddNewSalesInvoice({ navigation, route }) {
           }
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
           alert(`Item not exist!`);
           setQrCodeData('');
         });
@@ -1282,7 +1285,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                               const cloneState = Object.values(stateWithAmount).find(
                                 (ele) => ele.item_code !== data.item_code
                               );
-                              console.log('cloneState', cloneState);
+                              // console.log('cloneState', cloneState);
 
                               ModiState = Object.values([cloneState]);
 
@@ -1610,7 +1613,7 @@ function AddNewSalesInvoice({ navigation, route }) {
         const newData = mapProperties(route.params?.defaultData);
         // console.log('newData', newData);
         setState(newData);
-        console.log(newData);
+        // console.log(newData);
       } else {
         setState(initialState);
       }
@@ -1619,9 +1622,9 @@ function AddNewSalesInvoice({ navigation, route }) {
   }, [route.params]);
 
   // log when state having changed
-  useMemo(() => {
-    console.log('state: ', state);
-  }, [state]);
+  // useMemo(() => {
+  //   console.log('state: ', state);
+  // }, [state]);
 
   return (
     <ContainerStyled>
