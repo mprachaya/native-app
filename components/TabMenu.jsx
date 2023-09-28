@@ -13,8 +13,11 @@ function TabMenu() {
   const navigation = useNavigation();
 
   const handleNavigate = (path, activeMenu) => {
-    setActiveMenu(activeMenu);
-    navigation.replace(path);
+    const checkCurrent = navigation.getState();
+    if (checkCurrent.routes[0].name !== path) {
+      setActiveMenu(activeMenu);
+      navigation.replace(path);
+    }
   };
 
   return (
@@ -30,81 +33,135 @@ function TabMenu() {
       zIndex={999}
     >
       <HStack
+        mx={2.5}
         justifyContent={'space-around'}
         space={12}
       >
         <Center>
-          <Button
+          {/* <Button
+            _pressed={{ background: COLORS.secondary }}
             variant={'unstyled'}
-            w={'32'}
-            h={'12'}
+            w={'79.5px'}
+            h={'16'}
           >
-            <Search
-              width={32}
-              height={32}
-              color={inactiveColor}
-            />
-          </Button>
+            <View
+              mx={3}
+              my={1.5}
+            >
+              <Search
+                width={26}
+                height={26}
+                color={inactiveColor}
+              />
+            </View>
+            <Text color={inactiveColor}>search</Text>
+          </Button> */}
         </Center>
         <Center>
           <Button
             onPress={() => handleNavigate('Home', 'modules')}
+            _pressed={{ background: 'blueGray.800' }}
             variant={'unstyled'}
-            w={'32'}
-            h={'10'}
+            rounded={'2xl'}
+            w={'79.5px'}
+            h={'16'}
           >
-            <Modules
-              width={32}
-              height={32}
-              color={activeMenu === 'modules' ? activeColor : inactiveColor}
-            />
+            <View
+              mx={3}
+              my={1.5}
+            >
+              <Modules
+                width={26}
+                height={26}
+                color={activeMenu === 'modules' ? activeColor : inactiveColor}
+              />
+            </View>
+            <Text color={activeMenu === 'modules' ? activeColor : inactiveColor}>modules</Text>
           </Button>
-          <Text color={activeMenu === 'modules' ? activeColor : inactiveColor}>modules</Text>
         </Center>
         <Center>
           <Button
-            // onPress={() => setActiveMenu('home')}
+            justifyContent={'center'}
+            // onPress={() => handleNavigate('Home', 'modules')}
+            _pressed={{ background: 'blueGray.800' }}
             variant={'unstyled'}
-            w={'32'}
-            h={'10'}
+            rounded={'2xl'}
+            w={'79.5px'}
+            h={'16'}
           >
-            <Home
-              width={32}
-              height={32}
+            <View
+              mx={3}
+              my={1}
+            >
+              <Home
+                width={32}
+                height={32}
+                color={activeMenu === 'home' ? activeColor : inactiveColor}
+              />
+            </View>
+            <Text
+              textAlign={'center'}
               color={activeMenu === 'home' ? activeColor : inactiveColor}
-            />
+            >
+              home
+            </Text>
           </Button>
-          <Text color={activeMenu === 'home' ? activeColor : inactiveColor}>home</Text>
         </Center>
         <Center>
           <Button
-            // onPress={() => setActiveMenu('notification')}
+            justifyContent={'center'}
+            // onPress={() => handleNavigate('Home', 'modules')}
+            _pressed={{ background: 'blueGray.800' }}
             variant={'unstyled'}
-            w={'32'}
-            h={'10'}
+            rounded={'2xl'}
+            w={'79.5px'}
+            h={'16'}
           >
-            <Notification
-              width={32}
-              height={32}
+            <View
+              mx={3}
+              my={1}
+            >
+              <Notification
+                width={32}
+                height={32}
+                color={activeMenu === 'notification' ? activeColor : inactiveColor}
+              />
+            </View>
+            <Text
+              textAlign={'center'}
               color={activeMenu === 'notification' ? activeColor : inactiveColor}
-            />
+            >
+              Notify
+            </Text>
           </Button>
-          <Text color={activeMenu === 'notification' ? activeColor : inactiveColor}>bell</Text>
         </Center>
         <Center>
           <Button
-            // onPress={() => setActiveMenu('account-settings')}
+            justifyContent={'center'}
+            // onPress={() => handleNavigate('Home', 'modules')}
+            _pressed={{ background: 'blueGray.800' }}
             variant={'unstyled'}
-            w={'32'}
-            h={'10'}
+            rounded={'2xl'}
+            w={'79.5px'}
+            h={'16'}
           >
-            <AccountSettings
-              width={32}
-              height={32}
+            <View
+              mx={3}
+              my={1}
+            >
+              <AccountSettings
+                width={32}
+                height={32}
+                color={activeMenu === 'account-settings' ? activeColor : inactiveColor}
+              />
+            </View>
+            <Text
+              textAlign={'center'}
               color={activeMenu === 'account-settings' ? activeColor : inactiveColor}
-            />
+            >
+              home
+            </Text>
           </Button>
-          <Text color={activeMenu === 'account-settings' ? activeColor : inactiveColor}>home</Text>
         </Center>
       </HStack>
     </View>
