@@ -1241,7 +1241,7 @@ function AddNewSalesInvoice({ navigation, route }) {
                 {items.items !== null &&
                   Object.values(stateWithAmount)?.map((data, index) => (
                     <VStack
-                      key={data?.item_code}
+                      key={index}
                       bg={COLORS.white}
                       rounded={20}
                       space={2}

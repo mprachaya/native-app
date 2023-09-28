@@ -23,10 +23,12 @@ function ExportPDFPage({ navigation, route }) {
     if (route.params?.DOCTYPE && route.params?.NAME)
       if (format) {
         try {
+          // console.log(route.params?.NAME);
           // Construct the URL for the print request
           const apiUrl = `${baseURL + DOCTYPE_EXPORT}?doctype=${route.params?.DOCTYPE}&name=${
-            route.params?.DOCTYPE.NAME
+            route.params?.NAME
           }&format=${format}`;
+          console.log(apiUrl);
           const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
@@ -87,7 +89,7 @@ function ExportPDFPage({ navigation, route }) {
         })
 
         .catch((err) => {
-          console.log(err);
+          alert(err);
         });
     }
   }
@@ -100,7 +102,7 @@ function ExportPDFPage({ navigation, route }) {
 
       const fileName = FileSystem.documentDirectory + 'print-' + '-' + route.params?.NAME + '.pdf';
       const path = `${baseURL}/api/method/frappe.utils.print_format.download_pdf?doctype=${DOCTYPE}&name=${NAME}&format=${FORMAT}`;
-      console.log(path);
+      // console.log(path);
       const downloadRef = await FileSystem.downloadAsync(path, fileName);
       save(downloadRef.uri);
     }

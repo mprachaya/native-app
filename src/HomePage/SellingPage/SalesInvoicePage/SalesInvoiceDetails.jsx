@@ -432,7 +432,7 @@ function DetailsPage({ route, navigation }) {
   }, [isFocused]);
 
   const UpdateIsReturn = () => {
-    if (data.items !== undefined) {
+    if (data.items !== undefined && data.status === 'Draft') {
       // console.log('items: ', data?.items);
       const cloneItems = Object.values(data?.items).map((item) => ({
         item_code: item.item_code,
@@ -644,7 +644,7 @@ function DetailsPage({ route, navigation }) {
                     aria-label='return-check'
                     isChecked={data.is_return || 0}
                     _checked={{ bg: COLORS.gray, borderColor: COLORS.lightWhite }}
-                    onPress={UpdateIsReturn}
+                    onPress={data?.status === 'Draft' ? UpdateIsReturn : null}
                     // }
                   />
                 </HStack>

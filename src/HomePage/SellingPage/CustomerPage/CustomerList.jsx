@@ -14,7 +14,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
   const [tempIndex, setTempIndex] = useState(0);
   const { baseURL } = useConfig(true);
 
-  const Item = React.memo(({ name, image, title, type, group }) => (
+  const Item = React.memo(({ name, image, title, type, group, territory }) => (
     <Pressable
       mb={2}
       mx={1.5}
@@ -34,7 +34,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
             w={20}
             h={20}
             rounded={6}
-            shadow={1}
+            // shadow={1}
           >
             <Image
               style={{ flex: 1, resizeMode: 'cover' }}
@@ -56,7 +56,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
             h={20}
             rounded={6}
             background={'black'}
-            shadow={1}
+            // shadow={1}
           >
             <Box
               w={'full'}
@@ -104,6 +104,15 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
               {group}
             </Text>
           </HStack>
+          <HStack>
+            <Text
+              w={48}
+              color={COLORS.secondary}
+              fontSize={'sm'}
+            >
+              {territory}
+            </Text>
+          </HStack>
         </VStack>
         <Text
           color={COLORS.gray}
@@ -122,6 +131,10 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
     setLoadMore(true);
     setTempIndex(number);
   };
+
+  // useEffect(() => {
+  //   console.log(data);
+  // }, []);
   useEffect(() => {
     if (reload) {
       setTimeout(() => {
@@ -212,6 +225,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
               title={item.customer_name}
               type={item.customer_type}
               group={item.customer_group}
+              territory={item.territory}
             />
           )}
         />
@@ -230,6 +244,7 @@ export function CustomerList({ data, token, reload, setReload, returnDataIndex, 
               title={item.customer_name}
               type={item.customer_type}
               group={item.customer_group}
+              territory={item.territory}
             />
           )}
           removeClippedSubviews={true}

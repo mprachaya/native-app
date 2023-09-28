@@ -436,28 +436,55 @@ function DetailsPage({ route, navigation }) {
   const isFocused = useIsFocused();
   const [doOnce, setDoOnce] = useState(true);
 
-  useMemo(() => {
-    if (doOnce) {
-      setRefetch(true);
-      if (baseURL) {
-        // console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
-        axios
-          .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + data?.name)
-          .then((response) => {
-            // Handle the successful response here
+  // useMemo(() => {
+  //   if (baseURL) {
+  //     if (doOnce) {
+  //       setRefetch(true);
+  //       // console.log(baseURL + SALES_INVOICE_BY_SALES_ORDER + name);
+  //       axios
+  //         .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + data?.name)
+  //         .then((response) => {
+  //           // Handle the successful response here
 
-            // console.log('Response:', getDataAPICustom(response));
-            setLinks(getDataAPICustom(response));
-          })
-          .catch((error) => {
-            // Handle any errors that occur during the request
-            // console.error('Error:', error);
-          });
-      }
-    } else {
+  //           // console.log('Response:', getDataAPICustom(response));
+  //           setLinks(getDataAPICustom(response));
+  //         })
+  //         .catch((error) => {
+  //           // Handle any errors that occur during the request
+  //           // console.error('Error:', error);
+  //         });
+  //     } else {
+  //       setDoOnce(false);
+  //     }
+  //   }
+  // }, [isFocused]);
+  useMemo(() => {
+    // console.log('is Focused:', isFocused);
+    if ((data !== undefined && doOnce && baseURL) || isFocused) {
+      // handleFetchLinks(PAYMENT_BY_SALES_INVOICE, data.name, setLinksPayment);
+      axios
+        .get(baseURL + SALES_INVOICE_BY_SALES_ORDER + data?.name)
+        .then((response) => {
+          // Handle the successful response here
+
+          // console.log('Response:', getDataAPICustom(response));
+          setLinks(getDataAPICustom(response));
+        })
+        .catch((error) => {
+          // Handle any errors that occur during the request
+          // console.error('Error:', error);
+        });
+
+      // console.log('LinkCreated:', LinkCreated);
       setDoOnce(false);
+      // console.log('link:', LinkCreated);
+
+      if (isFocused) {
+        // console.log('has no connection (Sales Order)');
+        setDoOnce(true);
+      }
     }
-  }, [isFocused]);
+  }, [data, isFocused, baseURL]);
   // useMemo(() => {
 
   // }, [baseURL, data, isFocused]);

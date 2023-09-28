@@ -376,7 +376,7 @@ function FilterQuotation({ route, navigation }) {
               <HStack justifyContent={'center'}>
                 <View w={'container'}>
                   <FormControl justifyContent={'center'}>
-                    <FormControl.Label mx={7}>To Date</FormControl.Label>
+                    <FormControl.Label ml={12}>To Date</FormControl.Label>
                   </FormControl>
                   <View
                     mx={12}
