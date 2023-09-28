@@ -1,10 +1,29 @@
 import { Box, Button, ChevronRightIcon, HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { COLORS } from '../constants/theme';
-import { useNavigation } from '@react-navigation/native';
+import { getFocusedRouteNameFromRoute, useNavigation } from '@react-navigation/native';
 
 export default function ConnectionLinks({ Icon, name, links, navigateTo }) {
   const navigation = useNavigation();
+
+  const handleNavigateTo = (link) => {
+    const route = navigation.getState();
+    const checkLength = route.routes.length;
+    //check if maximum stack replace current with new page
+    //maximum stack will make app crashing
+    // if (checkLength < 4) {
+    //   navigation.navigate(navigateTo, { connectName: link.parent });
+    // } else {
+    //   navigation.replace(navigateTo, { connectName: link.parent });
+    //   // console.log('Maximum Stack!');
+    // }
+    //  if (checkLength < 4) {
+    //    navigation.navigate(navigateTo, { connectName: link.parent });
+    //  } else {
+    navigation.replace(navigateTo, { connectName: link.parent });
+    // console.log('Maximum Stack!');
+    //  }
+  };
 
   return links !== undefined ? (
     <VStack
@@ -62,7 +81,8 @@ export default function ConnectionLinks({ Icon, name, links, navigateTo }) {
               </Text> */}
             </VStack>
             <Button
-              onPress={() => navigation.navigate(navigateTo, { connectName: link.parent })}
+              // onPress={() => navigation.navigate(navigateTo, { connectName: link.parent })}
+              onPress={() => handleNavigateTo(link)}
               _pressed={{ background: 'white' }}
               variant={'unstyled'}
               my={2}

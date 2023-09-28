@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Store from './reducer';
+// import Store from './reducer';
 import { Platform } from 'react-native';
 import { NativeBaseProvider } from 'native-base';
 import { LogBox } from 'react-native';
@@ -72,321 +72,235 @@ export default function App() {
   return (
     <NativeBaseProvider>
       <NavigationContainer>
-        <Store>
-          <Stack.Navigator>
+        {/* <Store> */}
+        <Stack.Navigator>
+          <Stack.Screen
+            // name='TestQRScanner'
+            // component={QRScannerAutofill}
+            name='LoginERPNext'
+            component={LoginFrappeURL}
+            options={{
+              header: () => '',
+            }}
+          />
+          <Stack.Screen
+            name='TestQRScanner'
+            component={QRScannerAutofill}
+            options={{
+              header: () => '',
+            }}
+          />
+          <Stack.Screen
+            name='Home'
+            component={HomePage}
+            options={{
+              header: () => <AppBar />,
+            }}
+          />
+          <Stack.Screen
+            name='ExportPage'
+            component={ExportPDFPage}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Report Export'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          {/* Selling Page */}
+          {Platform.OS !== 'ios' ? (
             <Stack.Screen
-              // name='TestQRScanner'
-              // component={QRScannerAutofill}
-              name='LoginERPNext'
-              component={LoginFrappeURL}
-              options={{
-                header: () => '',
-              }}
-            />
-            <Stack.Screen
-              name='TestQRScanner'
-              component={QRScannerAutofill}
-              options={{
-                header: () => '',
-              }}
-            />
-            <Stack.Screen
-              name='Home'
-              component={HomePage}
-              options={{
-                header: () => <AppBar />,
-              }}
-            />
-            <Stack.Screen
-              name='ExportPage'
-              component={ExportPDFPage}
+              name='Selling'
+              component={SellingPage}
               options={{
                 title: '',
                 headerShadowVisible: true,
                 header: () => (
+                  <React.Fragment>
+                    <AppBar />
+                    <NavHeader pageName={'Selling'} />
+                  </React.Fragment>
+                ),
+              }}
+            />
+          ) : (
+            <Stack.Screen
+              name='Selling'
+              component={SellingPage}
+              options={{
+                header: () => (
+                  <React.Fragment>
+                    <AppBar />
+                  </React.Fragment>
+                ),
+              }}
+            />
+          )}
+          {/* Customer Page */}
+          <Stack.Group>
+            <Stack.Screen
+              name='Customer'
+              component={CustomerPage}
+              options={{
+                header: () => (
                   <NavHeader
-                    pageName={'Report Export'}
+                    pageName={'Customer'}
+                    pageBackName={'Selling'}
                     noHeader={true}
                   />
                 ),
               }}
             />
-            {/* Selling Page */}
-            {Platform.OS !== 'ios' ? (
-              <Stack.Screen
-                name='Selling'
-                component={SellingPage}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <React.Fragment>
-                      <AppBar />
-                      <NavHeader pageName={'Selling'} />
-                    </React.Fragment>
-                  ),
-                }}
-              />
-            ) : (
-              <Stack.Screen
-                name='Selling'
-                component={SellingPage}
-                options={{
-                  header: () => (
-                    <React.Fragment>
-                      <AppBar />
-                    </React.Fragment>
-                  ),
-                }}
-              />
-            )}
-            {/* Customer Page */}
-            <Stack.Group>
-              <Stack.Screen
-                name='Customer'
-                component={CustomerPage}
-                options={{
-                  header: () => (
-                    <NavHeader
-                      pageName={'Customer'}
-                      pageBackName={'Selling'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
 
-              <Stack.Screen
-                name='SortAndroid'
-                component={SortAndroid}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <NavHeader
-                      pageName={'Sort'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name='CustomerDetails'
-                component={CustomerDetails}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <NavHeader
-                      pageName={'Customer Details'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name='AddNewCustomer'
-                component={AddNewCustomer}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <NavHeader
-                      // pageName={'Add New Customer'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name='UpdateCustomer'
-                component={UpdateCustomer}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <NavHeader
-                      pageName={'Customer Update'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name='FilterCustomer'
-                component={FilterCustomer}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <NavHeader
-                      pageName={'Filter Customer'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-            </Stack.Group>
-            {/* Quotation Page */}
-            <Stack.Group>
-              <Stack.Screen
-                name='Quotation'
-                component={QuotationPage}
-                options={{
-                  header: () => (
-                    <NavHeader
-                      pageName={'Quotation'}
-                      pageBackName={'Selling'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name='SortAndroidQuotation'
-                component={SortAndroidQuotation}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <NavHeader
-                      pageName={'Sort'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name='FilterQuotation'
-                component={FilterQuotation}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <NavHeader
-                      pageName={'Filter Quotation'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name='AddNewQuotation'
-                component={AddNewQuotation}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <NavHeader
-                      pageName={'Add New Quotation'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name='QuotationDetails'
-                component={QuotationDetails}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <NavHeader
-                      pageName={'Quotation Details'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name='QuotationItemsDetails'
-                component={QuotationItemDetails}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <NavHeader
-                      pageName={'Item Details'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name='UpdateQuotation'
-                component={UpdateQuotation}
-                options={{
-                  title: '',
-                  headerShadowVisible: true,
-                  header: () => (
-                    <NavHeader
-                      pageName={'Edit Quotation'}
-                      noHeader={true}
-                    />
-                  ),
-                }}
-              />
-            </Stack.Group>
             <Stack.Screen
-              name='ExportPDF'
-              component={ExportPDF}
+              name='SortAndroid'
+              component={SortAndroid}
               options={{
                 title: '',
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
-                    pageName={'EXPORT DOCTYPE'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            {/* SalesOrder Page */}
-            <Stack.Screen
-              name='SalesOrder'
-              component={SalesOrderPage}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Sales Order'}
+                    pageName={'Sort'}
                     noHeader={true}
                   />
                 ),
               }}
             />
             <Stack.Screen
-              name='AddNewSalesOrder'
-              component={AddNewSalesOrder}
+              name='CustomerDetails'
+              component={CustomerDetails}
               options={{
                 title: '',
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
-                    pageName={'Create New Sales Order'}
+                    pageName={'Customer Details'}
                     noHeader={true}
                   />
                 ),
               }}
             />
             <Stack.Screen
-              name='SalesOrderDetails'
-              component={SalesOrderDetails}
+              name='AddNewCustomer'
+              component={AddNewCustomer}
               options={{
                 title: '',
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
-                    pageName={'Sales Order Details'}
+                    // pageName={'Add New Customer'}
                     noHeader={true}
                   />
                 ),
               }}
             />
             <Stack.Screen
-              name='SalesOrderItemDetails'
-              component={SalesOrderItemDetails}
+              name='UpdateCustomer'
+              component={UpdateCustomer}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Customer Update'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='FilterCustomer'
+              component={FilterCustomer}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Filter Customer'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+          </Stack.Group>
+          {/* Quotation Page */}
+          <Stack.Group>
+            <Stack.Screen
+              name='Quotation'
+              component={QuotationPage}
+              options={{
+                header: () => (
+                  <NavHeader
+                    pageName={'Quotation'}
+                    pageBackName={'Selling'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='SortAndroidQuotation'
+              component={SortAndroidQuotation}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Sort'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='FilterQuotation'
+              component={FilterQuotation}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Filter Quotation'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='AddNewQuotation'
+              component={AddNewQuotation}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Add New Quotation'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='QuotationDetails'
+              component={QuotationDetails}
+              options={{
+                title: '',
+                headerShadowVisible: true,
+                header: () => (
+                  <NavHeader
+                    pageName={'Quotation Details'}
+                    noHeader={true}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='QuotationItemsDetails'
+              component={QuotationItemDetails}
               options={{
                 title: '',
                 headerShadowVisible: true,
@@ -399,192 +313,278 @@ export default function App() {
               }}
             />
             <Stack.Screen
-              name='UpdateSalesOrder'
-              component={UpdateSalesOrder}
+              name='UpdateQuotation'
+              component={UpdateQuotation}
               options={{
                 title: '',
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
-                    pageName={'Edit Sales Order'}
+                    pageName={'Edit Quotation'}
                     noHeader={true}
                   />
                 ),
               }}
             />
-            <Stack.Screen
-              name='FilterSalesOrder'
-              component={FilterSalesOrder}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Filter Sales Order'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            {/* SalesInvoice Page */}
-            <Stack.Screen
-              name='SalesInvoice'
-              component={SalesInvoicePage}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Sales Invoice'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            {/* SalesInvoice Details Page */}
-            <Stack.Screen
-              name='SalesInvoiceDetails'
-              component={SalesInvoiceDetailPage}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Sales Invoice Details'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            <Stack.Screen
-              name='AddNewSalesInvoice'
-              component={AddNewSalesInvoice}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Create New Sales Invoice'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            <Stack.Screen
-              name='SalesInvoiceItemDetails'
-              component={SalesInvoiceItemDetails}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Item Details'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            <Stack.Screen
-              name='UpdateSalesInvoice'
-              component={UpdateSalesInvoice}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Edit Sales Invoice'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            <Stack.Screen
-              name='FilterSalesInvoice'
-              component={FilterSalesInvoice}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Filter Sales Invoice'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            {/* PaymentEntry Page */}
-            <Stack.Screen
-              name='PaymentEntry'
-              component={PaymentEntryPage}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Payment Entry'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            <Stack.Screen
-              name='PaymentEntryDetails'
-              component={PaymentEntryDetails}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Payment Entry Details'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            <Stack.Screen
-              name='AddNewPaymentEntry'
-              component={AddNewPaymentEntry}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Create New Payment Entry'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            <Stack.Screen
-              name='UpdatePaymentEntry'
-              component={UpdatePaymentEntry}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Edit Payment Entry'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-            <Stack.Screen
-              name='FilterPaymentEntry'
-              component={FilterPaymentEntry}
-              options={{
-                title: '',
-                headerShadowVisible: true,
-                header: () => (
-                  <NavHeader
-                    pageName={'Filter Payment Entry'}
-                    noHeader={true}
-                  />
-                ),
-              }}
-            />
-          </Stack.Navigator>
-        </Store>
+          </Stack.Group>
+          <Stack.Screen
+            name='ExportPDF'
+            component={ExportPDF}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'EXPORT DOCTYPE'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          {/* SalesOrder Page */}
+          <Stack.Screen
+            name='SalesOrder'
+            component={SalesOrderPage}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Sales Order'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='AddNewSalesOrder'
+            component={AddNewSalesOrder}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Create New Sales Order'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='SalesOrderDetails'
+            component={SalesOrderDetails}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Sales Order Details'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='SalesOrderItemDetails'
+            component={SalesOrderItemDetails}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Item Details'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='UpdateSalesOrder'
+            component={UpdateSalesOrder}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Edit Sales Order'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='FilterSalesOrder'
+            component={FilterSalesOrder}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Filter Sales Order'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          {/* SalesInvoice Page */}
+          <Stack.Screen
+            name='SalesInvoice'
+            component={SalesInvoicePage}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Sales Invoice'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          {/* SalesInvoice Details Page */}
+          <Stack.Screen
+            name='SalesInvoiceDetails'
+            component={SalesInvoiceDetailPage}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Sales Invoice Details'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='AddNewSalesInvoice'
+            component={AddNewSalesInvoice}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Create New Sales Invoice'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='SalesInvoiceItemDetails'
+            component={SalesInvoiceItemDetails}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Item Details'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='UpdateSalesInvoice'
+            component={UpdateSalesInvoice}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Edit Sales Invoice'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='FilterSalesInvoice'
+            component={FilterSalesInvoice}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Filter Sales Invoice'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          {/* PaymentEntry Page */}
+          <Stack.Screen
+            name='PaymentEntry'
+            component={PaymentEntryPage}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Payment Entry'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='PaymentEntryDetails'
+            component={PaymentEntryDetails}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Payment Entry Details'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='AddNewPaymentEntry'
+            component={AddNewPaymentEntry}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Create New Payment Entry'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='UpdatePaymentEntry'
+            component={UpdatePaymentEntry}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Edit Payment Entry'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name='FilterPaymentEntry'
+            component={FilterPaymentEntry}
+            options={{
+              title: '',
+              headerShadowVisible: true,
+              header: () => (
+                <NavHeader
+                  pageName={'Filter Payment Entry'}
+                  noHeader={true}
+                />
+              ),
+            }}
+          />
+        </Stack.Navigator>
+        {/* </Store> */}
       </NavigationContainer>
     </NativeBaseProvider>
   );

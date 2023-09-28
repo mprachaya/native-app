@@ -16,7 +16,7 @@ import { Context } from '../reducer';
 
 function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
   const toast = useToast();
-  const [state, dispatch] = useContext(Context);
+  // const [state, dispatch] = useContext(Context);
   const ModalContainer = ({ children }) => (
     <Actionsheet
       isOpen={open}
@@ -71,9 +71,9 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
           !sortByState[key]
             ? toast.show({ description: `Sort By ${label}`, duration: 2000 })
             : toast.show({ description: `Cancel Sort By ${label}`, duration: 2000 });
-          !sortByState[key]
-            ? dispatch({ type: 'SET_CTM_SORT_BY', payload: label })
-            : dispatch({ type: 'SET_CTM_SORT_BY', payload: '' });
+          // !sortByState[key]
+          //   ? dispatch({ type: 'SET_CTM_SORT_BY', payload: label })
+          //   : dispatch({ type: 'SET_CTM_SORT_BY', payload: '' });
           !sortByState[key]
             ? setSortByState((pre) => ({ ...pre, [key]: true }))
             : setSortByState((pre) => ({ ...pre, [key]: false }));
@@ -97,9 +97,9 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
             !sortTypeState[key]
               ? toast.show({ description: `Sort Type ${label}`, duration: 2000 })
               : toast.show({ description: `Cancel Sort Type ${label}`, duration: 2000 });
-            !sortByState[key]
-              ? dispatch({ type: 'SET_CTM_SORT_TYPE', payload: label })
-              : dispatch({ type: 'SET_CTM_SORT_TYPE', payload: '' });
+            // !sortByState[key]
+            //   ? dispatch({ type: 'SET_CTM_SORT_TYPE', payload: label })
+            //   : dispatch({ type: 'SET_CTM_SORT_TYPE', payload: '' });
 
             setSortTypeState((pre) => ({ ...pre, [key]: true }));
 
@@ -324,8 +324,8 @@ function SortModal({ open, setOpen, data, setData, setReload, sortBy }) {
             onPress={() => {
               setSortByState(initialsSortBy);
               setSortTypeState(initialsSortType);
-              dispatch({ type: 'SET_CTM_SORT_BY', payload: '' });
-              dispatch({ type: 'SET_CTM_SORT_TYPE', payload: '' });
+              // dispatch({ type: 'SET_CTM_SORT_BY', payload: '' });
+              // dispatch({ type: 'SET_CTM_SORT_TYPE', payload: '' });
               sortBy(data, setData, 'creation', 'ASC');
               setOpen(false);
               toast.show({ description: 'Clear all sort', duration: 2000 });

@@ -14,7 +14,7 @@ function TabMenu() {
 
   const handleNavigate = (path, activeMenu) => {
     setActiveMenu(activeMenu);
-    navigation.navigate(path);
+    navigation.replace(path);
   };
 
   return (

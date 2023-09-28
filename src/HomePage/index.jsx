@@ -43,7 +43,7 @@ function HomePage({ navigation }) {
             justifyContent={{ base: 'center', lg: 'space-around' }}
           >
             <MenuIcon
-              onPress={() => navigation.navigate('Selling')}
+              onPress={() => navigation.replace('Selling')}
               menuLabel={'Selling'}
               Icon={
                 <Shop

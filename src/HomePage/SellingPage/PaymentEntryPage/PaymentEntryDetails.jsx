@@ -300,11 +300,11 @@ function DetailsPage({ route, navigation }) {
     // }
     UpdateStatus(status);
   };
-  const handleShowItemDetails = (data) => {
-    navigation.navigate('PaymentEntryItemDetails', {
-      data: data,
-    });
-  };
+  // const handleShowItemDetails = (data) => {
+  //   navigation.navigate('PaymentEntryItemDetails', {
+  //     data: data,
+  //   });
+  // };
 
   // get connection links
   // const [links, setLinks] = useState([]); // sales order
