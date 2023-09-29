@@ -1,8 +1,9 @@
-import { Center, HStack, ScrollView, View } from 'native-base';
-import { Dimensions, SafeAreaView, useWindowDimensions } from 'react-native';
+import { Box, Center, HStack, ScrollView, Text, View } from 'native-base';
+import { Dimensions, SafeAreaView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { COLORS, SPACING } from '../../../constants/theme';
 import MenuIcon from '../../../components/MenuIcon';
 import {
+  ChevronBackWard,
   Contact,
   Customer,
   CustomerVisit,
@@ -21,6 +22,7 @@ const ContainerStyled = (props) => {
   return (
     <View
       {...props}
+      position={'relative'}
       height={'full'}
       // _android={{ height: (height * 81) / 100 }}
       // _ios={{ height: { base: (height * 78) / 100, lg: height > width ? (height * 91) / 100 : (height * 88) / 100 } }}
@@ -37,11 +39,35 @@ function SellingPage({ navigation }) {
   return (
     <SafeAreaView>
       <ContainerStyled>
+        <View
+          width={50}
+          height={53}
+          roundedBottomRight={'full'}
+          background={COLORS.primary}
+        >
+          <TouchableOpacity
+            onPress={() => navigation.pop()}
+            style={{ margin: 8.5 }}
+            position={'absolute'}
+            roundedBottomRight={'full'}
+          >
+            <ChevronBackWard color={'white'} />
+          </TouchableOpacity>
+        </View>
         <ScrollView>
           <Center w={'full'}>
+            <Text
+              letterSpacing={0.5}
+              fontSize={'lg'}
+              fontWeight={'black'}
+              color={COLORS.primary}
+            >
+              Selling
+            </Text>
             <HStack
+              space={6}
               w={400}
-              mt={12}
+              mt={8}
               justifyContent={{ base: 'center', lg: 'space-around' }}
             >
               <MenuIcon
@@ -80,8 +106,9 @@ function SellingPage({ navigation }) {
               />
             </HStack>
             <HStack
+              space={6}
               w={400}
-              mt={6}
+              mt={4}
               flexWrap={'wrap'}
               justifyContent={{ base: 'center', lg: 'space-around' }}
             >
@@ -117,8 +144,9 @@ function SellingPage({ navigation }) {
               />
             </HStack>
             <HStack
+              space={6}
               w={400}
-              mt={6}
+              mt={4}
               flexWrap={'wrap'}
               justifyContent={{ base: 'center', lg: 'space-around' }}
             >
@@ -157,7 +185,7 @@ function SellingPage({ navigation }) {
               />
             </HStack>
             <HStack
-              mt={6}
+              mt={4}
               w={400}
               space={SPACING.small}
               flexWrap={'wrap'}

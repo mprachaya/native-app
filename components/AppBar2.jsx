@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Center, ChevronRightIcon, HStack, Hidden, Link, Text } from 'native-base';
+import { Avatar, Box, Button, Center, ChevronRightIcon, HStack, Hidden, Link, Text, View } from 'native-base';
 import { COLORS, SHADOWS, SPACING } from '../constants/theme';
 // import { SearchInput } from './Inputs';
 // import { useContext } from 'react';
@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { getData } from '../utils/async-storage';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { TouchableOpacity } from 'react-native';
 
 export default function AppBar() {
   // const [state] = useContext(Context);
@@ -39,10 +40,11 @@ export default function AppBar() {
   return (
     <Box
       safeAreaTop
-      height={140}
+      mt={2}
+      height={125}
       pt={{ base: 12, lg: 10 }}
-      bg={COLORS.primary}
-      shadow={SHADOWS.medium}
+      bg={COLORS.lightWhite}
+      // shadow={SHADOWS.medium}
     >
       <HStack
         justifyContent='space-between'
@@ -50,13 +52,18 @@ export default function AppBar() {
       >
         <HStack>
           <Box m={4}>
-            <Avatar size={'md'} />
+            <Avatar
+              size={'md'}
+              source={{
+                uri: 'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg',
+              }}
+            ></Avatar>
           </Box>
-          <Box my={3}>
+          <Box my={4}>
             <TextStyled
               fontSize={{ base: 16, lg: 24 }}
               fontWeight='bold'
-              color={COLORS.tertiary}
+              color={COLORS.tertiary2}
             >
               {userName}
             </TextStyled>
@@ -64,51 +71,33 @@ export default function AppBar() {
               fontSize={{ base: 12, lg: 20 }}
               color={'#919394'}
             >
-              Simply dummy · text of the printing
+              Simply dummy
             </TextStyled>
           </Box>
-          {/* <HStack space={{ base: SPACING.small, lg: SPACING.medium }}>
-            <FrappeLogo size={'xs'} />
-            <Hidden only={'base'}>
-              <Link my={2.5}>
-                <ChevronRightIcon
-                  my={0.5}
-                  mr={2}
-                />
-                <Text fontSize={'md'}>{state.pathname}</Text>
-              </Link>
-            </Hidden>
-          </HStack> */}
         </HStack>
-        <Button
-          variant={'unstyled'}
-          _pressed={{ bg: COLORS.secondary }}
-          onPress={handleLogOut}
-          h={'12'}
-          my={2}
-          mr={8}
+        <View
+          // my={4}
+          mt={0.5}
+          mb={6}
+          mr={3.5}
+          px={4}
+          borderBottomLeftRadius={30}
+          justifyContent={'center'}
+          bg={COLORS.primary}
         >
-          <TextStyled
-            color={'white'}
-            fontWeight='bold'
+          <TouchableOpacity
+            variant={'unstyled'}
+            // _pressed={{ bg: COLORS.secondary }}
+            onPress={handleLogOut}
           >
-            Logout
-          </TextStyled>
-          {/* <HStack space={{ base: 0, lg: SPACING.small }}>
-            <SearchInput />
-            <HStack space={{ base: 2, lg: SPACING.small }}>
-              <Avatar
-                bg='lightBlue.400'
-                size={'10'}
-              >
-                A
-              </Avatar>
-              <Avatar size={'10'}>
-                <Avatar.Badge bg='green.500' />A
-              </Avatar>
-            </HStack>
-          </HStack> */}
-        </Button>
+            <TextStyled
+              color={COLORS.white}
+              fontWeight='bold'
+            >
+              Logout
+            </TextStyled>
+          </TouchableOpacity>
+        </View>
       </HStack>
     </Box>
   );

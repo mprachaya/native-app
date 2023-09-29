@@ -30,20 +30,22 @@ function HomePage({ navigation }) {
         <Center w={'full'}>
           <Text
             mt={6}
+            letterSpacing={0.5}
             fontSize={'lg'}
-            fontWeight={'bold'}
+            fontWeight={'black'}
             color={COLORS.primary}
           >
             Modules
           </Text>
           <HStack
+            space={6}
             w={400}
             mt={12}
             flexWrap={'wrap'}
             justifyContent={{ base: 'center', lg: 'space-around' }}
           >
             <MenuIcon
-              onPress={() => navigation.replace('Selling')}
+              onPress={() => navigation.navigate('Selling')}
               menuLabel={'Selling'}
               Icon={
                 <Shop
@@ -75,6 +77,7 @@ function HomePage({ navigation }) {
             />
           </HStack>
           <HStack
+            space={6}
             w={400}
             mt={6}
             flexWrap={'wrap'}

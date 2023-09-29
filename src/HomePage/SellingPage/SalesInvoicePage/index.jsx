@@ -202,24 +202,14 @@ function SalesInvoicePage({ route }) {
   }, [salesInvoiceData]);
 
   useMemo(() => {
-    console.log('filterActive ', filterActive);
-  }, [filterActive]);
-
-  useMemo(() => {
-    console.log('sortActive ', sortActive);
-  }, [sortActive]);
-
-  useMemo(() => {
     if (toggleFilter === undefined) {
     } else {
       handleFilter(toggleFilter);
     }
     checkFilter();
     checkSort();
-
-    // console.log(filterData);
-    // console.log(filterData);
   }, [salesInvoiceData, toggleFilter]);
+
   const isFocused = useIsFocused();
   const [doOnce, setDoOnce] = useState(true);
 

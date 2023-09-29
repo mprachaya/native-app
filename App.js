@@ -105,6 +105,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Report Export'}
                   noHeader={true}
                 />
@@ -119,12 +120,11 @@ export default function App() {
               options={{
                 title: '',
                 headerShadowVisible: true,
-                header: () => (
-                  <React.Fragment>
-                    <AppBar />
-                    <NavHeader pageName={'Selling'} />
-                  </React.Fragment>
-                ),
+                header: () => '',
+                // <React.Fragment>
+                //   <AppBar />
+                //   <NavHeader type={'main'} pageName={'Selling'} />
+                // </React.Fragment>
               }}
             />
           ) : (
@@ -132,11 +132,11 @@ export default function App() {
               name='Selling'
               component={SellingPage}
               options={{
-                header: () => (
-                  <React.Fragment>
-                    <AppBar />
-                  </React.Fragment>
-                ),
+                header: () => '',
+                // <React.Fragment>
+                //   <AppBar />
+                //   <NavHeader type={'main'} pageName={'Selling'} />
+                // </React.Fragment>
               }}
             />
           )}
@@ -148,6 +148,7 @@ export default function App() {
               options={{
                 header: () => (
                   <NavHeader
+                    type={'main'}
                     pageName={'Customer'}
                     pageBackName={'Selling'}
                     noHeader={true}
@@ -164,6 +165,7 @@ export default function App() {
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
+                    // type={'main'}
                     pageName={'Sort'}
                     noHeader={true}
                   />
@@ -178,6 +180,7 @@ export default function App() {
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
+                    // type={'main'}
                     pageName={'Customer Details'}
                     noHeader={true}
                   />
@@ -192,6 +195,7 @@ export default function App() {
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
+                    // type={'main'}
                     // pageName={'Add New Customer'}
                     noHeader={true}
                   />
@@ -206,6 +210,7 @@ export default function App() {
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
+                    // type={'main'}
                     pageName={'Customer Update'}
                     noHeader={true}
                   />
@@ -220,6 +225,7 @@ export default function App() {
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
+                    // type={'main'}
                     pageName={'Filter Customer'}
                     noHeader={true}
                   />
@@ -235,6 +241,7 @@ export default function App() {
               options={{
                 header: () => (
                   <NavHeader
+                    type={'main'}
                     pageName={'Quotation'}
                     pageBackName={'Selling'}
                     noHeader={true}
@@ -250,6 +257,7 @@ export default function App() {
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
+                    // type={'main'}
                     pageName={'Sort'}
                     noHeader={true}
                   />
@@ -264,6 +272,7 @@ export default function App() {
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
+                    // type={'main'}
                     pageName={'Filter Quotation'}
                     noHeader={true}
                   />
@@ -278,6 +287,7 @@ export default function App() {
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
+                    // type={'main'}
                     pageName={'Add New Quotation'}
                     noHeader={true}
                   />
@@ -292,6 +302,7 @@ export default function App() {
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
+                    // type={'main'}
                     pageName={'Quotation Details'}
                     noHeader={true}
                   />
@@ -306,6 +317,7 @@ export default function App() {
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
+                    // type={'main'}
                     pageName={'Item Details'}
                     noHeader={true}
                   />
@@ -320,6 +332,7 @@ export default function App() {
                 headerShadowVisible: true,
                 header: () => (
                   <NavHeader
+                    // type={'main'}
                     pageName={'Edit Quotation'}
                     noHeader={true}
                   />
@@ -335,6 +348,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'EXPORT DOCTYPE'}
                   noHeader={true}
                 />
@@ -350,6 +364,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  type={'main'}
                   pageName={'Sales Order'}
                   noHeader={true}
                 />
@@ -364,6 +379,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Create New Sales Order'}
                   noHeader={true}
                 />
@@ -378,6 +394,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Sales Order Details'}
                   noHeader={true}
                 />
@@ -392,6 +409,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Item Details'}
                   noHeader={true}
                 />
@@ -406,6 +424,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Edit Sales Order'}
                   noHeader={true}
                 />
@@ -420,6 +439,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Filter Sales Order'}
                   noHeader={true}
                 />
@@ -435,6 +455,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  type={'main'}
                   pageName={'Sales Invoice'}
                   noHeader={true}
                 />
@@ -450,6 +471,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Sales Invoice Details'}
                   noHeader={true}
                 />
@@ -464,6 +486,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Create New Sales Invoice'}
                   noHeader={true}
                 />
@@ -478,6 +501,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Item Details'}
                   noHeader={true}
                 />
@@ -492,6 +516,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Edit Sales Invoice'}
                   noHeader={true}
                 />
@@ -506,6 +531,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Filter Sales Invoice'}
                   noHeader={true}
                 />
@@ -521,6 +547,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  type={'main'}
                   pageName={'Payment Entry'}
                   noHeader={true}
                 />
@@ -535,6 +562,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Payment Entry Details'}
                   noHeader={true}
                 />
@@ -549,6 +577,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Create New Payment Entry'}
                   noHeader={true}
                 />
@@ -563,6 +592,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Edit Payment Entry'}
                   noHeader={true}
                 />
@@ -577,6 +607,7 @@ export default function App() {
               headerShadowVisible: true,
               header: () => (
                 <NavHeader
+                  // type={'main'}
                   pageName={'Filter Payment Entry'}
                   noHeader={true}
                 />

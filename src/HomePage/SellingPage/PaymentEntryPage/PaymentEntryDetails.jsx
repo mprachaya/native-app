@@ -107,7 +107,7 @@ function DetailsPage({ route, navigation }) {
       _pressed={{ background: COLORS.white }}
       _text={{ fontSize: 'xs', fontWeight: 'bold', color: COLORS.tertiary }}
       // onPress={() => setOpenPrint(true)}
-      onPress={() => navigation.navigate('ExportPage', { DOCTYPE: 'Payment Entry', NAME: name })}
+      onPress={() => navigation.navigate('ExportPage', { DOCTYPE: 'Payment Entry', NAME: data?.name })}
     >
       <Text
         textAlign='left'

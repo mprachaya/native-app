@@ -14,9 +14,11 @@ function TabMenu() {
 
   const handleNavigate = (path, activeMenu) => {
     const checkCurrent = navigation.getState();
-    if (checkCurrent.routes[0].name !== path) {
+    const currentRoute = checkCurrent.routes.length - 1;
+    // console.log(checkCurrent.routes[currentRoute - 1].name);
+    if (checkCurrent.routes[currentRoute].name !== path) {
       setActiveMenu(activeMenu);
-      navigation.replace(path);
+      navigation.navigate(path);
     }
   };
 
@@ -37,26 +39,7 @@ function TabMenu() {
         justifyContent={'space-around'}
         space={12}
       >
-        <Center>
-          {/* <Button
-            _pressed={{ background: COLORS.secondary }}
-            variant={'unstyled'}
-            w={'79.5px'}
-            h={'16'}
-          >
-            <View
-              mx={3}
-              my={1.5}
-            >
-              <Search
-                width={26}
-                height={26}
-                color={inactiveColor}
-              />
-            </View>
-            <Text color={inactiveColor}>search</Text>
-          </Button> */}
-        </Center>
+        <Center></Center>
         <Center>
           <Button
             onPress={() => handleNavigate('Home', 'modules')}
@@ -159,7 +142,7 @@ function TabMenu() {
               textAlign={'center'}
               color={activeMenu === 'account-settings' ? activeColor : inactiveColor}
             >
-              home
+              account
             </Text>
           </Button>
         </Center>

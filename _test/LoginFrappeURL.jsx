@@ -1,23 +1,10 @@
-import {
-  Button,
-  FormControl,
-  HStack,
-  Heading,
-  Input,
-  Spinner,
-  Text,
-  VStack,
-  View,
-  StyleSheet,
-  PresenceTransition,
-} from 'native-base';
+import { Button, FormControl, HStack, Input, Text, VStack, View } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { COLORS, SIZES } from '../constants/theme';
 import { FrappeLogo, LoadingFullScreen } from '../components';
 import axios from 'axios';
 import { storeData } from '../utils/async-storage';
-import { ActivityIndicator } from 'react-native';
-import FadeTransition from '../components/FadeTransition';
+import { Dimensions, TouchableOpacity } from 'react-native';
 
 const InputStyled = (props) => (
   <Input
@@ -26,6 +13,17 @@ const InputStyled = (props) => (
     rounded={12}
     fontSize={{ base: SIZES.medium, lg: SIZES.large }}
     backgroundColor='blueGray.100'
+    InputLeftElement={
+      <HStack
+        ml={3.5}
+        minWidth={'10'}
+        maxW={'10'}
+        justifyContent={'space-between'}
+      >
+        <Text color={'blueGray.400'}>{props.title}</Text>
+        <Text color={'blueGray.400'}>:</Text>
+      </HStack>
+    }
     _focus={{
       borderColor: 'white',
       backgroundColor: 'blueGray.100',
@@ -81,7 +79,7 @@ function LoginFrappeURL({ navigation }) {
   return (
     <View
       bg={'blueGray.200'}
-      h={1200}
+      h={Dimensions.get('window').height}
     >
       {loading && <LoadingFullScreen loading={loading} />}
       <VStack
@@ -90,52 +88,86 @@ function LoginFrappeURL({ navigation }) {
         alignItems={'center'}
       >
         <View
-          m={6}
+          mt={12}
+          mx={6}
           justifyContent={'center'}
           alignItems={'center'}
         >
-          <View m={6}>
-            <FrappeLogo size={'md'} />
+          <View
+            my={6}
+            mx={2}
+          >
+            <FrappeLogo size={'lg'} />
           </View>
           <Text
             color={COLORS.primary}
-            fontWeight={'bold'}
+            fontWeight={'black'}
             fontSize={'lg'}
             textAlign={'center'}
-          >{`ERP Next`}</Text>
+          >
+            Welcome to ERPNext
+          </Text>
+          <View
+            mt={3.5}
+            mb={6}
+            alignItems={'center'}
+            justifyContent={'center'}
+          >
+            <Text
+              letterSpacing={0}
+              color={'blueGray.500'}
+            >
+              Application that integrates information
+            </Text>
+            <Text color={'blueGray.500'}>flow across departments.</Text>
+          </View>
         </View>
-        <FormControl w={{ base: 300, lg: 400 }}>
-          <FormControl.Label>URL</FormControl.Label>
+        <VStack
+          space={3.5}
+          w={{ base: 300, lg: 400 }}
+        >
           <InputStyled
+            title={'url'}
             value={state.url}
             autoCapitalize='none'
             onChangeText={(value) => handleTyping('url', value)}
           />
-          <FormControl.Label>Username</FormControl.Label>
+
           <InputStyled
+            title={'user'}
             value={state.usr}
             autoCapitalize='none'
             onChangeText={(value) => handleTyping('usr', value)}
           />
-          <FormControl.Label>Password</FormControl.Label>
+
           <InputStyled
+            title={'pass'}
             value={state.pwd}
             autoCapitalize='none'
             type={'password'}
             onChangeText={(value) => handleTyping('pwd', value)}
           />
           <Button
-            rounded={20}
+            rounded={10}
             mt={6}
             mb={2.5}
             px={6}
             bg={COLORS.primary}
-            _text={{ fontSize: 'lg', fontWeight: 'bold', letterSpacing: 0.5 }}
+            _text={{ fontSize: 'xl', fontWeight: 'bold', letterSpacing: 0.75 }}
             _pressed={{ bg: COLORS.secondary }}
             onPress={() => authenticate(state.url, state.usr, state.pwd)}
           >
-            {'Login to main menu'}
+            {'Log in'}
           </Button>
+          <TouchableOpacity>
+            <Text
+              textAlign={'center'}
+              mt={4}
+              underline={true}
+            >
+              Contact Us
+            </Text>
+          </TouchableOpacity>
           {/* <Button
             rounded={20}
             px={6}
@@ -150,7 +182,7 @@ function LoginFrappeURL({ navigation }) {
           >
             {'Login -> Payment Entry'}
           </Button> */}
-        </FormControl>
+        </VStack>
       </VStack>
     </View>
   );

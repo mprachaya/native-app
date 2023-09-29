@@ -20,6 +20,8 @@ function ExportPDFPage({ navigation, route }) {
   const [format, setFormat] = useState(null);
 
   async function printDoctype() {
+    // console.log(route.params?.NAME + '' + route.params?.DOCTYPE);
+    // console.log(loading);
     if (route.params?.DOCTYPE && route.params?.NAME)
       if (format) {
         try {
@@ -124,6 +126,7 @@ function ExportPDFPage({ navigation, route }) {
       getFormat();
       setLoading(false);
     }
+    // console.log('loading', loading);
   }, [loading]);
 
   useEffect(() => {
